@@ -4,7 +4,7 @@ public class MemberDTO {
 	private String userId;
 	private String userName;
 	private String userPwd;
-	private String register_date;
+	private String reg_date;
 	private String modify_date;
 	private String email;
 	private String email1;
@@ -17,6 +17,13 @@ public class MemberDTO {
 	private String zip;
 	private String addr1;
 	private String addr2;
+	private String score;
+	public String getScore() {
+		return score;
+	}
+	public void setScore(String score) {
+		this.score = score;
+	}
 	private int enabled;
 	
 	public String getUserId() {
@@ -37,11 +44,11 @@ public class MemberDTO {
 	public void setUserPwd(String userPwd) {
 		this.userPwd = userPwd;
 	}
-	public String getRegister_date() {
-		return register_date;
+	public String getReg_date() {
+		return reg_date;
 	}
-	public void setRegister_date(String register_date) {
-		this.register_date = register_date;
+	public void setReg_date(String register_date) {
+		this.reg_date = register_date;
 	}
 	public String getModify_date() {
 		return modify_date;
