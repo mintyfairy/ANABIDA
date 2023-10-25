@@ -103,7 +103,7 @@ function memberOk() {
         return;
     }
 
-   	f.action = "${pageContext.request.contextPath}/member/member_ok.do";
+   	f.action = "${pageContext.request.contextPath}/member/${mode}_ok.do";
     f.submit();
 }
 

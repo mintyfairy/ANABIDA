@@ -7,7 +7,7 @@
 			&nbsp;
 		</div>
 		<div class="header-center">
-			<h1 class="logo"><a href="#"><img src="">아나비다</a><span></span></h1>
+			<h1 class="logo"><a href="${pageContext.request.contextPath}/main.do"><img src="">아나비다</a><span></span></h1>
 		</div>
 		<div class="header-right">
             <c:if test="${empty sessionScope.member}">
@@ -36,7 +36,7 @@
 					<li><a href="#" aria-label="submenu">판매내역</a></li>
 					<li><a href="#" aria-label="submenu">구매내역</a></li>
 					<li><a href="#" aria-label="submenu">찜목록</a></li>
-					<li><a href="#" aria-label="submenu">정보수정</a></li>
+					<li><a href="${pageContext.request.contextPath}/member/pwd.do?mode=update"  aria-label="submenu">정보수정</a></li>
 				</ul>
 			</li>
 

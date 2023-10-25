@@ -32,7 +32,7 @@ function sendOk() {
 		return;
 	}
 
-	f.action = "${pageContext.request.contextPath}/";
+	f.action = "${pageContext.request.contextPath}/member/pwd_ok.do";
 	f.submit();
 }
 </script>
