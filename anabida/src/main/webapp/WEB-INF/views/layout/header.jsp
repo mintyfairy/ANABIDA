@@ -7,7 +7,7 @@
 			&nbsp;
 		</div>
 		<div class="header-center">
-			<h1 class="logo"><a href="#">SPRING</a><span>.</span></h1>
+			<h1 class="logo"><a href="#"><img src="">아나비다</a><span></span></h1>
 		</div>
 		<div class="header-right">
             <c:if test="${empty sessionScope.member}">
@@ -30,45 +30,35 @@
 	<nav>
 		<ul class="main-menu">
 			<li><a href="${pageContext.request.contextPath}/">홈</a></li>
-			
-			<li><a href="#">회사소개</a></li>
-			
-			<li><a href="#">커뮤니티</a>
-				<ul class="sub-menu">
-					<li><a href="#" aria-label="submenu">방명록</a></li>
-					<li><a href="#" aria-label="submenu">게시판</a></li>
-					<li><a href="#" aria-label="submenu">포토갤러리</a></li>
-					<li><a href="#" aria-label="submenu">채팅</a></li>
-					<li><a href="#" aria-label="submenu">자료실</a></li>
-				</ul>
-			</li>
-
-			<li><a href="#">스터디룸</a>
-				<ul class="sub-menu">
-					<li><a href="#" aria-label="submenu">프로그래밍</a></li>
-					<li><a href="#" aria-label="submenu">데이터베이스</a></li>
-					<li><a href="#" aria-label="submenu">웹프로그래밍</a></li>
-					<li><a href="#" aria-label="submenu">질문과 답변</a></li>
-				</ul>
-			</li>
-
-			<li><a href="#">고객센터</a>
-				<ul class="sub-menu">
-					<li><a href="#" aria-label="submenu">자주하는 질문</a></li>
-					<li><a href="#" aria-label="submenu">공지사항</a></li>
-					<li><a href="#" aria-label="submenu">질문과 답변</a></li>
-					<li><a href="#" aria-label="submenu">1:1 문의</a></li>
-					<li><a href="#" aria-label="submenu">이벤트</a></li>
-				</ul>
-			</li>
 
 			<li><a href="#">마이페이지</a>
 				<ul class="sub-menu">
-					<li><a href="#" aria-label="submenu">포토앨범</a></li>
-					<li><a href="#" aria-label="submenu">일정관리</a></li>
-					<li><a href="#" aria-label="submenu">쪽지</a></li>
-					<li><a href="#" aria-label="submenu">이메일</a></li>
+					<li><a href="#" aria-label="submenu">판매내역</a></li>
+					<li><a href="#" aria-label="submenu">구매내역</a></li>
+					<li><a href="#" aria-label="submenu">찜목록</a></li>
 					<li><a href="#" aria-label="submenu">정보수정</a></li>
+				</ul>
+			</li>
+
+			<li><a href="#">공동구매</a>
+				<ul class="sub-menu">
+					<li><a href="#" aria-label="submenu">참여하기</a></li>
+					<li><a href="#" aria-label="submenu">모집하기</a></li>
+				</ul>
+			</li>
+			
+			<li><a href="#">커뮤니티</a>
+				<ul class="sub-menu">
+					<li><a href="#" aria-label="submenu">취미마당</a></li>
+					<li><a href="#" aria-label="submenu">일상마당</a></li>
+					<li><a href="#" aria-label="submenu">사건사고마당</a></li>
+				</ul>
+			</li>
+			
+			<li><a href="#">고객센터</a>
+				<ul class="sub-menu">
+					<li><a href="#" aria-label="submenu">고객문의</a></li>
+					<li><a href="#" aria-label="submenu">공지사항</a></li>
 				</ul>
 			</li>
 
