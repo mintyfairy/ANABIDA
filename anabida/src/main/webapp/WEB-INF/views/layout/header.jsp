@@ -47,12 +47,7 @@
 				</ul>
 			</li>
 			
-			<li><a href="#">커뮤니티</a>
-				<ul class="sub-menu">
-					<li><a href="#" aria-label="submenu">취미마당</a></li>
-					<li><a href="#" aria-label="submenu">일상마당</a></li>
-					<li><a href="#" aria-label="submenu">사건사고마당</a></li>
-				</ul>
+			<li><a href="#">커뮤니티마당</a>
 			</li>
 			
 			<li><a href="#">고객센터</a>
