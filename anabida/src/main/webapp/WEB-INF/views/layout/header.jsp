@@ -52,7 +52,7 @@
 			
 			<li><a href="#">고객센터</a>
 				<ul class="sub-menu">
-					<li><a href="#" aria-label="submenu">고객문의</a></li>
+					<li><a href='<c:url value="/member/cs.do"/>' aria-label="submenu">고객문의</a></li>
 					<li><a href="#" aria-label="submenu">공지사항</a></li>
 				</ul>
 			</li>
