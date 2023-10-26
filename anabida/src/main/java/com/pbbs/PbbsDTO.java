@@ -1,5 +1,5 @@
 package com.pbbs;
-public class PhotoDTO {
+public class PbbsDTO {
 	private long num;
 	private String userId;
 	private String userPwd,userName;

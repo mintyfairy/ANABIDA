@@ -31,6 +31,11 @@
 		<ul class="main-menu">
 			<li><a href="${pageContext.request.contextPath}/">홈</a></li>
 
+			<li><a href="#">임시</a>
+				<ul class="sub-menu">
+					<li><a href="${pageContext.request.contextPath}/pbbs/list.do?"  aria-label="submenu">중고거래게시판</a></li>
+				</ul>
+			</li>
 			<li><a href="#">마이페이지</a>
 				<ul class="sub-menu">
 					<li><a href="#" aria-label="submenu">판매내역</a></li>

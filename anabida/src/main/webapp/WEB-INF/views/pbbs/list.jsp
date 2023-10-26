@@ -72,10 +72,11 @@
 
 </head>
 <body>
-
+<!-- 
 	<header>
 		<jsp:include page="/WEB-INF/views/layout/header.jsp"></jsp:include>
 	</header>
+ -->
 
 	<main>
 		<div class="container body-container">
@@ -109,10 +110,7 @@
 		</div>
 	</main>
 
-	<footer>
-		<jsp:include page="/WEB-INF/views/layout/footer.jsp"></jsp:include>
-	</footer>
-
+	
 	<jsp:include page="/WEB-INF/views/layout/staticFooter.jsp" />
 </body>
 </html>

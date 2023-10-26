@@ -10,10 +10,10 @@ import java.util.List;
 import com.util.DBConn;
 import com.util.DBUtil;
 
-public class PhotoDAO {
+public class PbbsDAO {
 	private Connection conn=DBConn.getConnection();
 	
-	public void insertPhoto(PhotoDTO dto) throws SQLException {
+	public void insertPhoto(PbbsDTO dto) throws SQLException {
 		PreparedStatement pstmt=null;
 		String sql;
 		try {
@@ -65,8 +65,8 @@ public class PhotoDAO {
 		return result;
 	}
 
-	public List<PhotoDTO> listPhoto(int offset, int size) throws SQLException {
-		List<PhotoDTO> list=new ArrayList<PhotoDTO>();
+	public List<PbbsDTO> listPhoto(int offset, int size) throws SQLException {
+		List<PbbsDTO> list=new ArrayList<PbbsDTO>();
 		PreparedStatement pstmt=null;
 		String sql;
 		ResultSet rs=null;
@@ -82,7 +82,7 @@ public class PhotoDAO {
 			rs=pstmt.executeQuery();
 			
 			while(rs.next()) {
-				PhotoDTO dto= new PhotoDTO();
+				PbbsDTO dto= new PbbsDTO();
 				
 				dto.setNum(rs.getLong("num"));
 				dto.setUserId(rs.getString("userid"));
@@ -107,8 +107,8 @@ public class PhotoDAO {
 		return list;
 	}
 	
-	public PhotoDTO findById(long num) throws SQLException {
-		PhotoDTO dto=null;
+	public PbbsDTO findById(long num) throws SQLException {
+		PbbsDTO dto=null;
 		PreparedStatement pstmt=null;
 		ResultSet	rs =null;
 		String sql;
@@ -121,7 +121,7 @@ public class PhotoDAO {
 			rs=pstmt.executeQuery();
 			
 			if(rs.next()) {
-				dto= new PhotoDTO();
+				dto= new PbbsDTO();
 				
 				dto.setNum(rs.getLong("num"));
 				dto.setUserId(rs.getString("id"));
@@ -145,7 +145,7 @@ public class PhotoDAO {
 		return dto;
 		
 	}
-	public void updatePhoto(PhotoDTO dto ) throws SQLException {
+	public void updatePhoto(PbbsDTO dto ) throws SQLException {
 		PreparedStatement pstmt=null;
 		String sql;
 		try {

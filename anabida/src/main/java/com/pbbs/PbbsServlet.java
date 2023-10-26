@@ -16,9 +16,9 @@ import com.member.SessionInfo;
 import com.util.MyUploadServlet;
 import com.util.MyUtil;
 
-@WebServlet("/photo/*")
+@WebServlet("/pbbs/*")
 @MultipartConfig
-public class PhotoServlet extends MyUploadServlet {
+public class PbbsServlet extends MyUploadServlet {
 	private static final long serialVersionUID = 1L;
 
 	private String pathname;
@@ -60,7 +60,7 @@ public class PhotoServlet extends MyUploadServlet {
 
 	protected void list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		PhotoDAO dao = new PhotoDAO();
+		PbbsDAO dao = new PbbsDAO();
 		MyUtil util = new MyUtil();
 
 		String cp = req.getContextPath();
@@ -83,10 +83,10 @@ public class PhotoServlet extends MyUploadServlet {
 			if (offset < 0)
 				offset = 0;
 
-			List<PhotoDTO> list = dao.listPhoto(offset, size);
+			List<PbbsDTO> list = dao.listPhoto(offset, size);
 
-			String listUrl = cp + "/photo/list.do";
-			String articleUrl = cp + "/photo/article.do?page=" + current_page;
+			String listUrl = cp + "/pbbs/list.do";
+			String articleUrl = cp + "/pbbs/article.do?page=" + current_page;
 			String paging = util.paging(current_page, total_page, listUrl);
 
 			req.setAttribute("list", list);
@@ -101,31 +101,31 @@ public class PhotoServlet extends MyUploadServlet {
 			// TODO: handle exception
 		}
 
-		forward(req, resp, "/WEB-INF/views/photo/list.jsp");
+		forward(req, resp, "/WEB-INF/views/pbbs/list.jsp");
 
 	}
 
 	protected void writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		req.setAttribute("mode", "write");
-		forward(req, resp, "/WEB-INF/views/photo/write.jsp");
+		forward(req, resp, "/WEB-INF/views/pbbs/write.jsp");
 
 	}
 
 	protected void writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		PhotoDAO dao = new PhotoDAO();
+		PbbsDAO dao = new PbbsDAO();
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
 
 		String cp = req.getContextPath();
 		if (req.getMethod().equals("GET")) {
-			resp.sendRedirect(cp + "/photo/list.do");
+			resp.sendRedirect(cp + "/pbbs/list.do");
 			return;
 
 		}
 
 		try {
-			PhotoDTO dto = new PhotoDTO();
+			PbbsDTO dto = new PbbsDTO();
 
 			dto.setUserId(info.getUserId());
 			dto.setSubject(req.getParameter("subject"));
@@ -146,13 +146,13 @@ public class PhotoServlet extends MyUploadServlet {
 			e.printStackTrace();
 		}
 
-		resp.sendRedirect(cp + "/photo/list.do");
+		resp.sendRedirect(cp + "/pbbs/list.do");
 		return;
 
 	}
 
 	protected void article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		PhotoDAO dao = new PhotoDAO();
+		PbbsDAO dao = new PbbsDAO();
 		String cp = req.getContextPath();
 
 		String page = req.getParameter("page");
@@ -160,10 +160,10 @@ public class PhotoServlet extends MyUploadServlet {
 		try {
 			long num = Long.parseLong(req.getParameter("num"));
 
-			PhotoDTO dto = dao.findById(num);
+			PbbsDTO dto = dao.findById(num);
 			if (dto == null) {
 				// 게시글이 없다면 다시 리스트로
-				resp.sendRedirect(cp + "/photo/list.do?page=" + page);
+				resp.sendRedirect(cp + "/pbbs/list.do?page=" + page);
 				return;
 			}
 
@@ -175,7 +175,7 @@ public class PhotoServlet extends MyUploadServlet {
 			req.setAttribute("page", page);
 
 			// 포워딩
-			forward(req, resp, "/WEB-INF/views/photo/article.jsp");
+			forward(req, resp, "/WEB-INF/views/pbbs/article.jsp");
 			return;
 		} catch (Exception e) {
 
@@ -183,12 +183,12 @@ public class PhotoServlet extends MyUploadServlet {
 			e.printStackTrace();
 		}
 
-		resp.sendRedirect(cp + "/photo/list.do?page=" + page);
+		resp.sendRedirect(cp + "/pbbs/list.do?page=" + page);
 	}
 
 	protected void updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 글수정폼
-		PhotoDAO dao= new PhotoDAO();
+		PbbsDAO dao= new PbbsDAO();
 		String cp= req.getContextPath();
 		
 		
@@ -199,11 +199,11 @@ public class PhotoServlet extends MyUploadServlet {
 			long num=Long.parseLong(req.getParameter("num"));
 			
 			//테이블에서 해당 게시글 가져오기
-			PhotoDTO dto=dao.findById(num);
+			PbbsDTO dto=dao.findById(num);
 			
 			// 글없으면
 			if(dto==null) {
-				 resp.sendRedirect(cp+"/photo/list.do?page="+page);
+				 resp.sendRedirect(cp+"/pbbs/list.do?page="+page);
 				 return;
 			}
 			
@@ -214,7 +214,7 @@ public class PhotoServlet extends MyUploadServlet {
 			req.setAttribute("page", page);
 			
 			req.setAttribute("mode", "update");
-			forward(req, resp, "/WEB-INF/views/photo/write.jsp");
+			forward(req, resp, "/WEB-INF/views/pbbs/write.jsp");
 			return;
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -223,19 +223,19 @@ public class PhotoServlet extends MyUploadServlet {
 	}
 
 	protected void updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		PhotoDAO dao = new PhotoDAO();
+		PbbsDAO dao = new PbbsDAO();
 		String cp = req.getContextPath();
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
 
 		if (req.getMethod().equalsIgnoreCase("GET")) {
-			resp.sendRedirect("/WEB-INF/views/photo/list.jsp");
+			resp.sendRedirect("/WEB-INF/views/pbbs/list.jsp");
 			return;
 		}
 		String page = req.getParameter("page");
 		System.out.println(req.getParameter("selectFile"));
 		try {
-			PhotoDTO dto = new PhotoDTO();
+			PbbsDTO dto = new PbbsDTO();
 			dto.setNum(Long.parseLong(req.getParameter("num")));
 			dto.setSubject(req.getParameter("subject"));
 			dto.setContent(req.getParameter("content"));
@@ -258,14 +258,14 @@ public class PhotoServlet extends MyUploadServlet {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		resp.sendRedirect(cp + "/photo/list.do?page=" + page);
+		resp.sendRedirect(cp + "/pbbs/list.do?page=" + page);
 
 	}
 
 	protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 게시글 삭제
 		System.out.println("여기는온거니");
-		PhotoDAO dao = new PhotoDAO();
+		PbbsDAO dao = new PbbsDAO();
 		String cp = req.getContextPath();
 
 		String page = req.getParameter("page");
@@ -280,7 +280,7 @@ public class PhotoServlet extends MyUploadServlet {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		resp.sendRedirect(cp + "/photo/list.do?page=" + page);
+		resp.sendRedirect(cp + "/pbbs/list.do?page=" + page);
 	}
 
 }

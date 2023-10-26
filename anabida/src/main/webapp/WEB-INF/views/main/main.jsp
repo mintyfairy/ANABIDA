@@ -20,7 +20,7 @@
 <main>
 	<div class="container body-container">
 	    <div class="inner-page mx-auto">
-			메인 화면 입니다.
+		    <jsp:include page="/WEB-INF/views/pbbs/list.jsp"/>
 	    </div>
 	</div>
 </main>
