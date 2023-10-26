@@ -17,7 +17,7 @@ public class PbbsDAO {
 		PreparedStatement pstmt=null;
 		String sql;
 		try {
-			sql="insert into photo(num,userid,subject,content,IMAGEFILENAME,reg_date) values(photo_seq.nextval,?,?,?,?,sysdate)";
+			sql="insert into pbbs(pnum,userid,subject,content,IMAGEFILENAME,cost,catnum) values(pbbs_seq.nextval,?,?,?,?,?,?)";
 			
 			pstmt=conn.prepareStatement(sql);
 			
@@ -25,6 +25,8 @@ public class PbbsDAO {
 			pstmt.setString(2, dto.getSubject());
 			pstmt.setString(3, dto.getContent());
 			pstmt.setString(4, dto.getImageFilename());
+			pstmt.setLong(5, dto.getCost());
+			pstmt.setLong(6, dto.getCatNum());
 			
 			pstmt.executeUpdate();
 			
@@ -44,7 +46,7 @@ public class PbbsDAO {
 		ResultSet rs=null;
 		
 		try {
-			sql="select count(*) from photo";
+			sql="select count(*) from pbbs";
 			pstmt=conn.prepareStatement(sql);
 			
 			rs=pstmt.executeQuery();
@@ -72,7 +74,7 @@ public class PbbsDAO {
 		ResultSet rs=null;
 		
 		try {
-			sql="select num,userid,subject,imagefilename,to_char(reg_date,'YYYY-MM-DD') reg_date from photo order by num desc offset ? rows fetch first ? rows only";
+			sql="select pnum,userid,subject,imagefilename,cost,to_char(reg_date,'YYYY-MM-DD') reg_date from pbbs order by num desc offset ? rows fetch first ? rows only";
 			
 			pstmt=conn.prepareStatement(sql);
 			
@@ -84,11 +86,12 @@ public class PbbsDAO {
 			while(rs.next()) {
 				PbbsDTO dto= new PbbsDTO();
 				
-				dto.setNum(rs.getLong("num"));
+				dto.setNum(rs.getLong("pnum"));
 				dto.setUserId(rs.getString("userid"));
 				dto.setSubject(rs.getString("subject"));
 				dto.setImageFilename(rs.getString("imagefilename"));
 				dto.setReg_date(rs.getString("reg_date"));
+				dto.setCost(rs.getLong("cost"));
 				
 				list.add(dto);
 			}
@@ -114,7 +117,7 @@ public class PbbsDAO {
 		String sql;
 		
 		try {
-			sql="select num,photo.userid id,username,subject,content,TO_CHAR(reg_date, 'YYYY-MM-DD') reg_date,IMAGEFILENAME from photo join member1 	on photo.userid=member1.userid  where num=?";
+			sql="select num,pbbs.userid id,username,subject,content,TO_CHAR(reg_date, 'YYYY-MM-DD') reg_date,IMAGEFILENAME from pbbs join member1 	on pbbs.userid=member1.userid  where num=?";
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setLong(1, num);
 			
@@ -149,7 +152,7 @@ public class PbbsDAO {
 		PreparedStatement pstmt=null;
 		String sql;
 		try {
-			sql="update  photo set subject=?,content=?,IMAGEFILENAMe=? where num=? and userid=?";
+			sql="update  pbbs set subject=?,content=?,IMAGEFILENAMe=? where num=? and userid=?";
 			pstmt= conn.prepareStatement(sql);
 			
 			pstmt.setString(1,	 dto.getSubject());
@@ -173,7 +176,7 @@ public class PbbsDAO {
 		String sql;
 		try {
 			System.out.println("오ㅘㅅ니");
-			sql="delete from  photo  where num=?";
+			sql="delete from  pbbs  where num=?";
 			pstmt= conn.prepareStatement(sql);
 			
 			pstmt.setLong(1,num);

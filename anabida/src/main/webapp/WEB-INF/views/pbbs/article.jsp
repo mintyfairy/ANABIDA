@@ -24,7 +24,7 @@
 	<script type="text/javascript">
 	function deletePhoto() {
 		if(confirm(' 게시글을 삭제 하시겠습니까?')){
-			location.href='${pageContext.request.contextPath}/photo/delete.do?num=${dto.num}&page=${page}';
+			location.href='${pageContext.request.contextPath}/pbbs/delete.do?num=${dto.num}&page=${page}';
 			
 			
 		}
@@ -65,7 +65,7 @@
 					</tr>
 					<tr>
 						<td colspan="2" style="padding-bottom: 0">
-							<img src="<c:url value='/uploads/photo/${dto.imageFilename}'/>" class="img">
+							<img src="<c:url value='/uploads/pbbs/${dto.imageFilename}'/>" class="img">
 						</td>
 					</tr>
 					
@@ -83,7 +83,7 @@
 					<td width="50%">
 						<c:choose>
 							<c:when test="${sessionScope.member.userId==dto.userId}">
-								<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/photo/update.do?num=${dto.num}&page=${page}'">수정</button>
+								<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/update.do?num=${dto.num}&page=${page}'">수정</button>
 							</c:when>
 							<c:otherwise>
 								<button type="button" class="btn" disabled="disabled">수정</button>
@@ -102,7 +102,7 @@
 						
 					</td>
 					<td align="right">
-						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/photo/list.do?page=${page}';">리스트</button>
+						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?page=${page}';">리스트</button>
 					</td>
 				</tr>
 			</table>

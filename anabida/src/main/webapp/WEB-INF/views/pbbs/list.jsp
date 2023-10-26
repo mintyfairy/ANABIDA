@@ -72,11 +72,7 @@
 
 </head>
 <body>
-<!-- 
-	<header>
-		<jsp:include page="/WEB-INF/views/layout/header.jsp"></jsp:include>
-	</header>
- -->
+
 
 	<main>
 		<div class="container body-container">
@@ -91,15 +87,17 @@
 					<span class="list-header-left">${dataCount}개(${page}/${total_page} 페이지)</span> 
 					<span class="list-header-right">
 						<button type="button" class="btn"
-							onclick="location.href='${pageContext.request.contextPath}/photo/write.do';">등록</button>
+							onclick="location.href='${pageContext.request.contextPath}/pbbs/write.do';">등록</button>
 					</span>
 				</div>
 				<ul class="list-content">
 					<c:forEach var="dto" items="${list}">
 						<li class="card"
 							onclick="location.href='${articleUrl}&num=${dto.num}';"><img
-							src="${pageContext.request.contextPath}/uploads/photo/${dto.imageFilename}">
-							<p class="card-title">${dto.subject }</p></li>
+							src="${pageContext.request.contextPath}/uploads/pbbs/${dto.imageFilename}">
+							<p class="card-title">${dto.subject }</p>
+							<p class="card-title">${dto.cost }</p>
+						</li>
 
 					</c:forEach>
 				</ul>

@@ -50,7 +50,17 @@ function sendOk(){
 	        f.content.focus();
 	        return;
 	    }
-	    
+	    str = f.catNum.value.trim();
+	    if(!str) {
+	        alert("카테고리를 입력하세요. ");
+	        f.catNum.focus();
+	        return;
+	    }
+	    if( !/^\d+$/.test(f.cost.value) ) {
+	    	alert("숫자만 가능합니다. ");
+	        f.cost.focus();
+	        return;
+	    }
 	    let mode="${mode}";
 	    if(mode==="write"&&(!f.selectFile.value)){
 	    	alert('이미지파일추가바람');
@@ -59,7 +69,7 @@ function sendOk(){
 	    }
 	    
 
-	    f.action = "${pageContext.request.contextPath}/photo/${mode}_ok.do";
+	    f.action = "${pageContext.request.contextPath}/pbbs/${mode}_ok.do";
 	    f.submit();
 	}
 </script>
@@ -73,12 +83,37 @@ function sendOk(){
 <main>
 	<div class="container body-container">
 	    <div class="body-title">
-			<h2><i class="far fa-image	"></i> photo gallery </h2>
+			<h2><i class="far fa-image	"></i> 팝니다. 내 물건을 </h2>
 	    </div>
 	    
 	    <div class="body-main mx-auto">
 			<form name="photoForm" method="post" enctype="multipart/form-data">
 				<table class="table table-border table-form">
+					
+					<tr>
+						<td>이미지</td>
+						<td> 
+							<input type="file" name="selectFile" accept="image/*" class="form-control" style="width: 200px">
+						</td><!-- accept: 이미지만 받ㄱ함 -->
+					</tr>
+					<tr>
+						<td>카테고리</td>
+						<td>
+							<select name="catNum" class="form-select">
+									<option value="">선 택</option>
+									<option value="1"   >명품</option>
+									<option value="2"   >의류</option>
+									<option value="3"   >전자기기</option>
+									<option value="4"   >리빙/생활</option>
+									<option value="5"   >도서/음반/문구</option>
+									<option value="6"   >반려동물</option>
+									<option value="7"   >쿠폰</option>
+									<option value="8"   >스포츠</option>
+									<option value="999">기타</option>
+							  </select>
+						  </td>
+					</tr>
+					
 					<tr> 
 						<td>제&nbsp;&nbsp;&nbsp;&nbsp;목</td>
 						<td> 
@@ -100,12 +135,12 @@ function sendOk(){
 							<textarea name="content" class="form-control" > ${dto.content}   </textarea>
 						</td>
 					</tr>
-					
-					<tr>
-						<td>이미지</td>
+					<tr> 
+						<td>가격</td>
 						<td> 
-							<input type="file" name="selectFile" accept="image/*" class="form-control" >
-						</td><!-- accept: 이미지만 받ㄱ함 -->
+							&#8361; <input type="text" name="cost" maxlength="100" class="form-control" value="${dto.cost}" style="width: 100px"
+							> 
+						</td>
 					</tr>
 				</table>
 					
@@ -114,7 +149,7 @@ function sendOk(){
 						<td align="center">
 							<button type="button" class="btn" onclick="sendOk();">${mode=="update"?"수정완료":"등록완료"}</button>
 							<button type="reset" class="btn">다시입력</button>
-							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/photo/list.do';">${mode=="update"?"수정취소":"등록취소"}</button>
+							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do';">${mode=="update"?"수정취소":"등록취소"}</button>
 							<c:if test="${mode=='update'}">
 								<input type="hidden" name="num" value="${dto.num }"> <!-- 업데이트일때 페이지와 글번호를 넘겨줘야 수정가능 -->
 								<input type="hidden" name="page" value="${page}"> 	<!-- 그래서 업데이트일떄나타나게한다 -->

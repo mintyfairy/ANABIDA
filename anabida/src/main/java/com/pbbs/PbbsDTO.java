@@ -1,13 +1,43 @@
 package com.pbbs;
 public class PbbsDTO {
-	private long num;
+	private long num,cost,plike,catNum;
 	private String userId;
 	private String userPwd,userName;
 	private String subject;
 	private String content;
 	private String imageFilename;
-	private String reg_date;
+	private String reg_date,hitCount,pstate;
 	
+	public long getCost() {
+		return cost;
+	}
+	public void setCost(long cost) {
+		this.cost = cost;
+	}
+	public long getPlike() {
+		return plike;
+	}
+	public void setPlike(long plike) {
+		this.plike = plike;
+	}
+	public long getCatNum() {
+		return catNum;
+	}
+	public void setCatNum(long catNum) {
+		this.catNum = catNum;
+	}
+	public String getHitCount() {
+		return hitCount;
+	}
+	public void setHitCount(String hitCount) {
+		this.hitCount = hitCount;
+	}
+	public String getPstate() {
+		return pstate;
+	}
+	public void setPstate(String pstate) {
+		this.pstate = pstate;
+	}
 	public long getNum() {
 		return num;
 	}

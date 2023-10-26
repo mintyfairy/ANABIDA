@@ -130,6 +130,8 @@ public class PbbsServlet extends MyUploadServlet {
 			dto.setUserId(info.getUserId());
 			dto.setSubject(req.getParameter("subject"));
 			dto.setContent(req.getParameter("content"));
+			dto.setCatNum(Long.parseLong(req.getParameter("catNum")));
+			dto.setCost(Long.parseLong(req.getParameter("cost")));
 			String filename;
 			Part p = req.getPart("selectFile");
 			Map<String, String> map = doFileUpload(p, pathname);
