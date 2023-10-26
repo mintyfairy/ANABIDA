@@ -52,7 +52,7 @@
 				</ul>
 			</li>
 			
-			<li><a href="#">커뮤니티마당</a>
+			<li><a href="${pageContext.request.contextPath}/cbbs/write.do">커뮤니티마당</a>
 			</li>
 			
 			<li><a href="#">고객센터</a>

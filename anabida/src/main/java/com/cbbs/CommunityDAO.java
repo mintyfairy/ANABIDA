@@ -1,4 +1,4 @@
-package com.community;
+package com.cbbs;
 
 public class CommunityDAO {
 
