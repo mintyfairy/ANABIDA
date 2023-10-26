@@ -59,26 +59,33 @@
 							${dto.regdate}
 						</td>
 					</tr>
-					<td>
+				</tbody>
+			</table>
+					<p style="font-size: 16px;font-weight: bold">
 						${dto.subject}
-						<br>
+					</p>
+					<p style="font-size: 13px;color:gray">
 						${dto.catString}
-						<br>
+					</p>
+					<p style="font-size: 16px;font-weight: bold"	>
 						${dto.cost} 원
-					</td>
-					
+					</p>
+			<table class="table table-border table-article">
+				
+				<tbody>	
 					<tr>
-						<td colspan="2" >
+						<td colspan="2" style="font-size: 16px;" >
 							${dto.content}
 						</td>
 					</tr>
-					<td style="font-size: 12px">
-							찜 : ${dto.plike} 
-							조회수${dto.hitCount}
-					</td>
+					<tr>
+						<td style="font-size: 13px;color:gray">
+								찜 : ${dto.plike} 
+								조회수: ${dto.hitCount}
+						</td>
+					</tr>
 				</tbody>
 			</table>
-			
 			<table class="table">
 				<tr>
 					<td width="50%">
