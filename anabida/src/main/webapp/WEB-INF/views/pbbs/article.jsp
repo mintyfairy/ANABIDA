@@ -40,19 +40,15 @@
 	
 <main>
 	<div class="container body-container">
-	    <div class="body-title">
-			<h2><i class="far fa-image	"></i> photo gallery </h2>
-	    </div>
-	    
 	    <div class="body-main mx-auto">
+				
+					<div style="width:380px; height:220px; overflow:hidden; margin:0 auto;">
+						
+							<img src="<c:url value='/uploads/pbbs/${dto.imageFilename}'/>" class="img" style="width:100%; height:100%;object-fit:cover">
+						
+					</div>
+				
 			<table class="table table-border table-article">
-				<thead>
-					<tr>
-						<td colspan="2" align="center">
-							${dto.subject}
-						</td>
-					</tr>
-				</thead>
 				
 				<tbody>
 					<tr>
@@ -60,21 +56,26 @@
 							이름 : ${dto.userName}
 						</td>
 						<td align="right">
-							${dto.reg_date}
+							${dto.regdate}
 						</td>
 					</tr>
-					<tr>
-						<td colspan="2" style="padding-bottom: 0">
-							<img src="<c:url value='/uploads/pbbs/${dto.imageFilename}'/>" class="img">
-						</td>
-					</tr>
+					<td>
+						${dto.subject}
+						<br>
+						${dto.catString}
+						<br>
+						${dto.cost} 원
+					</td>
 					
 					<tr>
 						<td colspan="2" >
 							${dto.content}
 						</td>
 					</tr>
-					
+					<td style="font-size: 12px">
+							찜 : ${dto.plike} 
+							조회수${dto.hitCount}
+					</td>
 				</tbody>
 			</table>
 			

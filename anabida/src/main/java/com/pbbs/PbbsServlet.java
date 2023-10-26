@@ -38,7 +38,8 @@ public class PbbsServlet extends MyUploadServlet {
 
 		// 이미지저장경로
 		String root = session.getServletContext().getRealPath("/");
-		pathname = root + "uploads" + File.separator + "photo";
+		pathname = root + "uploads" + File.separator + "pbbs";
+		System.out.println(pathname);
 
 		if (uri.indexOf("list.do") != -1) {
 			list(req, resp);
@@ -54,7 +55,7 @@ public class PbbsServlet extends MyUploadServlet {
 			updateSubmit(req, resp);
 		} else if (uri.indexOf("delete.do") != -1) {
 			delete(req, resp);
-		}
+		} 
 
 	}
 
@@ -67,6 +68,8 @@ public class PbbsServlet extends MyUploadServlet {
 
 		try {
 			String page = req.getParameter("page");
+			String cat =req.getParameter("cat");
+			List<PbbsDTO> list;
 			int current_page = 1;
 			if (page != null) {
 				current_page = Integer.parseInt(page);
@@ -82,9 +85,11 @@ public class PbbsServlet extends MyUploadServlet {
 			int offset = (current_page - 1) * size;
 			if (offset < 0)
 				offset = 0;
-
-			List<PbbsDTO> list = dao.listPhoto(offset, size);
-
+			if(cat==null) {
+				list = dao.listPhoto(offset, size);
+			}else {
+				list = dao.listPhoto(offset, size,Long.parseLong(cat));
+			}
 			String listUrl = cp + "/pbbs/list.do";
 			String articleUrl = cp + "/pbbs/article.do?page=" + current_page;
 			String paging = util.paging(current_page, total_page, listUrl);
@@ -171,7 +176,9 @@ public class PbbsServlet extends MyUploadServlet {
 
 			// content의 엔터를 <br>로
 			dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
-
+			
+			//숫자인 카케고리구분을 스트링으로
+			dto.setCatString(dao.getCat(dto.getCatNum()));
 			// 포워딩할 JSP에 전달할 속성
 			req.setAttribute("dto", dto);
 			req.setAttribute("page", page);
@@ -235,7 +242,7 @@ public class PbbsServlet extends MyUploadServlet {
 			return;
 		}
 		String page = req.getParameter("page");
-		System.out.println(req.getParameter("selectFile"));
+		
 		try {
 			PbbsDTO dto = new PbbsDTO();
 			dto.setNum(Long.parseLong(req.getParameter("num")));

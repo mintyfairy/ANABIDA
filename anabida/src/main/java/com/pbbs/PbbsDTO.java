@@ -1,13 +1,26 @@
 package com.pbbs;
 public class PbbsDTO {
-	private long num,cost,plike,catNum;
+	private long num,cost,plike,catNum,hitCount,pstate;
 	private String userId;
 	private String userPwd,userName;
 	private String subject;
 	private String content;
 	private String imageFilename;
-	private String reg_date,hitCount,pstate;
+	private String regdate;
+	private String catString;
 	
+	public void setCatString(String catString) {
+		this.catString = catString;
+	}
+	public String getCatString() {
+		return catString;
+	}
+	public String getRegdate() {
+		return regdate;
+	}
+	public void setRegdate(String regdate) {
+		this.regdate = regdate;
+	}
 	public long getCost() {
 		return cost;
 	}
@@ -26,16 +39,16 @@ public class PbbsDTO {
 	public void setCatNum(long catNum) {
 		this.catNum = catNum;
 	}
-	public String getHitCount() {
+	public long getHitCount() {
 		return hitCount;
 	}
-	public void setHitCount(String hitCount) {
+	public void setHitCount(long hitCount) {
 		this.hitCount = hitCount;
 	}
-	public String getPstate() {
+	public long getPstate() {
 		return pstate;
 	}
-	public void setPstate(String pstate) {
+	public void setPstate(long pstate) {
 		this.pstate = pstate;
 	}
 	public long getNum() {
@@ -80,10 +93,5 @@ public class PbbsDTO {
 	public void setImageFilename(String imageFilename) {
 		this.imageFilename = imageFilename;
 	}
-	public String getReg_date() {
-		return reg_date;
-	}
-	public void setReg_date(String reg_date) {
-		this.reg_date = reg_date;
-	}
+
 }
