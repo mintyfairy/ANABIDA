@@ -188,7 +188,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 	<table class="table">
 		<tr>
 			<td width="100">
-				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/list.do';">새로고침</button>
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/list.do';">새로고침</button>
 			</td>
 			<td align="center">
 				<form name="searchForm" action="" method="post">

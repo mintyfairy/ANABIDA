@@ -6,10 +6,19 @@ public class JoinDTO {
 	private String title;
 	private String content;
 	private String reg_date;
+	private int min_peo;
 	private int joinCount;
 	private int hitCount;
 	
 	
+	
+	
+	public int getMin_peo() {
+		return min_peo;
+	}
+	public void setMin_peo(int min_peo) {
+		this.min_peo = min_peo;
+	}
 	public long getBuynum() {
 		return buynum;
 	}

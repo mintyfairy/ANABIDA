@@ -81,13 +81,53 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .table-form { margin-top: 20px; }
 .table-form td { padding: 7px 0; }
 .table-form tr:first-child {  border-top: 2px solid #212529; }
-.table-form tr > td:first-child { width: 110px; text-align: center; background: #f8f9fa; }
+.table-form tr > td:first-child { width: 110px; text-align: center; background: #feefef; }
 .table-form tr > td:nth-child(2) { 	padding-left: 10px; }
 .table-form input[type=text], .table-form input[type=file], .table-form textarea { width: 97%; }
 .table-form input[type=password] { width: 50%; }
 </style>
 
 <script type="text/javascript">
+function sendOk() {
+	const f = document.joinForm;
+	
+	let str;
+	
+	str = f.subject.value.trim();
+	if(!str) {
+		alert("제목을 입력하세요.");
+		f.subject.focus();
+		return;
+	}
+	
+	/*
+	if(! f.selectFile.value()) {
+		alert("이미지 파일이 선택되지 않았습니다.");
+		f.selectFile.focus();
+		return;
+	}
+	*/
+	
+	
+	str = f.content.value.trim();
+	if(! str) {
+		alert("양식이 누락 되었습니다.");
+		f.content.focus();
+		return;
+	}
+	
+	str = f.minpeo.value.trim();
+	if(!str) {
+		alert("최소 모집인원을 입력해주세요.");
+		f.minpeo.focus();
+		return;
+	}
+	
+	f.action = "${pageContext.request.contextPath}/join/${mode}_ok.do";
+	f.submit;
+}
+
+
 
 </script>
 </head>
@@ -95,10 +135,10 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 
 <div class="board">
 	<div class="title">
-	    <h3><span>|</span> 게시판</h3>
+	    <h3><span>|</span> 공동구매 모집 등록</h3>
 	</div>
 
-	<form name="boardForm" method="post">
+	<form name="joinForm" method="post" enctype="multipart/form-data">
 		<table class="table table-border table-form">
 			<tr> 
 				<td>제&nbsp;&nbsp;&nbsp;&nbsp;목</td>
@@ -110,22 +150,29 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 			<tr> 
 				<td>작성자</td>
 				<td> 
-					<input type="text" name="name" maxlength="10" class="form-control" value="">
-				</td>
-			</tr>
-			
-			<tr> 
-				<td>내&nbsp;&nbsp;&nbsp;&nbsp;용</td>
-				<td valign="top"> 
-					<textarea name="content" class="form-control"></textarea>
+					<input type="text" name="name" maxlength="10" class="form-control" value="${dto.userId}">
 				</td>
 			</tr>
 			
 			<tr>
-				<td>패스워드</td>
+				<td>이미지</td>
 				<td> 
-					<input type="password" name="pwd" maxlength="10" class="form-control">
-					(게시물 수정 및 삭제시 필요 !!!)
+					<input type="file" name="selectFile" accept="image/*" class="form-control">
+				</td>
+			</tr>
+			
+			<tr> 
+				<td>내&nbsp;&nbsp;&nbsp;&nbsp;용 <br> (양&nbsp;&nbsp;&nbsp;&nbsp;식)</td>
+				<td valign="top"> 
+					<textarea name="content" class="form-control" placeholder="자세히 작성해주세요"></textarea>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>최소 모집인원</td>
+				<td> 
+					<input type="text" name="minpeo" maxlength="10" class="form-control">
+					(반드시 기재 필요 !!!)
 				</td>
 			</tr>
 		</table>
@@ -133,9 +180,9 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		<table class="table">
 			<tr> 
 				<td align="center">
-					<button type="button" class="btn">등록하기</button>
-					<button type="reset" class="btn">다시입력</button>
-					<button type="button" class="btn">등록취소</button>
+					<button type="button" class="btn" onclick="sendOk();">${mode=='update'?'수정완료':'등록하기'}</button>
+					<button type="reset" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/write.do';">다시입력</button>
+					<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/list.do';">등록취소</button>
 				</td>
 			</tr>
 		</table>

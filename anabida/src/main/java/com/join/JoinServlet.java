@@ -6,7 +6,10 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import com.csbbs.CSBoardDAO;
+import com.member.SessionInfo;
 import com.util.MyServlet;
 
 @WebServlet("/join/*")
@@ -44,16 +47,44 @@ public class JoinServlet extends MyServlet{
 	
 	
 	protected void list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		
+			
 		forward(req, resp, "/WEB-INF/views/join/list.jsp");
 	}
 	
 	protected void writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setAttribute("mode", "write");		
 		forward(req, resp, "/WEB-INF/views/join/write.jsp");
 	}
 	
 	protected void writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		JoinDAO dao = new JoinDAO();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		if(req.getMethod().equalsIgnoreCase("GET")) {
+			resp.sendRedirect(cp + "/join/list.do");
+			return;
+		}
+		
+		try {
+			JoinDTO dto = new JoinDTO();
+			
+			// userId는 세션에 저장된 정보이므로
+			dto.setUserId(info.getUserId());
+			
+			dto.setTitle(req.getParameter("title"));
+			dto.setContent(req.getParameter("content"));
+			dto.setMin_peo(Integer.parseInt(req.getParameter("min_peo")));
+			
+			dao.insertJoin(dto);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		resp.sendRedirect(cp+"/join/list.do");
 	}
 	
 	protected void article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

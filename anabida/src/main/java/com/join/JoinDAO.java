@@ -1,21 +1,45 @@
 package com.join;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.util.DBConn;
+import com.util.DBUtil;
 
 public class JoinDAO {
 	private Connection conn = DBConn.getConnection();
 	
-	/*
+	
 	
 	// 게시글 등록
 	public void insertJoin(JoinDTO dto) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql;
 		
+		try {
+			// 이미지 빠짐
+			sql=" INSERT INTO group_buying(buynum, userId, title, content, reg_date, joinCount, hitCount, min_peo)"
+					+ " VALUES(group_seq.NEXTVAL, ?, ?, ?, SYSDATE, 0, 0, ?) ";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, dto.getUserId());
+			pstmt.setString(2, dto.getTitle());
+			pstmt.setString(3, dto.getContent());
+			pstmt.setInt(4, dto.getMin_peo());
+			
+			pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(pstmt);
+		}
 	}
+	
+	/*
 	
 	// 데이터 개수
 	public int dataCount() {
