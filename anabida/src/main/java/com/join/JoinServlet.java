@@ -1,12 +1,15 @@
 package com.join;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import com.member.SessionInfo;
 import com.util.MyServlet;
@@ -15,6 +18,7 @@ import com.util.MyServlet;
 public class JoinServlet extends MyServlet{
 
 	private static final long serialVersionUID = 1L;
+	private String pathname;
 	
 	@Override
 	protected void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -30,6 +34,12 @@ public class JoinServlet extends MyServlet{
 		
 		req.setCharacterEncoding("utf-8");
 		String uri = req.getRequestURI();
+		
+		
+		// 이미지 저장 경로
+		String root = session.getServletContext().getRealPath("/");
+		pathname = root + "uploads" + File.separator + "photo";
+		
 		
 		if(uri.indexOf("list.do") != -1) {
 			list(req, resp);
@@ -86,6 +96,10 @@ public class JoinServlet extends MyServlet{
 			dto.setTitle(req.getParameter("title"));
 			dto.setContent(req.getParameter("content"));
 			dto.setMin_peo(Integer.parseInt(req.getParameter("min_peo")));
+			String filename;
+			
+			Part p = req.getPart("selectFile");
+			
 			
 			dao.insertJoin(dto);
 			
