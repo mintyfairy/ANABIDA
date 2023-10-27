@@ -74,7 +74,7 @@ public class PbbsDAO {
 		ResultSet rs=null;
 		
 		try {
-			sql="select pnum,userid,subject,imagefilename,cost,to_char(reg_date,'YYYY-MM-DD') reg_date from pbbs order by num desc offset ? rows fetch first ? rows only";
+			sql="select pnum,userid,subject,imagefilename,cost,to_char(regdate,'YYYY-MM-DD') regdate,pstate from pbbs order by pnum desc offset ? rows fetch first ? rows only";
 			
 			pstmt=conn.prepareStatement(sql);
 			
@@ -90,8 +90,55 @@ public class PbbsDAO {
 				dto.setUserId(rs.getString("userid"));
 				dto.setSubject(rs.getString("subject"));
 				dto.setImageFilename(rs.getString("imagefilename"));
-				dto.setReg_date(rs.getString("reg_date"));
+				dto.setRegdate(rs.getString("regdate"));
 				dto.setCost(rs.getLong("cost"));
+				dto.setPstate(rs.getLong("pstate"));
+				
+				list.add(dto);
+			}
+			
+			
+		}catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+		}finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		
+		return list;
+	}
+	
+	public List<PbbsDTO> listPhoto(int offset, int size,long cat) throws SQLException {
+		List<PbbsDTO> list=new ArrayList<PbbsDTO>();
+		PreparedStatement pstmt=null;
+		String sql;
+		ResultSet rs=null;
+		
+		try {
+			sql="select pnum,userid,subject,imagefilename,cost,to_char(regdate,'YYYY-MM-DD') regdate,pstate from pbbs WHERE catnum=? order by pnum desc offset ? rows fetch first ? rows only";
+			
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, cat);
+			pstmt.setInt(2, offset);
+			pstmt.setInt(3, size);
+			
+			rs=pstmt.executeQuery();
+			
+			while(rs.next()) {
+				PbbsDTO dto= new PbbsDTO();
+				
+				dto.setNum(rs.getLong("pnum"));
+				dto.setUserId(rs.getString("userid"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setImageFilename(rs.getString("imagefilename"));
+				dto.setRegdate(rs.getString("regdate"));
+				dto.setCost(rs.getLong("cost"));
+				dto.setPstate(rs.getLong("pstate"));
+				
 				
 				list.add(dto);
 			}
@@ -117,7 +164,7 @@ public class PbbsDAO {
 		String sql;
 		
 		try {
-			sql="select num,pbbs.userid id,username,subject,content,TO_CHAR(reg_date, 'YYYY-MM-DD') reg_date,IMAGEFILENAME from pbbs join member1 	on pbbs.userid=member1.userid  where num=?";
+			sql="select pnum,pbbs.userid id,username,subject,content,cost,TO_CHAR(regdate, 'YYYY-MM-DD') regdate,IMAGEFILENAME,pstate,PLIKE,CATNUM,HITCOUNT from pbbs join member 	on pbbs.userid=member.userid  where pnum=?";
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setLong(1, num);
 			
@@ -126,13 +173,18 @@ public class PbbsDAO {
 			if(rs.next()) {
 				dto= new PbbsDTO();
 				
-				dto.setNum(rs.getLong("num"));
+				dto.setNum(rs.getLong("pnum"));
 				dto.setUserId(rs.getString("id"));
 				dto.setUserName(rs.getString("username"));
 				dto.setSubject(rs.getString("subject"));
 				dto.setContent(rs.getString("content"));
-				dto.setReg_date(rs.getString("reg_date"));
+				dto.setRegdate(rs.getString("regdate"));
 				dto.setImageFilename(rs.getString("IMAGEFILENAME"));
+				dto.setCost(rs.getLong("cost")); ;
+				dto.setPstate(rs.getLong("pstate")); ;
+				dto.setPlike(rs.getLong("PLIKE")); ;
+				dto.setCatNum(rs.getLong("CATNUM")); ;
+				dto.setHitCount(rs.getLong("HITCOUNT")); ;
 			}
 			
 		} catch (SQLException e) {
@@ -152,7 +204,7 @@ public class PbbsDAO {
 		PreparedStatement pstmt=null;
 		String sql;
 		try {
-			sql="update  pbbs set subject=?,content=?,IMAGEFILENAMe=? where num=? and userid=?";
+			sql="update  pbbs set subject=?,content=?,IMAGEFILENAMe=? where pnum=? and userid=?";
 			pstmt= conn.prepareStatement(sql);
 			
 			pstmt.setString(1,	 dto.getSubject());
@@ -176,7 +228,7 @@ public class PbbsDAO {
 		String sql;
 		try {
 			System.out.println("오ㅘㅅ니");
-			sql="delete from  pbbs  where num=?";
+			sql="delete from  pbbs  where pnum=?";
 			pstmt= conn.prepareStatement(sql);
 			
 			pstmt.setLong(1,num);
@@ -191,5 +243,32 @@ public class PbbsDAO {
 			DBUtil.close(pstmt);
 		}
 	}
-	
+	public String getCat(long num) throws SQLException {
+		String cat="";
+		PreparedStatement pstmt=null;
+		String sql;
+		ResultSet rs=null;
+		
+		try {
+			sql="select CATNAME from category where CATNUM=?";
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setLong(1, num);
+			
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()) {
+				cat = rs.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+		}finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		return cat;
+	}
 }

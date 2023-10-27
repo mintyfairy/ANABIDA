@@ -72,14 +72,25 @@
 
 </head>
 <body>
-
+	<header>
+		<jsp:include page="/WEB-INF/views/layout/header.jsp"></jsp:include>
+	</header>
 
 	<main>
 		<div class="container body-container">
 			<div class="body-title">
-				<h2>
-					<i class="far fa-image	"></i> photo gallery
-				</h2>
+				<h3>
+					<i class="far fa-image	"></i>
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?page=1">전체</a> |
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?cat=1&page=1">명품</a> |
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?cat=2&page=1">의류</a> |
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?cat=3&page=1">전자기기</a> |
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?cat=4&page=1">리빙/생활</a> |
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?cat=5&page=1">도서/음반/문구</a> |
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?cat=6&page=1">반려동물</a> |
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?cat=7&page=1">쿠폰</a> |
+					<a href="${pageContext.request.contextPath}/pbbs/list.do?cat=8&page=1">스포츠</a> |
+				</h3>
 			</div>
 
 			<div class="body-main mx-auto">
@@ -95,8 +106,8 @@
 						<li class="card"
 							onclick="location.href='${articleUrl}&num=${dto.num}';"><img
 							src="${pageContext.request.contextPath}/uploads/pbbs/${dto.imageFilename}">
-							<p class="card-title">${dto.subject }</p>
-							<p class="card-title">${dto.cost }</p>
+							<p class="card-title"> ${dto.subject }</p>
+							<p class="card-title"> ${dto.cost } 원</p>
 						</li>
 
 					</c:forEach>
@@ -108,7 +119,10 @@
 		</div>
 	</main>
 
-	
+	<footer>
+		<jsp:include page="/WEB-INF/views/layout/footer.jsp"></jsp:include>
+	</footer>
+
 	<jsp:include page="/WEB-INF/views/layout/staticFooter.jsp" />
 </body>
 </html>
