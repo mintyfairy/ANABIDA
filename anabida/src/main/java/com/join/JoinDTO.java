@@ -1,29 +1,24 @@
 package com.join;
 
 public class JoinDTO {
-	private long buynum;
+	private long buyNum;
 	private String userId;
 	private String title;
 	private String content;
 	private String reg_date;
+	private String link;
 	private int min_peo;
 	private int joinCount;
 	private int hitCount;
 	
 	
-	
-	
-	public int getMin_peo() {
-		return min_peo;
+	private long fileNum;
+	private String attName;
+	public long getBuyNum() {
+		return buyNum;
 	}
-	public void setMin_peo(int min_peo) {
-		this.min_peo = min_peo;
-	}
-	public long getBuynum() {
-		return buynum;
-	}
-	public void setBuynum(long buynum) {
-		this.buynum = buynum;
+	public void setBuyNum(long buyNum) {
+		this.buyNum = buyNum;
 	}
 	public String getUserId() {
 		return userId;
@@ -49,6 +44,18 @@ public class JoinDTO {
 	public void setReg_date(String reg_date) {
 		this.reg_date = reg_date;
 	}
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
+	public int getMin_peo() {
+		return min_peo;
+	}
+	public void setMin_peo(int min_peo) {
+		this.min_peo = min_peo;
+	}
 	public int getJoinCount() {
 		return joinCount;
 	}
@@ -61,6 +68,21 @@ public class JoinDTO {
 	public void setHitCount(int hitCount) {
 		this.hitCount = hitCount;
 	}
+	public long getFileNum() {
+		return fileNum;
+	}
+	public void setFileNum(long fileNum) {
+		this.fileNum = fileNum;
+	}
+	public String getAttName() {
+		return attName;
+	}
+	public void setAttName(String attName) {
+		this.attName = attName;
+	}
 	
+	
+	
+
 	
 }

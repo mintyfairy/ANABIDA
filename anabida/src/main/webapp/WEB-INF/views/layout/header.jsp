@@ -47,8 +47,8 @@
 
 			<li><a href="#">공동구매</a>
 				<ul class="sub-menu">
-					<li><a href="#" aria-label="submenu">참여하기</a></li>
-					<li><a href="#" aria-label="submenu">모집하기</a></li>
+					<li><a href="${pageContext.request.contextPath}/join/list.do" aria-label="submenu">참여하기</a></li>
+					<li><a href="${pageContext.request.contextPath}/join/write.do" aria-label="submenu">모집하기</a></li>
 				</ul>
 			</li>
 			

@@ -13,8 +13,6 @@ import com.util.MyServlet;
 
 @WebServlet("/cbbs/*")
 public class CommunityServlet extends MyServlet{
-
-	
 	private static final long serialVersionUID = 1L;
 
 	@Override

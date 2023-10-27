@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.csbbs.CSBoardDAO;
 import com.member.SessionInfo;
 import com.util.MyServlet;
 
@@ -16,9 +15,19 @@ import com.util.MyServlet;
 public class JoinServlet extends MyServlet{
 
 	private static final long serialVersionUID = 1L;
-
+	
 	@Override
 	protected void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 세션에 저장된 로그인 정보
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		// 로그인이 안된경우
+		if (info == null) {
+			forward(req, resp, "/WEB-INF/views/member/login.jsp");
+			return;
+		}
+		
 		req.setCharacterEncoding("utf-8");
 		String uri = req.getRequestURI();
 		
@@ -85,6 +94,7 @@ public class JoinServlet extends MyServlet{
 		}
 		
 		resp.sendRedirect(cp+"/join/list.do");
+
 	}
 	
 	protected void article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
