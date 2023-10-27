@@ -5,10 +5,26 @@ public class PbbsDTO {
 	private String userPwd,userName;
 	private String subject;
 	private String content;
-	private String imageFilename;
 	private String regdate;
 	private String catString;
 	
+	private long fileNum;
+	private String[] imageFiles;
+	private String imageFilename;
+
+	
+	public long getFileNum() {
+		return fileNum;
+	}
+	public void setFileNum(long fileNum) {
+		this.fileNum = fileNum;
+	}
+	public String[] getImageFiles() {
+		return imageFiles;
+	}
+	public void setImageFiles(String[] imageFiles) {
+		this.imageFiles = imageFiles;
+	}
 	public void setCatString(String catString) {
 		this.catString = catString;
 	}

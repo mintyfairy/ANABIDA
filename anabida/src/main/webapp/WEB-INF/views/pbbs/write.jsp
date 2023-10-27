@@ -28,6 +28,21 @@
 .table-foem .img{
 vertical-align:middle; font-size: 11px; color: #333333;
 } 
+.img-box {
+	max-width: 600px;
+	padding: 5px;
+	box-sizing: border-box;
+	display: flex; /* 자손요소를 flexbox로 변경 */
+	flex-direction: row; /* 정방향 수평나열 */
+	flex-wrap: nowrap;
+	overflow-x: auto;
+}
+.img-box img {
+	width: 37px; height: 37px;
+	margin-right: 5px;
+	flex: 0 0 auto;
+	cursor: pointer;
+}
 
 	
 </style>
@@ -72,6 +87,18 @@ function sendOk(){
 	    f.action = "${pageContext.request.contextPath}/pbbs/${mode}_ok.do";
 	    f.submit();
 	}
+	
+<c:if test="${mode=='update'}">
+function deleteFile(fileNum) {
+	if(! confirm("이미지를 삭제 하시겠습니까 ?")) {
+		return;
+	}
+	
+	let query = "num=${dto.num}&fileNum=" + fileNum + "&page=${page}";
+	let url = "${pageContext.request.contextPath}/pbbs/deleteFile.do?" + query;
+	location.href = url;
+}
+</c:if>
 </script>
 </head>
 <body>
@@ -83,7 +110,7 @@ function sendOk(){
 <main>
 	<div class="container body-container">
 	    <div class="body-title">
-			<h2><i class="far fa-image	"></i> 팝니다. 내 물건을 </h2>
+			<h2><i class="far 	"></i> 팝니다. 내 물건을 </h2>
 	    </div>
 	    
 	    <div class="body-main mx-auto">
@@ -93,14 +120,29 @@ function sendOk(){
 					<tr>
 						<td>이미지</td>
 						<td> 
-							<input type="file" name="selectFile" accept="image/*" class="form-control" style="width: 200px">
+							<input type="file" name="selectFile" accept="image/*" multiple class="form-control" style="width: 200px">
 						</td><!-- accept: 이미지만 받ㄱ함 -->
+						<td style="font-size: 12px;color:gray">첫번째 이미지가 썸네일이 됩니다</td>
 					</tr>
+					
+					<c:if test="${mode=='update'}">
+						<tr>
+							<td>등록이미지</td>
+							<td> 
+								<div class="img-box">
+									<c:forEach var="vo" items="${listFile}">
+										<img src="${pageContext.request.contextPath}/uploads/pbbs/${vo.imageFilename}"
+											onclick="deleteFile('${vo.fileNum}');">
+									</c:forEach>
+								</div>
+							</td>
+						</tr>
+					</c:if>
 					<tr>
 						<td>카테고리</td>
 						<td>
 							<select name="catNum" class="form-select">
-									<option value="">선 택</option>
+									<option value="{dto.catNum}">${mode=="update"?dto.catString:"선 택"}</option>
 									<option value="1"   >명품</option>
 									<option value="2"   >의류</option>
 									<option value="3"   >전자기기</option>
@@ -132,7 +174,7 @@ function sendOk(){
 					<tr> 
 						<td valign="top">내&nbsp;&nbsp;&nbsp;&nbsp;용</td>
 						<td> 
-							<textarea name="content" class="form-control" > ${dto.content}   </textarea>
+							<textarea name="content" class="form-control" >${dto.content}</textarea>
 						</td>
 					</tr>
 					<tr> 
@@ -151,9 +193,9 @@ function sendOk(){
 							<button type="reset" class="btn">다시입력</button>
 							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do';">${mode=="update"?"수정취소":"등록취소"}</button>
 							<c:if test="${mode=='update'}">
-								<input type="hidden" name="num" value="${dto.num }"> <!-- 업데이트일때 페이지와 글번호를 넘겨줘야 수정가능 -->
+								<input type="hidden" name="num" value="${dto.num}"> <!-- 업데이트일때 페이지와 글번호를 넘겨줘야 수정가능 -->
 								<input type="hidden" name="page" value="${page}"> 	<!-- 그래서 업데이트일떄나타나게한다 -->
-								<input type="hidden" name="postImgname" value="${postImgname}"> 	<!-- 그래서 업데이트일떄나타나게한다 -->
+								<!--  <input type="hidden" name="postImgname" value="${postImgname}">--> 	<!-- 그래서 업데이트일떄나타나게한다 -->
 							</c:if>
 						</td>
 					</tr>

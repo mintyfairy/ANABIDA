@@ -13,22 +13,40 @@
 	max-width: 700px;
 	padding-top: 15px;
 }
+.img-box {
+	max-width: 700px;
+	padding: 5px;
+	box-sizing: border-box;
+	display: flex; /* 자손요소를 flexbox로 변경 */
+	flex-direction: row; /* 정방향 수평나열 */
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	align-items: baseline;
+}
+.img-box img {
+	width: 100px; height: 100px;
+	margin-right: 5px;
+	flex: 0 0 auto;
+	cursor: pointer;
+}
 
+.photo-layout img { width: 570px; height: 450px; }
 .table-article tr > td { padding-left: 5px; padding-right: 5px; }
 
 .table-article .omg{max-width: 100%;height: auto;resize: both;}
 </style>
 
 
-<c:if test="${sesseionScope.member.userId==dto.userId || sessionScope.member.userId=='admin' }">
+<c:if test="${sessionScope.member.userId==dto.userId || sessionScope.member.userId=='admin' }">
 	<script type="text/javascript">
 	function deletePhoto() {
 		if(confirm(' 게시글을 삭제 하시겠습니까?')){
-			location.href='${pageContext.request.contextPath}/pbbs/delete.do?num=${dto.num}&page=${page}';
+			location.href='${pageContext.request.contextPath}/pbbs/delete.do?num=${dto.num}&page=${page}${category}';
 			
 			
 		}
 	}
+
 	</script>
 </c:if>
 </head>
@@ -42,14 +60,21 @@
 	<div class="container body-container">
 	    <div class="body-main mx-auto">
 				
-					<div style="width:380px; height:220px; overflow:hidden; margin:0 auto;">
-						
-							<img src="<c:url value='/uploads/pbbs/${dto.imageFilename}'/>" class="img" style="width:100%; height:100%;object-fit:cover">
-						
-					</div>
+					
 				
 			<table class="table table-border table-article">
-				
+					<tr>
+						<td colspan="2" height="110">
+							<div class="img-box" >
+								<img src="<c:url value='/uploads/pbbs/${dto.imageFilename}'/>" class="img" style=" width:390px; height: 300px;overflow:hidden;object-fit:cover">
+								<c:forEach var="vo" items="${listFile}">
+									<img src="${pageContext.request.contextPath}/uploads/pbbs/${vo.imageFilename}" style="bottom : 0 ;width:260px; height: 200px;overflow:hidden;object-fit:cover" 
+										onclick="imageViewer('${pageContext.request.contextPath}/uploads/pbbs/${vo.imageFilename}');"
+										>
+								</c:forEach>
+							</div>
+						</td>	
+					</tr>
 				<tbody>
 					<tr>
 						<td width="50%">
@@ -62,30 +87,25 @@
 				</tbody>
 			</table>
 					<p style="font-size: 16px;font-weight: bold">
-						${dto.subject}
+						&nbsp;${dto.subject}
 					</p>
 					<p style="font-size: 13px;color:gray">
-						${dto.catString}
+						&nbsp;${dto.catString}
 					</p>
 					<p style="font-size: 16px;font-weight: bold"	>
-						${dto.cost} 원
+						&nbsp;${dto.cost} 원
 					</p>
-			<table class="table table-border table-article">
-				
-				<tbody>	
-					<tr>
-						<td colspan="2" style="font-size: 16px;" >
-							${dto.content}
-						</td>
-					</tr>
-					<tr>
-						<td style="font-size: 13px;color:gray">
-								찜 : ${dto.plike} 
+					<br><br>
+					<p style="font-size: 15px;"	>
+						${dto.content}
+					</p>
+					<br><br>
+					<p style="font-size: 13px;color:gray">
+						찜 : ${dto.plike} 
 								조회수: ${dto.hitCount}
-						</td>
-					</tr>
-				</tbody>
-			</table>
+					</p>
+					<hr>
+			
 			<table class="table">
 				<tr>
 					<td width="50%">
@@ -99,18 +119,18 @@
 						</c:choose>
 					
 						<c:choose>
-							<c:when test="${sesseionScope.member.userId==dto.userId || sessionScope.member.userId=='admin' }">
+							<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.userId=='admin' }">
 								<button type="button" class="btn" onclick="deletePhoto();">삭제 </button>
 							</c:when>
 							<c:otherwise>
-								<button type="button" class="btn" disabled="disabled">삭제 </button>
+								<button type="button" class="btn" disabled="disabled">삭제</button>
 							</c:otherwise>
 						</c:choose>
 					
 						
 					</td>
 					<td align="right">
-						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?page=${page}';">리스트</button>
+						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?page=${page}${category}';">리스트</button>
 					</td>
 				</tr>
 			</table>
