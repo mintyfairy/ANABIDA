@@ -97,8 +97,9 @@
 				<div class="list-header">
 					<span class="list-header-left">${dataCount}개(${page}/${total_page} 페이지)</span> 
 					<span class="list-header-right">
-						<button type="button" class="btn"
-							onclick="location.href='${pageContext.request.contextPath}/pbbs/write.do';">등록</button>
+						<a href="${pageContext.request.contextPath}/pbbs/list.do?page=1${category}">최신순	 | </a>
+						<a href="${pageContext.request.contextPath}/pbbs/list.do?order=view&page=1${category}">&nbsp;조회수순 | </a>
+						<a href="${pageContext.request.contextPath}/pbbs/list.do?order=like&page=1${category}">&nbsp;찜순</a>
 					</span>
 				</div>
 				<ul class="list-content">
@@ -112,6 +113,10 @@
 
 					</c:forEach>
 				</ul>
+					<span class="list-header-right">
+						<button type="button" class="btn"
+							onclick="location.href='${pageContext.request.contextPath}/pbbs/write.do';">등록</button>
+					</span>
 				<div class="page-navigation">${dataCount==0?"등록된 게시물이 없습니다.":paging}
 				</div>
 
