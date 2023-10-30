@@ -93,7 +93,7 @@ function sendOk() {
 	
 	let str;
 	
-	str = f.subject.value.trim();
+	str = f.title.value.trim();
 	if(!str) {
 		alert("제목을 입력하세요.");
 		f.subject.focus();
@@ -108,14 +108,14 @@ function sendOk() {
 		return;
 	}
 	
-	str = f.minpeo.value.trim();
+	str = f.min_peo.value.trim();
 	if(!str) {
 		alert("최소 모집인원을 입력해주세요.");
 		f.minpeo.focus();
 		return;
 	}
 	
-	str = f.birth.value.trim();
+	str = f.exp_date.value.trim();
 	if(!str) {
 		alert("모집종료 기간을 입력해주세요.");
 		f.birth.focus();
@@ -142,7 +142,7 @@ function sendOk() {
 			<tr> 
 				<td>제&nbsp;&nbsp;&nbsp;&nbsp;목</td>
 				<td> 
-					<input type="text" name="subject" maxlength="100" class="form-control" value="">
+					<input type="text" name="title" maxlength="100" class="form-control" value="">
 				</td>
 			</tr>
 			
@@ -156,7 +156,7 @@ function sendOk() {
 			<tr>
 				<td>모집종료 기한</td>
 				<td>
-					<input type="date" name="birth" class="form-control" style="width: 50%;">
+					<input type="date" name="exp_date" class="form-control" style="width: 50%;">
 				</td>
 			</tr>
 			
@@ -184,7 +184,7 @@ function sendOk() {
 			<tr>
 				<td>최소 모집인원</td>
 				<td> 
-					<input type="text" name="minpeo" maxlength="10" class="form-control">
+					<input type="text" name="min_peo" maxlength="10" class="form-control">
 					(반드시 기재 필요 !!!)
 				</td>
 			</tr>

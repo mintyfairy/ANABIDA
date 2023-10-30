@@ -153,7 +153,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 
 	<table class="table">
 		<tr>
-			<td width="50%">25개(1/2 페이지)</td>
+			<td width="50%">${dataCount}개(${page}/${total_page} 페이지)</td>
 			<td align="right">&nbsp;</td>
 		</tr>
 	</table>
@@ -171,14 +171,17 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		</thead>
 		
 		<tbody>
+		  <c:forEach var="dto" items="${list}" varStatus="status">
 			<tr>
-				<td>1</td>
+				<td>${dataCount - (page-1) * size - status.index}</td>
 				<td class="content-box"><div class="img" ></div><span class="hi">안녕 하세요.</span></td>
-				<td>스프링</td>
-				<td>(2023-10-01<br>~2023-10-11)</td>
-				<td>(1/10)</td>
+				<td>작성자</td>
+				<td>(${dto.reg_date}<br>~${dto.exp_date})</td>
+				<td>(${dto.joinCount}/${dto.min_peo})</td>
 			</tr>
+		   </c:forEach>
 		<tbody>
+		
 		
 	</table>
 	
