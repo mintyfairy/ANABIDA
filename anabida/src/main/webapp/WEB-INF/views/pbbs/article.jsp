@@ -46,6 +46,13 @@
 			
 		}
 	}
+	function changeMind() {
+		if(confirm(' 게시글을 찜 하시겠습니까?')){
+			location.href='${pageContext.request.contextPath}/pbbs/like.do?num=${dto.num}&page=${page}${category}';
+			
+			
+		}
+	}
 
 	</script>
 </c:if>
@@ -81,7 +88,10 @@
 							이름 : ${dto.userName}
 						</td>
 						<td align="right">
-							${dto.regdate}
+							${dto.regdate} 
+							<a style="display:inline-block ;text-align:right" onclick="changeMind();" title="찜">
+							<i class="${dto.plike==0?'fa-regular':'fa-solid'} fa-heart"></i>
+							</a>
 						</td>
 					</tr>
 				</tbody>
@@ -100,6 +110,7 @@
 						${dto.content}
 					</p>
 					<br><br>
+						
 					<p style="font-size: 13px;color:gray">
 						찜 : ${dto.plike} 
 								조회수: ${dto.hitCount}

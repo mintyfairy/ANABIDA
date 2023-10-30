@@ -65,8 +65,8 @@ function sendOk(){
 	        f.content.focus();
 	        return;
 	    }
-	    str = f.catNum.value.trim();
-	    if(!str) {
+	    
+	    if(!f.catNum.value) {
 	        alert("카테고리를 입력하세요. ");
 	        f.catNum.focus();
 	        return;
@@ -142,7 +142,7 @@ function deleteFile(fileNum) {
 						<td>카테고리</td>
 						<td>
 							<select name="catNum" class="form-select">
-									<option value="{dto.catNum}">${mode=="update"?dto.catString:"선 택"}</option>
+									<option value="${dto.catNum}">${mode=="update"?dto.catString:"선 택"}</option>
 									<option value="1"   >명품</option>
 									<option value="2"   >의류</option>
 									<option value="3"   >전자기기</option>

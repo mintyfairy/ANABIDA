@@ -52,8 +52,12 @@ public class PbbsServlet extends MyUploadServlet {
 			updateForm(req, resp);
 		} else if (uri.indexOf("update_ok.do") != -1) {
 			updateSubmit(req, resp);
+		} else if (uri.indexOf("deleteFile") != -1) {
+			deleteFile(req, resp);
 		} else if (uri.indexOf("delete.do") != -1) {
 			delete(req, resp);
+		} else if (uri.indexOf("like.do") != -1) {
+			like(req, resp);
 		} 
 
 	}
@@ -72,6 +76,15 @@ public class PbbsServlet extends MyUploadServlet {
 			if(cat!=null) {
 				category="&"+"cat="+cat+"&";
 			}
+			String ord =req.getParameter("order");
+			String order="";
+			if(ord!=null) {
+				order="&"+"order="+ord+"&";
+			}
+			if(ord==null) {
+				ord="";
+			}
+			
 			
 			List<PbbsDTO> list;
 			
@@ -84,20 +97,39 @@ public class PbbsServlet extends MyUploadServlet {
 			}else {datacount = dao.dataCount(Long.parseLong(cat));
 			}
 			
-			int size = 9;
+			int size = 12;
 			int total_page = util.pageCount(datacount, size);
 			if (current_page > total_page) {
 				current_page = total_page;
 			}
-
+			
 			int offset = (current_page - 1) * size;
 			if (offset < 0)offset = 0;
-			if(cat==null) {list = dao.listPhoto(offset, size);
-			}else {list = dao.listPhoto(offset, size,Long.parseLong(cat));
+			if(ord.equals("view")) {
+				if(cat==null) 
+				{
+					list = dao.mostViewListPhoto(offset, size);
+				}else {
+					list = dao.mostViewListPhoto(offset, size,Long.parseLong(cat));
+				}
+			}else if (ord.equals("like")) {
+				if(cat==null) 
+				{
+					list = dao.popularListPhoto(offset, size);
+				}else {
+					list = dao.popularListPhoto(offset, size,Long.parseLong(cat));
+				}
+			}else {
+				if(cat==null) 
+				{
+					list = dao.listPhoto(offset, size);
+				}else {
+					list = dao.listPhoto(offset, size,Long.parseLong(cat));
+				}
 			}
 			
-			String listUrl = cp + "/pbbs/list.do?"+category;
-			String articleUrl = cp + "/pbbs/article.do?"+category  +"page=" + current_page;
+			String articleUrl = cp + "/pbbs/article.do?"+category+order  +"page=" + current_page;
+			String listUrl = cp + "/pbbs/list.do?"+category+order;
 			String paging = util.paging(current_page, total_page, listUrl);
 
 			req.setAttribute("list", list);
@@ -107,6 +139,9 @@ public class PbbsServlet extends MyUploadServlet {
 			req.setAttribute("total_page", total_page);
 			req.setAttribute("paging", paging);
 			req.setAttribute("articleUrl", articleUrl);
+			req.setAttribute("category", category);
+			req.setAttribute("order", order);
+
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -142,7 +177,10 @@ public class PbbsServlet extends MyUploadServlet {
 			dto.setUserId(info.getUserId());
 			dto.setSubject(req.getParameter("subject"));
 			dto.setContent(req.getParameter("content"));
-			dto.setCatNum(Long.parseLong(req.getParameter("catNum")));
+			if(req.getParameter("catNum")!=null) {
+				System.out.println(req.getParameter("catNum"));
+				dto.setCatNum(Long.parseLong(req.getParameter("catNum")));
+			};
 			dto.setCost(Long.parseLong(req.getParameter("cost")));
 			/*String filename;
 			Part p = req.getPart("selectFile");
@@ -172,6 +210,8 @@ public class PbbsServlet extends MyUploadServlet {
 	protected void article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		PbbsDAO dao = new PbbsDAO();
 		String cp = req.getContextPath();
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
 
 
 		String page = req.getParameter("page");
@@ -180,20 +220,34 @@ public class PbbsServlet extends MyUploadServlet {
 		if(cat!=null) {
 			category="&"+"cat="+cat+"&";
 		}
-
+		String ord =req.getParameter("order");
+		String order="";
+		if(ord!=null) {
+			order="&"+"order="+ord+"&";
+		}
+		if(ord==null) {
+			ord="";
+		}
 		try {
 			
 			long num = Long.parseLong(req.getParameter("num"));
 		//	long num=	62;
+			// 조회수 증가
+			dao.updateHitCount(num);
+			
 			PbbsDTO dto = dao.findById(num);
 			if (dto == null) {
 				// 게시글이 없다면 다시 리스트로
-				resp.sendRedirect(cp + "/pbbs/list.do?"+category  +"page=" + page);
+				resp.sendRedirect(cp + "/pbbs/list.do?"+category+order  +"page=" + page);
 				return;
 			}
 
 			// content의 엔터를 <br>로
 			dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
+			
+			//유저가 이게시글을 찜했는지 검사
+			dto.setPlike(dao.doILikeThis(num,info.getUserId()));
+			
 			
 			//사진
 			List<PbbsDTO> listFile = dao.listPhotoFile(num);
@@ -205,6 +259,8 @@ public class PbbsServlet extends MyUploadServlet {
 			req.setAttribute("dto", dto);
 			req.setAttribute("page", page);
 			req.setAttribute("category", category);
+			req.setAttribute("order", order);
+			
 
 			// 포워딩
 			forward(req, resp, "/WEB-INF/views/pbbs/article.jsp");
@@ -215,7 +271,7 @@ public class PbbsServlet extends MyUploadServlet {
 			e.printStackTrace();
 		}
 
-		resp.sendRedirect(cp + "/pbbs/list.do?"+category +"page=" + page);
+		resp.sendRedirect(cp + "/pbbs/list.do?"+category+order +"page=" + page);
 	}
 
 	protected void updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -232,6 +288,14 @@ public class PbbsServlet extends MyUploadServlet {
 		if(cat!=null) {
 			category="&"+"cat="+cat+"&";
 		}
+		String ord =req.getParameter("order");
+		String order="";
+		if(ord!=null) {
+			order="&"+"order="+ord+"&";
+		}
+		if(ord==null) {
+			ord="";
+		}
 		
 		try {
 			long num=Long.parseLong(req.getParameter("num"));
@@ -240,7 +304,7 @@ public class PbbsServlet extends MyUploadServlet {
 			PbbsDTO dto=dao.findById(num);
 			// 글없으면
 			if(dto==null) {
-				 resp.sendRedirect(cp+"/pbbs/list.do?"+category  +"page=" + page);
+				 resp.sendRedirect(cp+"/pbbs/list.do?"+category+order  +"page=" + page);
 				 return;
 			}
 			dto.setCatString(dao.getCat(dto.getCatNum()));
@@ -279,6 +343,14 @@ public class PbbsServlet extends MyUploadServlet {
 		if(cat!=null) {
 			category="&"+"cat="+cat+"&";
 		}
+		String ord =req.getParameter("order");
+		String order="";
+		if(ord!=null) {
+			order="&"+"order="+ord+"&";
+		}
+		if(ord==null) {
+			ord="";
+		}
 		try {
 			PbbsDTO dto = new PbbsDTO();
 			dto.setNum(Long.parseLong(req.getParameter("num")));
@@ -293,12 +365,13 @@ public class PbbsServlet extends MyUploadServlet {
 			dto.setUserId(info.getUserId());
 
 			dao.updatePhoto(dto);
+			
 
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		resp.sendRedirect(cp + "/pbbs/list.do?"+category  +"page="+ page);
+		resp.sendRedirect(cp + "/pbbs/list.do?"+category+order +"page="+ page);
 
 	}
 	protected void deleteFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -315,6 +388,14 @@ public class PbbsServlet extends MyUploadServlet {
 		String category="";
 		if(cat!=null) {
 			category="&"+"cat="+cat+"&";
+		}
+		String ord =req.getParameter("order");
+		String order="";
+		if(ord!=null) {
+			order="&"+"order="+ord+"&";
+		}
+		if(ord==null) {
+			ord="";
 		}
 		try {
 			long num = Long.parseLong(req.getParameter("num"));
@@ -339,13 +420,13 @@ public class PbbsServlet extends MyUploadServlet {
 				dao.deletePhotoFile("one", fileNum);
 			}
 			
-			resp.sendRedirect(cp + "/pbbs/update.do?"+category  +"num=" + num + "&page=" + page);
+			resp.sendRedirect(cp + "/pbbs/update.do?"+category +order +"num=" + num + "&page=" + page);
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		resp.sendRedirect(cp + "/pbbs/list.do?"+category  +"page=" + page);
+		resp.sendRedirect(cp + "/pbbs/list.do?"+category+order  +"page=" + page);
 	}
 
 	protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -362,17 +443,25 @@ public class PbbsServlet extends MyUploadServlet {
 		if(cat!=null) {
 			category="&"+"cat="+cat+"&";
 		}
+		String ord =req.getParameter("order");
+		String order="";
+		if(ord!=null) {
+			order="&"+"order="+ord+"&";
+		}
+		if(ord==null) {
+			ord="";
+		}
 		try {
 			long num=Long.parseLong(req.getParameter("num"));
 			PbbsDTO dto = dao.findById(num);
 			if (dto == null) {
-				resp.sendRedirect(cp + "/pbbs/list.do?"+category  +"page=" + page);
+				resp.sendRedirect(cp + "/pbbs/list.do?"+category +order +"page=" + page);
 				return;
 			}
 
 			// 게시물을 올린 사용자가 아니면
 			if (!dto.getUserId().equals(info.getUserId())) {
-				resp.sendRedirect(cp + "/pbbs/list.do?"+category  +"page=" + page);
+				resp.sendRedirect(cp + "/pbbs/list.do?"+category +order +"page=" + page);
 				return;
 			}
 
@@ -390,7 +479,53 @@ public class PbbsServlet extends MyUploadServlet {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		resp.sendRedirect(cp + "/pbbs/list.do?"+category  +"page="+ page);
+		resp.sendRedirect(cp + "/pbbs/list.do?"+category+order  +"page="+ page);
+	}
+	protected void like(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 게시글 찜하기
+		PbbsDAO dao = new PbbsDAO();
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		String cp = req.getContextPath();
+		String page = req.getParameter("page");
+		String cat =req.getParameter("cat");
+		String category="";
+		if(cat!=null) {
+			category="&"+"cat="+cat+"&";
+		}
+		String ord =req.getParameter("order");
+		String order="";
+		if(ord!=null) {
+			order="&"+"order="+ord+"&";
+		}
+		if(ord==null) {
+			ord="";
+		}
+		try {
+			long num=Long.parseLong(req.getParameter("num"));
+			PbbsDTO dto = dao.findById(num);
+			if (dto == null) {
+				resp.sendRedirect(cp + "/pbbs/list.do?"+category+order  +"page=" + page);
+				return;
+			}
+			String id=info.getUserId();
+			long chk=dao.doILikeThis(num, id);
+			
+			// 찜테이블 업데이트하고 게시들의 찜된횟수 업데이트
+			if(chk==0) {
+				dao.iLikeIt( num,id);
+			}else {
+				dao.imSoso( num,id);
+			}
+			
+			
+			resp.sendRedirect(cp + "/pbbs/article.do?"+category+order  +"page="+ page+"&num="+num);
+			return;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		resp.sendRedirect(cp + "/pbbs/list.do?"+category+order  +"page="+ page);
 	}
 
 }

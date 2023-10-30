@@ -190,6 +190,95 @@ public class PbbsDAO {
 		return list;
 	}
 	
+	public List<PbbsDTO> mostViewListPhoto(int offset, int size) throws SQLException {
+		List<PbbsDTO> list=new ArrayList<PbbsDTO>();
+		PreparedStatement pstmt=null;
+		String sql;
+		ResultSet rs=null;
+		
+		try {
+			sql="select pnum,userid,subject,imagefilename,cost,to_char(regdate,'YYYY-MM-DD') regdate,pstate, HITCOUNT from pbbs  order by HITCOUNT  desc offset ? rows fetch first ? rows only";
+			
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setInt(1, offset);
+			pstmt.setInt(2, size);
+			
+			rs=pstmt.executeQuery();
+			
+			while(rs.next()) {
+				PbbsDTO dto= new PbbsDTO();
+				
+				dto.setNum(rs.getLong("pnum"));
+				dto.setUserId(rs.getString("userid"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setImageFilename(rs.getString("imagefilename"));
+				dto.setRegdate(rs.getString("regdate"));
+				dto.setCost(rs.getLong("cost"));
+				dto.setPstate(rs.getLong("pstate"));
+				dto.setHitCount(rs.getLong("HITCOUNT"));
+				
+				list.add(dto);
+			}
+			
+			
+		}catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+		}finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		
+		return list;
+	}
+	
+	public List<PbbsDTO> popularListPhoto(int offset, int size) throws SQLException {
+		List<PbbsDTO> list=new ArrayList<PbbsDTO>();
+		PreparedStatement pstmt=null;
+		String sql;
+		ResultSet rs=null;
+		
+		try {
+			sql="select pnum,userid,subject,imagefilename,cost,to_char(regdate,'YYYY-MM-DD') regdate,pstate, plike from pbbs order by plike desc offset ? rows fetch first ? rows only";
+			
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setInt(1, offset);
+			pstmt.setInt(2, size);
+			
+			rs=pstmt.executeQuery();
+			
+			while(rs.next()) {
+				PbbsDTO dto= new PbbsDTO();
+				
+				dto.setNum(rs.getLong("pnum"));
+				dto.setUserId(rs.getString("userid"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setImageFilename(rs.getString("imagefilename"));
+				dto.setRegdate(rs.getString("regdate"));
+				dto.setCost(rs.getLong("cost"));
+				dto.setPstate(rs.getLong("pstate"));
+				
+				list.add(dto);
+			}
+			
+			
+		}catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+		}finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		
+		return list;
+	}
+	
 	public List<PbbsDTO> listPhoto(int offset, int size,long cat) throws SQLException {
 		List<PbbsDTO> list=new ArrayList<PbbsDTO>();
 		PreparedStatement pstmt=null;
@@ -236,6 +325,98 @@ public class PbbsDAO {
 		return list;
 	}
 	
+	public List<PbbsDTO> mostViewListPhoto(int offset, int size,long cat) throws SQLException {
+		List<PbbsDTO> list=new ArrayList<PbbsDTO>();
+		PreparedStatement pstmt=null;
+		String sql;
+		ResultSet rs=null;
+		
+		try {
+			sql="select pnum,userid,subject,imagefilename,cost,to_char(regdate,'YYYY-MM-DD') regdate,pstate, HITCOUNT from pbbs WHERE catnum=?  order by HITCOUNT  desc offset ? rows fetch first ? rows only";
+			
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, cat);
+			pstmt.setInt(2, offset);
+			pstmt.setInt(3, size);
+			
+			rs=pstmt.executeQuery();
+			
+			while(rs.next()) {
+				PbbsDTO dto= new PbbsDTO();
+				
+				dto.setNum(rs.getLong("pnum"));
+				dto.setUserId(rs.getString("userid"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setImageFilename(rs.getString("imagefilename"));
+				dto.setRegdate(rs.getString("regdate"));
+				dto.setCost(rs.getLong("cost"));
+				dto.setPstate(rs.getLong("pstate"));
+				dto.setHitCount(rs.getLong("HITCOUNT"));
+				
+				list.add(dto);
+			}
+			
+			
+		}catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+		}finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		
+		return list;
+	}
+	
+	public List<PbbsDTO> popularListPhoto(int offset, int size,long cat) throws SQLException {
+		List<PbbsDTO> list=new ArrayList<PbbsDTO>();
+		PreparedStatement pstmt=null;
+		String sql;
+		ResultSet rs=null;
+		
+		try {
+			sql="select pnum,userid,subject,imagefilename,cost,to_char(regdate,'YYYY-MM-DD') regdate,pstate, plike from pbbs WHERE catnum=? order by plike desc offset ? rows fetch first ? rows only";
+			
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, cat);
+			pstmt.setInt(2, offset);
+			pstmt.setInt(3, size);
+			
+			rs=pstmt.executeQuery();
+			
+			while(rs.next()) {
+				PbbsDTO dto= new PbbsDTO();
+				
+				dto.setNum(rs.getLong("pnum"));
+				dto.setUserId(rs.getString("userid"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setImageFilename(rs.getString("imagefilename"));
+				dto.setRegdate(rs.getString("regdate"));
+				dto.setCost(rs.getLong("cost"));
+				dto.setPstate(rs.getLong("pstate"));
+				
+				list.add(dto);
+			}
+			
+			
+		}catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+		}finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		
+		return list;
+	}
+		
+
 	public PbbsDTO findById(long num) throws SQLException {
 		PbbsDTO dto=null;
 		PreparedStatement pstmt=null;
@@ -409,7 +590,7 @@ public class PbbsDAO {
 			if (mode.equals("all")) {
 				sql = "DELETE FROM pPic WHERE num = ?";
 			} else {
-				sql = "DELETE FROM pPic WHERE fileNum = ?";
+				sql = "DELETE FROM pPic WHERE picNum = ?";
 			}
 			pstmt = conn.prepareStatement(sql);
 			
@@ -454,5 +635,118 @@ public class PbbsDAO {
 		}
 
 		return dto;
+	}
+	
+	
+	public void updateHitCount(long pnum) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql;
+
+		try {
+
+			sql = "UPDATE pbbs SET hitCount=hitCount+1 WHERE pnum=?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, pnum);
+			
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+
+	}
+	
+	public long doILikeThis(long num,String id) throws SQLException {
+		long b=0;
+		PreparedStatement pstmt =null;
+		String sql;
+		ResultSet rs = null;
+		try {
+			sql="select count(*) what from wish_lists w join pbbs p on w.pnum=p.pnum where w.userid=? and p.pnum=?";
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setString(1, id);
+			pstmt.setLong(2, num);
+			
+			rs=pstmt.executeQuery();//해당안되면 영향받은값이 0이 나올것이라 기대됨
+			//b=pstmt.executeUpdate();//해당안되면 영향받은값이 0이 나올것이라 기대됨
+			//0이라는 숫자를반환하는게 무조건 1로나와서 실패함
+			if(rs.next()) {
+				b=rs.getLong("what");
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+			
+		}finally {
+			DBUtil.close(pstmt);
+			DBUtil.close(rs);
+		}
+		
+		return b;
+	
+	}
+
+	public void iLikeIt(long num, String id) throws SQLException {
+		// TODO Auto-generated method stub
+		PreparedStatement pstmt =null;
+		String sql;
+		try {
+			sql="insert into wish_lists values(?,?)";
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setString(1, id);
+			pstmt.setLong(2, num);
+			
+			pstmt.executeUpdate();
+			DBUtil.close(pstmt);
+			sql="update pbbs  set plike=plike+1 where pnum=?";
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, num);
+			
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+			
+		}finally {
+			DBUtil.close(pstmt);
+		}
+	}
+
+	public void imSoso(long num, String id)throws SQLException {
+		// TODO Auto-generated method stub
+		PreparedStatement pstmt =null;
+		String sql;
+		try {
+			sql="delete from wish_lists where pnum=?";
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, num);
+			
+			pstmt.executeUpdate();
+			DBUtil.close(pstmt);
+			sql="update pbbs  set plike=plike-1 where pnum=?";
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, num);
+			
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+			
+		}finally {
+			DBUtil.close(pstmt);
+		}
 	}
 }
