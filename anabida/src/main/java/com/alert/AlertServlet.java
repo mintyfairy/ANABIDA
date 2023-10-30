@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -17,7 +18,7 @@ import com.util.MyUploadServlet;
 import com.util.MyUtil;
 
 @MultipartConfig
-@WebServlet("/notice/*")
+@WebServlet("/alert/*")
 public class AlertServlet extends MyUploadServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -40,7 +41,7 @@ public class AlertServlet extends MyUploadServlet {
 
 		// 저장할 경로
 		String root = session.getServletContext().getRealPath("/");
-		pathname = root + "uploads" + File.separator + "notice";
+		pathname = root + "uploads" + File.separator + "alert";
 
 		if (uri.indexOf("list.do") != -1) {
 			list(req, resp);
@@ -66,7 +67,11 @@ public class AlertServlet extends MyUploadServlet {
 	}
 
 	protected void list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		AlertDAO dao = new AlertDAO();
+		
+		 /*
+		  AlertDAO dao = new AlertDAO();
+		  
+		 
 		MyUtil util = new MyUtil();
 		
 		String cp = req.getContextPath();
@@ -122,33 +127,89 @@ public class AlertServlet extends MyUploadServlet {
 			e.printStackTrace();
 			
 			
-		}
-		forward(req,resp,"/WEB-INF/views/notice/list.jsp");
+		}*/
+		forward(req,resp,"/WEB-INF/views/alert/list.jsp");
 		
 
 	}
+	
 
-	protected void writeForm(HttpServletRequest req, HttpServletResponse resp) {
+	protected void writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//여기짜고
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		
+		String size = req.getParameter("size");
+		
+		if(!info.getUserId().equals("admin")) {
+			resp.sendRedirect(cp + "/alert/list.do?size=" + size);
+			return;
+		}
+		req.setAttribute("mode", "write");
+		req.setAttribute("size", size);
+		forward(req,resp,"/WEB-INF/views/alert/write.jsp");
+		
+	}
+
+	protected void writeSubmit(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException  {
+//여기짜기
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		
+		if(req.getMethod().equalsIgnoreCase("GET")) {
+			resp.sendRedirect(cp+ "/alert/list.do");
+			return;
+		}
+		
+		if(!info.getUserId().equals("admin")) {
+			resp.sendRedirect(cp + "/alert/list.do");
+			return;
+		}
+		AlertDAO dao = new AlertDAO();
+		
+		String size = req.getParameter("size");
+		try {
+			AlertDTO dto = new AlertDTO();
+			
+			dto.setUserId(info.getUserId());
+			if(req.getParameter("alert")!=null) {
+				dto.setAlert(Integer.parseInt(req.getParameter("alert")));
+			}
+			dto.setTitle(req.getParameter("title"));
+			dto.setContent(req.getParameter("content"));
+			
+			Map<String, String[]> map = doFileUpload(req.getParts(), pathname);
+			if(map != null) {
+				String[] saveFiles = map.get("saveFilenames");
+				String[] originalFiles = map.get("originalFilenames");
+				dto.setSaveFiles(saveFiles);
+				dto.OriginalFiles(originalFiles);
+					
+			}
+			dao.insertArlert(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		resp.sendRedirect(cp + "/alert/list.do?size=" + size);
+	}
+
+	protected void article(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException  {
 
 	}
 
-	protected void writeSubmit(HttpServletRequest req, HttpServletResponse resp) {
+	protected void updateForm(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException  {
 
 	}
 
-	protected void article(HttpServletRequest req, HttpServletResponse resp) {
+	protected void updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 	}
 
-	protected void updateForm(HttpServletRequest req, HttpServletResponse resp) {
-
-	}
-
-	protected void updateSubmit(HttpServletRequest req, HttpServletResponse resp) {
-
-	}
-
-	protected void deleteFile(HttpServletRequest req, HttpServletResponse resp) {
+	protected void deleteFile(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException  {
 
 	}
 
