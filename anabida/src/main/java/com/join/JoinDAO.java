@@ -105,7 +105,7 @@ public class JoinDAO {
 					+ " JOIN member m ON g.userId = m.userId ";
 			
 			if(schType.equals("all")) {
-				sql += " WHERE INSTR(subject, ?) >= 1 OR INSTR(content, ?) >= 1 " ;
+				sql += " WHERE INSTR(title, ?) >= 1 OR INSTR(content, ?) >= 1 " ;
 			} else if (schType.equals("reg_date")) {
 				kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
 				sql += " WHERE TO_CHAR(reg_date, 'YYYYMMDD') = ? ";
@@ -146,7 +146,7 @@ public class JoinDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, ");
+			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, min_peo, ");
 			sb.append(" TO_CHAR(g.reg_date, 'YYYY-MM-DD') reg_date, ");
 			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date ");
 			sb.append(" FROM group_buying g ");
@@ -169,6 +169,7 @@ public class JoinDAO {
 				dto.setTitle(rs.getString("title"));
 				dto.setJoinCount(rs.getInt("joinCount"));
 				dto.setLink(rs.getString("link"));
+				dto.setMin_peo(rs.getInt("min_peo"));
 				dto.setReg_date(rs.getString("reg_date"));
 				dto.setExp_date(rs.getString("exp_date"));
 				
@@ -192,20 +193,20 @@ public class JoinDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, ");
-			sb.append(" TO_CHAR(reg_date, 'YYYY-MM-DD') reg_date, ");
-			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, ");
+			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, min_peo, ");
+			sb.append(" TO_CHAR(g.reg_date, 'YYYY-MM-DD') reg_date, ");
+			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date ");
 			sb.append(" FROM group_buying g ");
 			sb.append(" JOIN member m ON g.userId = m.userId ");
 			if (schType.equals("all")) {
-				sb.append(" WHERE INSTR(subject, ?) >= 1 OR INSTR(content, ?) >= 1 ");
+				sb.append(" WHERE INSTR(title, ?) >= 1 OR INSTR(content, ?) >= 1 ");
 			} else if (schType.equals("reg_date")) {
 				kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
 				sb.append(" WHERE TO_CHAR(reg_date, 'YYYYMMDD') = ?");
 			} else {
 				sb.append(" WHERE INSTR(" + schType + ", ?) >= 1 ");
 			}
-			sb.append(" ORDER BY num DESC ");
+			sb.append(" ORDER BY buyNum DESC ");
 			sb.append(" OFFSET ? ROWS FETCH FIRST ? ROWS ONLY ");
 			
 			pstmt = conn.prepareStatement(sb.toString());
@@ -227,6 +228,13 @@ public class JoinDAO {
 				JoinDTO dto = new JoinDTO();
 				
 				dto.setBuyNum(rs.getLong("buyNum"));
+				dto.setUserId(rs.getString("userId"));
+				dto.setTitle(rs.getString("title"));
+				dto.setJoinCount(rs.getInt("joinCount"));
+				dto.setLink(rs.getString("link"));
+				dto.setMin_peo(rs.getInt("min_peo"));
+				dto.setReg_date(rs.getString("reg_date"));
+				dto.setExp_date(rs.getString("exp_date"));
 				
 				list.add(dto);
 			}

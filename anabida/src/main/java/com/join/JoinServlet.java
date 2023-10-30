@@ -166,8 +166,8 @@ public class JoinServlet extends MyUploadServlet{
 	protected void writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		JoinDAO dao = new JoinDAO();
 		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		//HttpSession session = req.getSession();
+		//SessionInfo info = (SessionInfo) session.getAttribute("member");
 		
 		String cp = req.getContextPath();
 		if(req.getMethod().equalsIgnoreCase("GET")) {
@@ -179,7 +179,8 @@ public class JoinServlet extends MyUploadServlet{
 			JoinDTO dto = new JoinDTO();
 			
 			// userId는 세션에 저장된 정보이므로
-			dto.setUserId(info.getUserId());
+			// dto.setUserId(info.getUserId());
+			dto.setUserId(req.getParameter("userId"));
 			
 			dto.setTitle(req.getParameter("title"));
 			dto.setLink(req.getParameter("link"));

@@ -141,6 +141,10 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 </style>
 
 <script type="text/javascript">
+function searchList() {
+	const f = document.searchForm;
+	f.submit();
+}
 
 </script>
 </head>
@@ -174,10 +178,11 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		  <c:forEach var="dto" items="${list}" varStatus="status">
 			<tr>
 				<td>${dataCount - (page-1) * size - status.index}</td>
-				<td class="content-box"><div class="img" ></div><span class="hi">안녕 하세요.</span></td>
-				<td>작성자</td>
+				<td class="content-box"><div class="img" ></div><span class="hi">${dto.title}</span></td>
+				<td>${dto.userId}</td>
 				<td>(${dto.reg_date}<br>~${dto.exp_date})</td>
 				<td>(${dto.joinCount}/${dto.min_peo})</td>
+				<td>${dto.hitCount}</td>
 			</tr>
 		   </c:forEach>
 		<tbody>
@@ -186,7 +191,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 	</table>
 	
 	<div class="page-navigation">
-		1 2 3
+		${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}
 	</div>
 	
 	<table class="table">
@@ -195,16 +200,16 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/list.do';">새로고침</button>
 			</td>
 			<td align="center">
-				<form name="searchForm" action="" method="post">
+				<form name="searchForm" action="${pageContext.request.contextPath}/join/list.do" method="post">
 					<select name="schType" class="form-select">
-						<option value="all">제목+내용</option>
-						<option value="name">작성자</option>
-						<option value="reg_date">등록일</option>
-						<option value="subject">제목</option>
-						<option value="content">내용</option>
+						<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
+						<option value="name" ${schType=="userId"? "selected":"" }>작성자</option>
+						<option value="reg_date"  ${schType=="reg_date"?"selected":"" }>등록일</option>
+						<option value="subject" ${schType=="subject"?"selected":"" }>제목</option>
+						<option value="content"${schType=="content"?"selected":"" }>내용</option>
 					</select>
-					<input type="text" name="kwd" value="" class="form-control">
-					<button type="button" class="btn">검색</button>
+					<input type="text" name="kwd" value="${kwd}" class="form-control">
+					<button type="button" class="btn" onclick="searchList();">검색</button>
 				</form>
 			</td>
 			<td align="right" width="100">
