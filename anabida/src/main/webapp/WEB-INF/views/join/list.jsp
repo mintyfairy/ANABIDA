@@ -164,7 +164,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 				<th class="num">번호</th>
 				<th class="subject">제목</th>
 				<th class="name">작성자</th>
-				<th class="date">작성일</th>
+				<th class="date">기한</th>
 				<th class="joincount">참여자수</th>
 				<th class="hit">조회수</th>
 			</tr>
@@ -175,8 +175,8 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 				<td>1</td>
 				<td class="content-box"><div class="img" ></div><span class="hi">안녕 하세요.</span></td>
 				<td>스프링</td>
-				<td>2021-10-01</td>
-				<td>1</td>
+				<td>(2023-10-01<br>~2023-10-11)</td>
+				<td>(1/10)</td>
 			</tr>
 		<tbody>
 		

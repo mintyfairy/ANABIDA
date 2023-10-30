@@ -2,6 +2,7 @@ package com.join;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.util.DBConn;
@@ -19,25 +20,21 @@ public class JoinDAO {
 		String sql;
 		
 		try {
-			sql=" INSERT INTO group_buying(buyNum, userId, title, content, reg_date, joinCount, hitCount, min_peo, link)"
-					+ " VALUES(group_seq.NEXTVAL, ?, ?, ?, SYSDATE, 0, 0, ?, ?) ";
+			sql=" INSERT INTO group_buying(buyNum, userId, title, link, content, reg_date, exp_date, joinCount, "
+					+ " hitCount, min_peo, imageFilename)"
+					+ " VALUES(group_seq.NEXTVAL, ?, ?, ?, ?, SYSDATE, ?, ?, ?, ?, ?) ";
 			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, dto.getUserId());
 			pstmt.setString(2, dto.getTitle());
-			pstmt.setString(3, dto.getContent());
-			pstmt.setInt(4, dto.getMin_peo());
-			pstmt.setString(5, dto.getLink());
+			pstmt.setString(3, dto.getLink());
+			pstmt.setString(4, dto.getContent());
+			pstmt.setString(5, dto.getExp_date());
+			pstmt.setInt(6, dto.getJoinCount());
+			pstmt.setInt(7, dto.getHitCount());
+			pstmt.setInt(8, dto.getMin_peo());
+			pstmt.setString(9, dto.getImageFilename());
 			
-			pstmt.executeUpdate();
-			
-			DBUtil.close(pstmt);
-			
-			sql=" INSERT INTO group_att(fileNum, attName)"
-					+ " VALUES(gr_att.NEXTVAL, ?) ";
-			pstmt = conn.prepareStatement(sql);
-			
-			pstmt.setString(1, dto.getAttName());
 			pstmt.executeUpdate();
 			
 			
@@ -48,13 +45,51 @@ public class JoinDAO {
 		}
 	}
 	
-	/*
+	
+
+	public void updateHitCount(long buyNum) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql; 
+		
+		try {
+			sql = " UPDATE group_buying SET hitCount=hitCount+1 WHERE buyNum = ?";
+			pstmt = conn.prepareStatement(sql);
+			
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	
+	
 	
 	// 데이터 개수
 	public int dataCount() {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql; 
 		
+		try {
+			sql = "SELECT NVL(COUNT(*), 0) FROM group_buying ";
+			pstmt = conn.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return result;
 	}
-	
+	/*
 	// 검색에서의 데이터 개수
 	public int datCount(String schType, String kwd) {
 		
@@ -71,16 +106,6 @@ public class JoinDAO {
 	}
 	
 	
-	
-	
-	
-	
-	
-	// 조회수 증가하기 
-	public void updateHitCount(long buynum) throws SQLException {
-		
-	}
-	
 	// 참여자 수 증가하기
 	public void joinCount(long buynum) throws SQLException {
 		
@@ -92,6 +117,13 @@ public class JoinDAO {
 	}
 	
 	*/
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

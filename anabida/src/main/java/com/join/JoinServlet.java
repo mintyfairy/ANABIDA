@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,28 +14,30 @@ import javax.servlet.http.Part;
 
 import com.member.SessionInfo;
 import com.util.MyServlet;
+import com.util.MyUploadServlet;
 
 @WebServlet("/join/*")
-public class JoinServlet extends MyServlet{
-
+@MultipartConfig
+public class JoinServlet extends MyUploadServlet{
 	private static final long serialVersionUID = 1L;
 	private String pathname;
 	
 	@Override
 	protected void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("utf-8");
+		String uri = req.getRequestURI();
+		String cp = req.getContextPath();
+		
 		// 세션에 저장된 로그인 정보
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
 		
 		// 로그인이 안된경우
 		if (info == null) {
-			forward(req, resp, "/WEB-INF/views/member/login.jsp");
+			resp.sendRedirect(cp+"/member/login.do");
 			return;
-		}
-		
-		req.setCharacterEncoding("utf-8");
-		String uri = req.getRequestURI();
-		
+		} 
+	
 		
 		// 이미지 저장 경로
 		String root = session.getServletContext().getRealPath("/");
@@ -99,7 +102,11 @@ public class JoinServlet extends MyServlet{
 			String filename;
 			
 			Part p = req.getPart("selectFile");
-			
+			Map<String, String> map = doFileUpload(p, pathname);
+			if(map!=null) {
+				filename = map.get("saveFilename");
+				dto.setImageFilename(filename);
+			}
 			
 			dao.insertJoin(dto);
 			

@@ -115,6 +115,13 @@ function sendOk() {
 		return;
 	}
 	
+	str = f.birth.value.trim();
+	if(!str) {
+		alert("모집종료 기간을 입력해주세요.");
+		f.birth.focus();
+		return;
+	}
+	
 	f.action = "${pageContext.request.contextPath}/join/${mode}_ok.do";
 	f.submit();
 }
@@ -142,7 +149,14 @@ function sendOk() {
 			<tr> 
 				<td>작성자</td>
 				<td> 
-					<input type="text" name="name" maxlength="10" class="form-control" value="${dto.userId}">
+					<p>${sessionScope.member.userName}</p>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>모집종료 기한</td>
+				<td>
+					<input type="date" name="birth" class="form-control" style="width: 50%;">
 				</td>
 			</tr>
 			

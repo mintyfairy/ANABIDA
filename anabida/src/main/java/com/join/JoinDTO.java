@@ -4,16 +4,15 @@ public class JoinDTO {
 	private long buyNum;
 	private String userId;
 	private String title;
+	private String link;
 	private String content;
 	private String reg_date;
-	private String link;
-	private int min_peo;
+	private String exp_date;
 	private int joinCount;
 	private int hitCount;
+	private int min_peo;
+	private String imageFilename;
 	
-	
-	private long fileNum;
-	private String attName;
 	public long getBuyNum() {
 		return buyNum;
 	}
@@ -32,6 +31,12 @@ public class JoinDTO {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
 	public String getContent() {
 		return content;
 	}
@@ -44,17 +49,11 @@ public class JoinDTO {
 	public void setReg_date(String reg_date) {
 		this.reg_date = reg_date;
 	}
-	public String getLink() {
-		return link;
+	public String getExp_date() {
+		return exp_date;
 	}
-	public void setLink(String link) {
-		this.link = link;
-	}
-	public int getMin_peo() {
-		return min_peo;
-	}
-	public void setMin_peo(int min_peo) {
-		this.min_peo = min_peo;
+	public void setExp_date(String exp_date) {
+		this.exp_date = exp_date;
 	}
 	public int getJoinCount() {
 		return joinCount;
@@ -68,18 +67,19 @@ public class JoinDTO {
 	public void setHitCount(int hitCount) {
 		this.hitCount = hitCount;
 	}
-	public long getFileNum() {
-		return fileNum;
+	public int getMin_peo() {
+		return min_peo;
 	}
-	public void setFileNum(long fileNum) {
-		this.fileNum = fileNum;
+	public void setMin_peo(int min_peo) {
+		this.min_peo = min_peo;
 	}
-	public String getAttName() {
-		return attName;
+	public String getImageFilename() {
+		return imageFilename;
 	}
-	public void setAttName(String attName) {
-		this.attName = attName;
+	public void setImageFilename(String imageFilename) {
+		this.imageFilename = imageFilename;
 	}
+	
 	
 	
 	
