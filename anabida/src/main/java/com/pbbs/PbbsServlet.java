@@ -251,7 +251,8 @@ public class PbbsServlet extends MyUploadServlet {
 			
 			//사진
 			List<PbbsDTO> listFile = dao.listPhotoFile(num);
-			
+			long listSize=listFile.size()+1;
+			long listNum=1;
 			//숫자인 카케고리구분을 스트링으로
 			dto.setCatString(dao.getCat(dto.getCatNum()));
 			// 포워딩할 JSP에 전달할 속성
@@ -260,6 +261,8 @@ public class PbbsServlet extends MyUploadServlet {
 			req.setAttribute("page", page);
 			req.setAttribute("category", category);
 			req.setAttribute("order", order);
+			req.setAttribute("listSize", listSize);
+			req.setAttribute("listNum", listNum);
 			
 
 			// 포워딩
