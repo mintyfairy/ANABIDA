@@ -128,7 +128,7 @@ function searchList() {
 								<c:if test="${dto.userId=='admin'}">
 								<td style="color: #0099e6;">${dto.userName}</td>
 								</c:if>
-								<c:if test="${dto.userId==sessionScope.member.userId}">
+								<c:if test="${dto.userId==sessionScope.member.userId && dto.userId != 'admin'}">
 								<td style="font-weight: bold;">${dto.userName}</td>
 								</c:if>
 								<c:if test="${dto.userId!='admin' && dto.userId!=sessionScope.member.userId}">
