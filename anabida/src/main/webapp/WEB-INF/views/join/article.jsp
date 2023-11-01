@@ -82,19 +82,32 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .table-article tr > td { padding-left: 5px; padding-right: 5px; }
 </style>
 
+<script type="text/javascript">
+<c:if test="${sessionScopte.member.userId==dto.userId || sessionScope.member.userId=='admin'}">
+	function deleteBoard() {
+		if(confirm("게시글을 삭제 하시겠습니까? ")){
+		let query = "buyNum=${buyNum}&${query}";
+		let url = "${pageContext.request.contextPath}/join/delete.do?"+query;
+		location.href = url;
+		}
+	}
+</c:if>
+</script>
+
+
 </head>
 <body>
 
 <div class="board">
 	<div class="title">
-	    <h3><span>|</span> 게시판</h3>
+	    <h3><span>|</span>공동구매 확인</h3>
 	</div>
 	
 	<table class="table table-border table-article">
 		<thead>
 			<tr>
 				<td colspan="2" align="center">
-					제목 입니다.
+					${dto.title}
 				</td>
 			</tr>
 		</thead>
@@ -102,27 +115,52 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		<tbody>
 			<tr>
 				<td width="50%">
-					이름 : 김자바
+					이름 : ${dto.userName}
 				</td>
 				<td align="right">
-					2021-10-10 | 조회 10
+					${dto.reg_date} | 조회 ${dto.hitCount} 
+				</td>
+			</tr>
+			
+			<tr>
+				<td width="50%">
+					모집종료기한 : ${dto.exp_date}
+				</td>
+				<td align="right">
+					참여 인원수 : (0/${dto.min_peo}) 
+				</td>
+			</tr>
+			
+			<tr style="border-bottom: none;">
+				<td colspan="2" valign="top" height="200">
+					<img src="<c:url value='/uploads/join/${dto.imageFilename}'/>">
 				</td>
 			</tr>
 			
 			<tr>
 				<td colspan="2" valign="top" height="200">
-					내용 입니다.
+					${dto.content}
 				</td>
 			</tr>
 			
 			<tr>
 				<td colspan="2">
-					이전글 : 이전글입니다.
+					이전글 : 
+					<c:if test="${not empty prevDto}">
+						<a href="${pageContext.request.contextPath}/join/article.do?${query}&buyNum=${prevDto.buyNum}">
+						${prevDto.title}
+						</a>
+					</c:if>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
-					다음글 : 다음글입니다.
+					다음글 : 
+					<c:if test="${not empty nextDto}">
+					<a href="${pageContext.request.contextPath}/join/article.do?${query}&buyNum=${nextDto.buyNum}">
+					${nextDto.title}
+					</a>
+					</c:if>
 				</td>
 			</tr>
 		<tbody>
@@ -131,11 +169,27 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 	<table class="table">
 		<tr>
 			<td width="50%">
-				<button type="button" class="btn">수정</button>
-				<button type="button" class="btn">삭제</button>
+				<c:choose>
+					<c:when test="${sessionScope.member.userId==dto.userId}">
+						<button type="button" class="btn" onclick="location.href='${pateContext.request.contextPath}/join/update.do?buyNum=${dto.buyNum}&page=${page}';">수정</button>
+					</c:when>
+					<c:otherwise>
+						<button type="button" class="btn" disabled="disabled">수정</button>
+					</c:otherwise>
+				</c:choose>
+				
+				<c:choose>
+					<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.userId=='admin'}">
+						<button type="button" class="btn" onclick="deleteBoard();">삭제</button>
+					</c:when>
+					<c:otherwise>
+						<button type="button" class="btn" disabled="disabled">삭제</button>
+					</c:otherwise>
+				</c:choose>
+				
 			</td>
 			<td align="right">
-				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/';">리스트</button>
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/list.do?page=${page}';">리스트</button>
 			</td>
 		</tr>
 	</table>

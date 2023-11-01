@@ -28,6 +28,19 @@
 .table-foem .img{
 vertical-align:middle; font-size: 11px; color: #333333;
 } 
+
+.img-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 65px);
+	grid-gap: 5px;
+}
+
+.img-grid .item {
+    object-fit: cover; /* 가로세로 비율은 유지하면서 컨테이너에 꽉 차도록 설정 */
+    width: 65px;
+    height: 65px;
+	cursor: pointer;
+}
 .img-box {
 	max-width: 600px;
 	padding: 5px;
@@ -87,7 +100,68 @@ function sendOk(){
 	    f.action = "${pageContext.request.contextPath}/pbbs/${mode}_ok.do";
 	    f.submit();
 	}
+$(function(){
+	var sel_files = [];
 	
+	$("body").on("click", ".table-form .img-add", function(event){
+		$("form[name=photoForm] input[name=selectFile]").trigger("click"); 
+	});
+	
+	$("form[name=photoForm] input[name=selectFile]").change(function(){
+		if(! this.files) {
+			let dt = new DataTransfer();
+			for(let file of sel_files) {
+				dt.items.add(file);
+			}
+			document.photoForm.selectFile.files = dt.files;
+			
+	    	return false;
+	    }
+	    
+        for(let file of this.files) {
+        	sel_files.push(file);
+        	
+            const reader = new FileReader();
+			const $img = $("<img>", {class:"item img-item"});
+			$img.attr("data-filename", file.name);
+            reader.onload = e => {
+            	$img.attr("src", e.target.result);
+            };
+			reader.readAsDataURL(file);
+            
+            $(".img-grid").append($img);
+        }
+		
+		let dt = new DataTransfer();
+		for(let file of sel_files) {
+			dt.items.add(file);
+		}
+		document.photoForm.selectFile.files = dt.files;		
+	});
+	
+	$("body").on("click", ".table-form .img-item", function(event) {
+		if(! confirm("선택한 파일을 삭제 하시겠습니까 ?")) {
+			return false;
+		}
+		
+		let filename = $(this).attr("data-filename");
+		
+	    for(let i = 0; i < sel_files.length; i++) {
+	    	if(filename === sel_files[i].name){
+	    		sel_files.splice(i, 1);
+	    		break;
+			}
+	    }
+	
+		let dt = new DataTransfer();
+		for(let file of sel_files) {
+			dt.items.add(file);
+		}
+		document.photoForm.selectFile.files = dt.files;
+		
+		$(this).remove();
+	});
+});
 <c:if test="${mode=='update'}">
 function deleteFile(fileNum) {
 	if(! confirm("이미지를 삭제 하시겠습니까 ?")) {
@@ -120,9 +194,12 @@ function deleteFile(fileNum) {
 					<tr>
 						<td>이미지</td>
 						<td> 
-							<input type="file" name="selectFile" accept="image/*" multiple class="form-control" style="width: 200px">
+								
+							<div class="img-grid"><img class="item img-add" src="${pageContext.request.contextPath}/resource/images/add_photo.png"></div>
+							<input type="file" name="selectFile" accept="image/*" multiple="multiple" style="display: none;" class="form-control">
+							<p style="font-size: 12px;color:gray">첫번째 이미지가 썸네일이 됩니다</p>
 						</td><!-- accept: 이미지만 받ㄱ함 -->
-						<td style="font-size: 12px;color:gray">첫번째 이미지가 썸네일이 됩니다</td>
+						
 					</tr>
 					
 					<c:if test="${mode=='update'}">

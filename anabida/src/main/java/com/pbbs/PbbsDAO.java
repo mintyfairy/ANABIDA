@@ -749,4 +749,35 @@ public class PbbsDAO {
 			DBUtil.close(pstmt);
 		}
 	}
+	public void iChooseYou(long num,String buyerId) throws SQLException {
+		PreparedStatement pstmt =null;
+		String sql;
+		try {
+			sql="update pbbs  set pstate=1 where pnum=?";
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, num);
+			
+			pstmt.executeUpdate();
+			DBUtil.close(pstmt);
+			
+			
+			sql="insert into phistory (hisnum,buyer,hdate) values (?,?,sysdate)";
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, num);
+			pstmt.setString(2, buyerId);
+			
+			pstmt.executeUpdate();
+			
+		
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+			
+		}finally {
+			DBUtil.close(pstmt);
+		}
+	}
 }

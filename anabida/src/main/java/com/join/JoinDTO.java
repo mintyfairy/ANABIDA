@@ -12,7 +12,16 @@ public class JoinDTO {
 	private int hitCount;
 	private int min_peo;
 	private String imageFilename;
+	private String userName;
 	
+	
+	
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 	public long getBuyNum() {
 		return buyNum;
 	}
