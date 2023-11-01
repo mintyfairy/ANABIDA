@@ -129,7 +129,6 @@ img {vertical-align: middle;}
 	    <div class="body-title">
 			<h2><i class="fa-regular fa-square"></i> 게시판 </h2>
 	    </div>
-	    <button type="button" class="btn btnSendBoardLike" title="좋아요"><i class="fas fa-thumbs-up" style="color: ${isUserLike?'blue':'black'}"></i>&nbsp;&nbsp;<span id="boardLikeCount">${dto.likeCount}</span></button>
 	    
 	    <div class="body-main mx-auto">
 			<table class="table table-border table-article">
@@ -147,6 +146,7 @@ img {vertical-align: middle;}
 							이름 : ${dto.userName }
 						</td>
 						<td align="right">
+							<button type="button" class="btn btnSendBoardLike" title="좋아요"><i class="fa-regular fa-heart" style="color: ${isUserLike? 'red':'black'}"></i>&nbsp;&nbsp;<span id="boardLikeCount">${dto.likeCount}</span></button>
 							
 							<c:if test="${dto.ccategory == 1}">모임마당</c:if>
 							<c:if test="${dto.ccategory == 2}">질문마당</c:if>
@@ -207,7 +207,7 @@ img {vertical-align: middle;}
 								<input type="hidden" name="userId" value = "${sessionScope.member.userId}">
 								<input type="hidden" name="num" value = "${dto.num}">
 								<input type="hidden" name="page" value = "${page}">
-								<button type="button" class="btn" onclick="participate();" >참여하기</button>
+								<button type="button" class="btn btnSendparticipate" onclick="participate();" >참여하기</button>
 							</form> 
 							
 						</td>
