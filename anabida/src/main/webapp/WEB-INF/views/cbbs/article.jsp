@@ -117,6 +117,7 @@ img {vertical-align: middle;}
 }
 </style>
 </head>
+
 <body>
 
 <header>
@@ -128,6 +129,7 @@ img {vertical-align: middle;}
 	    <div class="body-title">
 			<h2><i class="fa-regular fa-square"></i> 게시판 </h2>
 	    </div>
+	    <button type="button" class="btn btnSendBoardLike" title="좋아요"><i class="fas fa-thumbs-up" style="color: ${isUserLike?'blue':'black'}"></i>&nbsp;&nbsp;<span id="boardLikeCount">${dto.likeCount}</span></button>
 	    
 	    <div class="body-main mx-auto">
 			<table class="table table-border table-article">
@@ -205,10 +207,13 @@ img {vertical-align: middle;}
 								<input type="hidden" name="userId" value = "${sessionScope.member.userId}">
 								<input type="hidden" name="num" value = "${dto.num}">
 								<input type="hidden" name="page" value = "${page}">
-																<button type="button" class="btn" onclick="participate();" >참여하기</button>
+								<button type="button" class="btn" onclick="participate();" >참여하기</button>
 							</form> 
+							
 						</td>
 					</tr>
+														
+					
 					<tr>
 						<td>참여인원 (${meetmember}/${meet.cmember})  |
 						<c:forEach var="username" items="${username}" varStatus="status">
@@ -363,8 +368,78 @@ function participate() {
   	const f = document.insertmember;
   	f.action = "${pageContext.request.contextPath}/cbbs/participate.do";
 	f.submit();
-  	
 }
 
+</script>
+
+<script type="text/javascript">
+
+function login() {
+	location.href="${pageContext.request.contextPath}/member/login.do";
+}
+
+function ajaxFun(url, method, query, dataType, fn) {
+	$.ajax({
+		type:method,
+		url:url,
+		data:query,
+		dataType:dataType,
+		success:function(data) {
+			fn(data);
+		},
+		beforeSend:function(jqXHR) {
+			jqXHR.setRequestHeader("AJAX", true);
+		},
+		complete: function () {
+		},
+		error:function(jqXHR) {
+			if(jqXHR.status === 403) {
+				login();
+				return false;
+			} else if(jqXHR.status === 400) {
+				alert("요청 처리가 실패 했습니다.");
+				return false;
+			}
+	    	
+			console.log(jqXHR.responseText);
+		}
+	});
+	
+}
+
+//게시글 공감 여부
+$(function(){
+	$(".btnSendBoardLike").click(function(){
+		const $i = $(this).find("i");
+		let isNoLike = $i.css("color") == "rgb(0, 0, 0)";
+		let msg = isNoLike ? "게시글에 공감하십니까 ? " : "게시글 공감을 취소하시겠습니까 ? ";
+		
+		if(! confirm( msg )) {
+			return false;
+		}
+		
+		let url = "${pageContext.request.contextPath}/cbbs/insertBoardLike.do";
+		let num = "${dto.num}";
+		// var query = {num:num, isNoLike:isNoLike};
+		let query = "num=" + num + "&isNoLike=" + isNoLike;;
+		
+		const fn = function(data) {
+			let state = data.state;
+			if(state === "true") {
+				let color = "black";
+				if( isNoLike ) {
+					color = "blue";
+				}
+				$i.css("color", color);
+				let count = data.likeCount;
+				$("#boardLikeCount").text(count);
+			} else if(state === "liked") {
+				alert("좋아요는 한번만 가능합니다. !!!");
+			}
+		};
+		
+		ajaxFun(url, "post", query, "json", fn);
+	});
+});
 </script>
 </html>

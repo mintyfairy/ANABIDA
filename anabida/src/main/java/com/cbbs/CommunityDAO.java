@@ -368,11 +368,15 @@ public class CommunityDAO {
 			String sql;
 
 			try {
-				sql = "SELECT c.cnum, ctitle, c.ccategory, m.userId, userName, ccontent, "
-						+ " creg_date, chitCount "
-						+ " FROM member m  "
-						+ " JOIN cbbs c ON c.userId=m.userId "
-						+ " WHERE c.cnum = ? ";
+				sql = " SELECT b.cnum, ctitle, b.ccategory, m.userId, userName, ccontent,  "
+						+ " creg_date, chitCount , NVL(likeCount, 0) likeCount  "
+						+ " FROM cbbs b  "
+						+ " JOIN member m ON b.userId=m.userId "
+						+ "  LEFT OUTER JOIN ("
+						+ "  SELECT num, COUNT(*) likeCount FROM cbbsLike"
+						+ "   GROUP BY num"
+						+ "  ) bc ON b.cnum = bc.num"
+						+ "  WHERE b.cnum = ?";
 				pstmt = conn.prepareStatement(sql);
 				
 				pstmt.setLong(1, num);
@@ -390,6 +394,7 @@ public class CommunityDAO {
 					dto.setCcontent(rs.getString("ccontent"));
 					dto.setChitCount(rs.getInt("chitCount"));
 					dto.setCreg_date(rs.getString("creg_date"));
+					dto.setLikeCount(rs.getInt("likeCount"));
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -610,6 +615,110 @@ public class CommunityDAO {
 			return result;
 		}
 		
+		
+		// 게시물의 공감 추가
+		public void insertBoardLike(long num, String userId) throws SQLException {
+			PreparedStatement pstmt = null;
+			String sql;
+			
+			try {
+				sql = "INSERT INTO cbbsLike(num, userId) VALUES (?, ?)";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+				pstmt.setString(2, userId);
+				
+				pstmt.executeUpdate();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			} finally {
+				DBUtil.close(pstmt);
+			}
+			
+		}
+		
+		// 게시글 공감 삭제
+		public void deleteBoardLike(long num, String userId) throws SQLException {
+			PreparedStatement pstmt = null;
+			String sql;
+			
+			try {
+				sql = "DELETE FROM cbbsLike WHERE num = ? AND userId = ?";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+				pstmt.setString(2, userId);
+				
+				pstmt.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			} finally {
+				DBUtil.close(pstmt);
+			}
+			
+		}
+		
+		// 게시물의 공감 개수
+		public int countBoardLike(long num) {
+			int result = 0;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql;
+			
+			try {
+				sql = "SELECT NVL(COUNT(*), 0) FROM cbbsLike WHERE num=?";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+				
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					result = rs.getInt(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				DBUtil.close(rs);
+				DBUtil.close(pstmt);
+			}
+			
+			return result;
+		}
+		
+		// 로그인 유저의 게시글 공감 유무
+		public boolean isUserBoardLike(long num, String userId) {
+			boolean result = false;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql;
+			
+			try {
+				sql = "SELECT num, userId "
+						+ " FROM cbbsLike "
+						+ " WHERE num = ? AND userId = ?";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+				pstmt.setString(2, userId);
+				
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					result = true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				DBUtil.close(rs);
+				DBUtil.close(pstmt);
+			}
+			
+			return result;
+		}
 		
 		
 		

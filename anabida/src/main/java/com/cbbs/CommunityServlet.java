@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.json.JSONObject;
 
 import com.member.SessionInfo;
 import com.util.MyUploadServlet;
@@ -64,6 +67,8 @@ public class CommunityServlet extends MyUploadServlet{
 			delete(req, resp);
 		}else if(uri.indexOf("participate.do")!=-1) {
 			participate(req, resp);
+		}else if(uri.indexOf("insertBoardLike.do")!=-1) {
+			insertBoardLike(req, resp);
 		}
 	}
 	
@@ -275,6 +280,10 @@ public class CommunityServlet extends MyUploadServlet{
 			List<CommunityDTO> listFile = dao.listPhotoFile(num);
 			
 			int cdataCount = dao.cdataCount(dto.getNum());
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo)session.getAttribute("member");
+
+			boolean isUserLike = dao.isUserBoardLike(num, info.getUserId());
 			
 			req.setAttribute("meet", meet);	
 			req.setAttribute("dto", dto);
@@ -282,7 +291,7 @@ public class CommunityServlet extends MyUploadServlet{
 			req.setAttribute("query", query);
 			req.setAttribute("listFile", listFile);
 			req.setAttribute("cdataCount", cdataCount);
-			
+			req.setAttribute("isUserLike", isUserLike);
 			
 			forward(req, resp, "/WEB-INF/views/cbbs/article.jsp");
 			return;
@@ -349,6 +358,42 @@ public class CommunityServlet extends MyUploadServlet{
 			e.printStackTrace();
 		}
 	}
+	
+	// 게시물 공감저장 -AJAX
+		protected void insertBoardLike(HttpServletRequest req, HttpServletResponse resp)
+		throws ServletException, IOException {
+			CommunityDAO dao = new CommunityDAO();
+			
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			String state = "false";
+			int likeCount = 0;
+			try {
+				long num = Long.parseLong(req.getParameter("num"));
+				String isNoLike = req.getParameter("isNoLike");
+				if(isNoLike.equals("true")) {
+					dao.insertBoardLike(num, info.getUserId()); // 공감
+				} else {
+					dao.deleteBoardLike(num, info.getUserId()); // 공감 취소
+				}
+				
+				likeCount = dao.countBoardLike(num);
+
+				state = "true";
+			} catch (SQLException e) {
+				state = "liked";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			JSONObject job = new JSONObject();
+			job.put("state", state);
+			job.put("likeCount", likeCount);
+
+			respJson(resp, job.toString());
+			
+		}
 	
 	
 	

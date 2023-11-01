@@ -162,6 +162,14 @@ public abstract class MyUploadServlet extends HttpServlet {
 
 		return map;
 	}
+	
+	// JSON 으로 응답
+		protected void respJson(HttpServletResponse resp, String jsonStr) throws ServletException, IOException {
+			// resp.setContentType("text/html;charset=utf-8");
+			resp.setContentType("application/json");
+			resp.setCharacterEncoding("UTF-8");
+			resp.getWriter().write(jsonStr);
+		}
 
 	private String getOriginalFilename(Part p) {
 		try {

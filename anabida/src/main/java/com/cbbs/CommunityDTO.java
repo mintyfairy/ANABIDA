@@ -11,7 +11,10 @@ public class CommunityDTO {
 	private String creg_date;
 	private String ccategory;
 	
+	// 좋아요
+	private int likeCount;
 	
+
 	// 모임 번호
 	private long mnum;
 	// 조회수
@@ -30,6 +33,14 @@ public class CommunityDTO {
 	private String[] picFileNames;
 
 	
+
+	public int getLikeCount() {
+		return likeCount;
+	}
+
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
 	
 	public long getMnum() {
 		return mnum;
