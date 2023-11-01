@@ -40,7 +40,7 @@ public class MemberServlet extends MyServlet {
 			updateSubmit(req, resp);
 		} else if (uri.indexOf("userIdCheck.do") != -1) {
 			userIdCheck(req, resp);
-		}
+		} 
 	}
 
 	protected void loginForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -261,7 +261,6 @@ public class MemberServlet extends MyServlet {
 
 		try {
 			
-
 			MemberDTO dto = new MemberDTO();
 
 			dto.setUserId(req.getParameter("userId"));
@@ -294,4 +293,6 @@ public class MemberServlet extends MyServlet {
 		// 아이디 중복 검사
 
 	}
+	
+	
 }
