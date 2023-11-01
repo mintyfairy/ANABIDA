@@ -534,7 +534,6 @@ public class PbbsServlet extends MyUploadServlet {
 	}
 	protected void choose(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		PbbsDAO dao = new PbbsDAO();
-		HttpSession session = req.getSession();
 		String cp = req.getContextPath();
 		String page = req.getParameter("page");
 		String cat =req.getParameter("cat");
