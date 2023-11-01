@@ -146,9 +146,10 @@ public class JoinDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, min_peo, ");
+			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, min_peo, NVL(imageFilename, 'no.png') imageFilename, ");
 			sb.append(" TO_CHAR(g.reg_date, 'YYYY-MM-DD') reg_date, ");
-			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date ");
+			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, ");
+			sb.append(" m.userName ");
 			sb.append(" FROM group_buying g ");
 			sb.append(" JOIN member m ON g.userId = m.userId ");
 			sb.append(" ORDER BY buyNum DESC ");
@@ -166,8 +167,11 @@ public class JoinDAO {
 				
 				dto.setBuyNum(rs.getLong("buyNum"));
 				dto.setUserId(rs.getString("userId"));
+				dto.setUserName(rs.getString("userName"));
+				dto.setImageFilename(rs.getString("imageFilename"));
 				dto.setTitle(rs.getString("title"));
 				dto.setJoinCount(rs.getInt("joinCount"));
+				dto.setHitCount(rs.getInt("hitCount"));
 				dto.setLink(rs.getString("link"));
 				dto.setMin_peo(rs.getInt("min_peo"));
 				dto.setReg_date(rs.getString("reg_date"));
@@ -193,9 +197,10 @@ public class JoinDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, min_peo, ");
+			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, min_peo,  NVL(imageFilename, 'no.png') imageFilename,");
 			sb.append(" TO_CHAR(g.reg_date, 'YYYY-MM-DD') reg_date, ");
-			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date ");
+			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, ");
+			sb.append(" m.userName ");
 			sb.append(" FROM group_buying g ");
 			sb.append(" JOIN member m ON g.userId = m.userId ");
 			if (schType.equals("all")) {
@@ -229,8 +234,11 @@ public class JoinDAO {
 				
 				dto.setBuyNum(rs.getLong("buyNum"));
 				dto.setUserId(rs.getString("userId"));
+				dto.setUserName(rs.getString("userName"));
 				dto.setTitle(rs.getString("title"));
+				dto.setImageFilename(rs.getString("imageFilename"));
 				dto.setJoinCount(rs.getInt("joinCount"));
+				dto.setHitCount(rs.getInt("hitCount"));
 				dto.setLink(rs.getString("link"));
 				dto.setMin_peo(rs.getInt("min_peo"));
 				dto.setReg_date(rs.getString("reg_date"));
@@ -248,20 +256,242 @@ public class JoinDAO {
 		return list;
 	}
 	
+
+	// 해당게시물 보기
+	public JoinDTO findById(long buyNum) {
+		JoinDTO dto = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = " SELECT buyNum, g.userId, userName, link, title, content, g.reg_date, exp_date, hitCount, joinCount, "
+					+ " NVL(imageFilename, 'no.png') imageFilename, min_peo "
+					+ " FROM group_buying g"
+					+ " JOIN member m ON g.userId = m.userId"
+					+ " WHERE buyNum= ? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, buyNum);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				dto = new JoinDTO();
+				
+				dto.setBuyNum(rs.getLong("buyNum"));
+				dto.setUserId(rs.getString("userId"));
+				dto.setUserName(rs.getString("userName"));
+				dto.setContent(rs.getString("content"));
+				dto.setTitle(rs.getString("title"));
+				dto.setJoinCount(rs.getInt("joinCount"));
+				dto.setHitCount(rs.getInt("hitCount"));
+				dto.setLink(rs.getString("link"));
+				dto.setMin_peo(rs.getInt("min_peo"));
+				dto.setReg_date(rs.getString("reg_date"));
+				dto.setExp_date(rs.getString("exp_date"));
+				dto.setImageFilename(rs.getString("imageFilename"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return dto;
+	}
 	
+	// 이전글
+	public JoinDTO findByPrev(long buyNum, String schType, String kwd) {
+		JoinDTO dto = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		StringBuilder sb = new StringBuilder();
+		
+		try {
+			if(kwd != null && kwd.length()!=0) {
+				sb.append(" SELECT buyNum, title ");
+				sb.append(" FROM group_buying g ");
+				sb.append(" JOIN member m ON g.userId = m.userId ");
+				if(schType.equals("all")) {
+					sb.append(" AND(INSTR(title, ?) >= 1 OR INSTR(content, ?) >=1)");
+				} else if (schType.equals("reg_date")) {
+					kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
+					sb.append(" AND(TO_CHAR(reg_date, 'YYYYMMDD')=? ) " );
+				} else {
+					sb.append(" AND(INSTR(" + schType + ", ?) >=1 )");
+				}
+				sb.append(" ORDER BY buyNum ASC");
+				sb.append(" FETCH FIRST 1 ROWS ONLY ");
+				
+				pstmt = conn.prepareStatement(sb.toString());
+				
+				pstmt.setLong(1, buyNum);
+				pstmt.setString(2, kwd);
+				
+				if(schType.equals("all")) {
+					pstmt.setString(3, kwd);
+				} 
+				
+			}
+				else {
+					sb.append(" SELECT buyNum, title ");
+					sb.append(" FROM group_buying ");
+					sb.append(" WHERE buyNum > ? ");
+					sb.append(" ORDER BY buyNum ASC ");
+					sb.append(" FETCH FIRST 1 ROWS ONLY ");
+					
+					pstmt = conn.prepareStatement(sb.toString());
+					pstmt.setLong(1, buyNum);
+				}
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					dto = new JoinDTO();
+					dto.setBuyNum(rs.getLong("buyNum"));
+					dto.setTitle(rs.getString("title"));
+				}
+				
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		return dto;
+	}
+	
+	// 다음글
+	public JoinDTO findByNext(long buyNum, String schType, String kwd) {
+		JoinDTO dto = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		StringBuilder sb = new StringBuilder();
+
+		try {
+			if (kwd != null && kwd.length() != 0) {
+				sb.append(" SELECT buyNum, title ");
+				sb.append(" FROM group_buying g ");
+				sb.append(" JOIN member m ON g.userId = m.userId ");
+				sb.append(" WHERE ( buyNum < ? ) ");
+				if (schType.equals("all")) {
+					sb.append("   AND ( INSTR(title, ?) >= 1 OR INSTR(content, ?) >= 1 ) ");
+				} else if (schType.equals("reg_date")) {
+					kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
+					sb.append("   AND ( TO_CHAR(reg_date, 'YYYYMMDD') = ? ) ");
+				} else {
+					sb.append("   AND ( INSTR(" + schType + ", ?) >= 1 ) ");
+				}
+				sb.append(" ORDER BY buyNum DESC ");
+				sb.append(" FETCH FIRST 1 ROWS ONLY ");
+
+				pstmt = conn.prepareStatement(sb.toString());
+				
+				pstmt.setLong(1, buyNum);
+				pstmt.setString(2, kwd);
+				if (schType.equals("all")) {
+					pstmt.setString(3, kwd);
+				}
+			} else {
+				sb.append(" SELECT buyNum, title ");
+				sb.append(" FROM group_buying ");
+				sb.append(" WHERE buyNum < ? ");
+				sb.append(" ORDER BY buyNum DESC ");
+				sb.append(" FETCH FIRST 1 ROWS ONLY ");
+
+				pstmt = conn.prepareStatement(sb.toString());
+				
+				pstmt.setLong(1, buyNum);
+			}
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				dto = new JoinDTO();
+				
+				dto.setBuyNum(rs.getLong("buyNum"));
+				dto.setTitle(rs.getString("title"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+
+		return dto;
+	}
+	
+	// 게시물 수정
+	public void updateJoin(JoinDTO dto) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			sql = " UPDATE group_buying SET title=?, exp_date=?, min_peo=?, content=?,"
+					+ " WHERE buyNum=? AND userId=? ";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, dto.getTitle());
+			pstmt.setString(2, dto.getExp_date());
+			pstmt.setInt(3, dto.getMin_peo());
+			pstmt.setString(4, dto.getContent());
+			pstmt.setLong(5, dto.getBuyNum());
+			pstmt.setString(6, dto.getUserId());
+			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+		
+	}
+	
+	//삭제
+	public void deleteBoard(long buyNum, String userId) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql;
+
+		try {
+			if (userId.equals("admin")) {
+				sql = "DELETE FROM group_buying WHERE buyNum=?";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, buyNum);
+				
+				pstmt.executeUpdate();
+			} else {
+				sql = "DELETE FROM group_buying WHERE buyNum=? AND userId=?";
+				
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, buyNum);
+				pstmt.setString(2, userId);
+				             
+				pstmt.executeUpdate();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+	}
 	/*
 	
 	// 참여자 수 증가하기
 	public void joinCount(long buynum) throws SQLException {
 		
 	}
-	
-	// 해당게시물 보기
-	public JoinDTO findById(long buynum) {
-		
-	}
-	
 	*/
+
+	
 	
 	
 	

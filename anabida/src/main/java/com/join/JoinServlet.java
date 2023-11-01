@@ -44,7 +44,7 @@ public class JoinServlet extends MyUploadServlet{
 		
 		// 이미지 저장 경로
 		String root = session.getServletContext().getRealPath("/");
-		pathname = root + "uploads" + File.separator + "photo";
+		pathname = root + "uploads" + File.separator + "join";
 		
 		
 		if(uri.indexOf("list.do") != -1) {
@@ -107,7 +107,7 @@ public class JoinServlet extends MyUploadServlet{
 			}
 			
 			// 전체 페이지 수 
-			int size = 3;
+			int size = 5;
 			int total_page = util.pageCount(dataCount, size);
 			if(current_page>total_page){
 				current_page = total_page;
@@ -166,8 +166,8 @@ public class JoinServlet extends MyUploadServlet{
 	protected void writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		JoinDAO dao = new JoinDAO();
 		
-		//HttpSession session = req.getSession();
-		//SessionInfo info = (SessionInfo) session.getAttribute("member");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
 		
 		String cp = req.getContextPath();
 		if(req.getMethod().equalsIgnoreCase("GET")) {
@@ -178,9 +178,9 @@ public class JoinServlet extends MyUploadServlet{
 		try {
 			JoinDTO dto = new JoinDTO();
 			
-			// userId는 세션에 저장된 정보이므로
-			// dto.setUserId(info.getUserId());
-			dto.setUserId(req.getParameter("userId"));
+			//userId는 세션에 저장된 정보이므로
+			dto.setUserId(info.getUserId());
+			// dto.setUserId(req.getParameter("userId"));
 			
 			dto.setTitle(req.getParameter("title"));
 			dto.setLink(req.getParameter("link"));
@@ -207,15 +207,132 @@ public class JoinServlet extends MyUploadServlet{
 
 	}
 	
+	
 	protected void article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		JoinDAO dao = new JoinDAO();
+		MyUtil util = new MyUtil();
+		
+		String cp = req.getContextPath();
+		
+		String page = req.getParameter("page");
+		String query = "page="+page;
+		
+		try {
+			long buyNum = Long.parseLong(req.getParameter("buyNum"));
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			if(schType==null) {
+				schType = "all";
+				kwd ="";
+			} 
+			kwd = URLDecoder.decode(kwd, "utf-8");
+			
+			if(kwd.length()!=0) {
+				query += "&schType=" + schType + "&kwd=" + URLEncoder.encode(kwd, "UTF-8");
+			}
+			
+			// 조회수 증가
+			dao.updateHitCount(buyNum);
+			
+			// 게시물 가져오기
+			JoinDTO dto = dao.findById(buyNum);
+			if(dto==null) {
+				resp.sendRedirect(cp+"/join/list.do?"+query);
+			}
+			dto.setContent(util.htmlSymbols(dto.getContent()));
+			
+			// 이전글 다음글
+			JoinDTO prevDto = dao.findByPrev(dto.getBuyNum(), schType, kwd);
+			JoinDTO nextDto = dao.findByNext(dto.getBuyNum(), schType, kwd);
+			
+			// JSP로 전달할 속성
+			req.setAttribute("dto", dto);
+			req.setAttribute("page", page);
+			req.setAttribute("query", query);
+			req.setAttribute("prevDto", prevDto);
+			req.setAttribute("nextDto", nextDto);
+			
+			forward(req, resp, "/WEB-INF/views/join/article.jsp");
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		resp.sendRedirect(cp + "/join/list.do?" + query);
 	}
 	
 	protected void updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		JoinDAO dao = new JoinDAO();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		String page = req.getParameter("page");
+		
+		try {
+			long buyNum = Long.parseLong(req.getParameter("buyNum"));
+			JoinDTO dto = dao.findById(buyNum);
+			
+			if(dto==null) {
+				resp.sendRedirect(cp + "/join/list.do?page="+page);
+				return;
+			}
+			
+			if(!dto.getUserId().equals(info.getUserId())) {
+				resp.sendRedirect(cp+"/join/list.do?page="+page);
+				return;
+			}
+			
+			req.setAttribute("dto", dto);
+			req.setAttribute("page", page);
+			req.setAttribute("mode", "update");
+			
+			forward(req, resp, "/WEB-INF/views/join/write.jsp");
+			return;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		resp.sendRedirect(cp+"/join/list.do?page="+page);
 	}
 	
 	protected void updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	}
 	protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		JoinDAO dao = new JoinDAO();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		
+		String page = req.getParameter("page");
+		String query = "page="+page;
+		
+		try {
+			long buyNum = Long.parseLong(req.getParameter("buyNum"));
+			
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			if (schType == null) {
+				schType = "all";
+				kwd = "";
+			}
+			kwd = URLDecoder.decode(kwd, "utf-8");
+
+			if (kwd.length() != 0) {
+				query += "&schType=" + schType + "&kwd=" + URLEncoder.encode(kwd, "UTF-8");
+			}
+			
+			dao.deleteBoard(buyNum, info.getUserId());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		resp.sendRedirect(cp + "/join/list.do?"+query);
+				
 	}
 	
 	

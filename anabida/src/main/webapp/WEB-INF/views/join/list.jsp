@@ -6,7 +6,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/layout.css" type="text/css">
 <style type="text/css">
 * { padding: 0; margin: 0; }
 *, *::after, *::before { box-sizing: border-box; }
@@ -73,9 +76,12 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .table-border tfoot > tr { border-bottom: 1px solid #ced4da; }
 .td-border td { border: 1px solid #ced4da; }
 
-.content-box{width:100%; height:100%; display: flex;}
-.img{border: 1px solid pink; width: 30%; height:80%; vertical-align: center; margin:15px 5px;}
+
+td .content-box{width:30%; height:100%; display: flex;}
+.img {display:flex; justify-content: center;}
 .hi { padding: 60px 20px;}
+.subtitle {text-align: left;}
+
 
 /* board */
 .board { margin: 30px auto; width: 700px; }
@@ -85,7 +91,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .table-list thead > tr { background: #feefef; }
 
 .table-list th, .table-list td { text-align: center; }
-.table-list td:nth-child(5n+2) { text-align: left;  height: 150px;}
+.table-list td:nth-child(5n+3) { text-align: left;  height: 150px; width: 30%;}
 
 .table-list .num { width: 50px; color: #787878; }
 .table-list .subject { color: #787878; }
@@ -93,6 +99,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .table-list .date { width: 100px; color: #787878; }
 .table-list .hit { width: 50px; color: #787878; }
 .table-list .joincount { width: 60px; color: #787878; }
+
 
 .btn {
   width: 80px;
@@ -138,6 +145,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 }
 
 
+
 </style>
 
 <script type="text/javascript">
@@ -146,9 +154,14 @@ function searchList() {
 	f.submit();
 }
 
+
 </script>
 </head>
 <body>
+
+<header>
+    <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
+</header>
 
 <div class="board">
 	<div class="title">
@@ -166,7 +179,7 @@ function searchList() {
 		<thead>
 			<tr>
 				<th class="num">번호</th>
-				<th class="subject">제목</th>
+				<th class="subject" colspan="2">제목</th>
 				<th class="name">작성자</th>
 				<th class="date">기한</th>
 				<th class="joincount">참여자수</th>
@@ -178,8 +191,17 @@ function searchList() {
 		  <c:forEach var="dto" items="${list}" varStatus="status">
 			<tr>
 				<td>${dataCount - (page-1) * size - status.index}</td>
-				<td class="content-box"><div class="img" ></div><span class="hi">${dto.title}</span></td>
-				<td>${dto.userId}</td>
+				<td class="">
+					<a href="${pageContext.request.contextPath}/join/article.do?buyNum=${dto.buyNum}&page=${page}">
+					<img src="${pageContext.request.contextPath}/uploads/join/${dto.imageFilename}" width="100" height="103" class="img">
+					</a>
+				</td>
+				<td> 
+					<a href="${pageContext.request.contextPath}/join/article.do?buyNum=${dto.buyNum}&page=${page}">
+					${dto.title}
+					</a>
+				</td>
+				<td>${dto.userName}</td>
 				<td>(${dto.reg_date}<br>~${dto.exp_date})</td>
 				<td>(${dto.joinCount}/${dto.min_peo})</td>
 				<td>${dto.hitCount}</td>
@@ -205,7 +227,7 @@ function searchList() {
 						<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
 						<option value="name" ${schType=="userId"? "selected":"" }>작성자</option>
 						<option value="reg_date"  ${schType=="reg_date"?"selected":"" }>등록일</option>
-						<option value="subject" ${schType=="subject"?"selected":"" }>제목</option>
+						<option value="title" ${schType=="title"?"selected":"" }>제목</option>
 						<option value="content"${schType=="content"?"selected":"" }>내용</option>
 					</select>
 					<input type="text" name="kwd" value="${kwd}" class="form-control">
