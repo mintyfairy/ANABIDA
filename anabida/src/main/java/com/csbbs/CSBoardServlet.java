@@ -238,15 +238,14 @@ public class CSBoardServlet extends MyUploadServlet {
 			
 			if (dto == null) {
 				// 게시글 없으면
+				
 				resp.sendRedirect(cp + "/csbbs/list.do?" + query);
 				return;
 			}
 			
 			// content의 엔터를 <br>로
-			dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
-			if(dto.getContent() != null) {
-				dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
-			}
+			//dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
+			
 			dto.setContent(util.htmlSymbols(dto.getContent()));
 			// 이전글, 다음글
 			CSBoardDTO prevDto = dao.findByPrevBoard(dto.getGroupNum(), dto.getOrderNo(), schType, kwd);
@@ -270,6 +269,7 @@ public class CSBoardServlet extends MyUploadServlet {
 		}
 
 		// 예외 발생시 list.do로
+		System.out.println("aaa");
 		resp.sendRedirect(cp + "/csbbs/list.do?" + query);
 
 	}
