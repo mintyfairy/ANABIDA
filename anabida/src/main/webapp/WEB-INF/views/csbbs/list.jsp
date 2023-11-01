@@ -59,6 +59,10 @@
 	margin-left: 3px;
 	vertical-align: middle;
 }
+
+a { color: #222222; text-decoration: none; cursor: pointer; }
+a:active, a:hover { color: #668cff; text-decoration: underline; }
+
 </style>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script type="text/javascript">
