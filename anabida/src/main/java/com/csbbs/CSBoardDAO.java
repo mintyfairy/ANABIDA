@@ -196,7 +196,7 @@ public class CSBoardDAO {
 			sb.append("       TO_CHAR(b.reg_date, 'YYYY-MM-DD') reg_date ");
 			sb.append(" FROM qbbs b ");
 			sb.append(" JOIN member m ON b.userId = m.userId ");
-			sb.append(" ORDER BY groupNum ASC, depth ASC ");
+			sb.append(" ORDER BY groupNum desc, depth ASC ");
 			sb.append(" OFFSET ? ROWS FETCH FIRST ? ROWS ONLY ");
 
 			pstmt = conn.prepareStatement(sb.toString());

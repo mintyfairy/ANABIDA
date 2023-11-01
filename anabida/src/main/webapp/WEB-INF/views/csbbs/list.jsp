@@ -14,7 +14,7 @@
 }
 
 .table-list thead>tr:first-child {
-	background: #f8f8f8;
+	background:  #e6f7ff;
 }
 
 .table-list th, .table-list td {
@@ -49,11 +49,30 @@
 	width: 70px;
 	color: #787878;
 }
+
+.hover { cursor: pointer; background: #787878; }
+.paginate span {
+	border: 1px solid #0088cc;
+	color: #3399ff;
+	font-weight: 600;
+	padding: 3px 7px;
+	margin-left: 3px;
+	vertical-align: middle;
+}
 </style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script type="text/javascript">
-	function searchList() {
-		const f = document.searchForm;
-		f.submit();
+$(function(){
+	$("table.tc tr:gt(0)").hover( // 마우스 hover 처리
+		function() {$(this).addClass("hover");},
+		function() {$(this).removeClass("hover");}
+	);
+	
+});
+
+function searchList() {
+	const f = document.searchForm;
+	f.submit();
 	}
 </script>
 </head>
@@ -74,12 +93,12 @@
 			<div class="body-main mx-auto">
 				<table class="table">
 					<tr>
-						<td width="50%">${dataCount}개${page}/${total_page}페이지</td>
+						<td width="50%">${dataCount}개  ${page}/${total_page}페이지</td>
 						<td align="right">&nbsp;</td>
 					</tr>
 				</table>
 
-				<table class="table table-border table-list">
+				<table class="table table-border table-list tc">
 					<thead>
 						<tr>
 							<th class="qnum">번호</th>
@@ -106,14 +125,25 @@
 										확인 권한이 없습니다.
 									</c:if>
 								</td>
+								<c:if test="${dto.userId=='admin'}">
+								<td style="color: #0099e6;">${dto.userName}</td>
+								</c:if>
+								<c:if test="${dto.userId==sessionScope.member.userId}">
+								<td style="font-weight: bold;">${dto.userName}</td>
+								</c:if>
+								<c:if test="${dto.userId!='admin' && dto.userId!=sessionScope.member.userId}">
 								<td>${dto.userName}</td>
+								</c:if>
 								<td>${dto.reg_date}</td>
 								<td>${dto.hitCount}</td>
-								<c:if test="${dto.userId!='admin' }">
-								<td>${dto.answeryes==0 ? "답변대기":"답변완료"}</td>	
+								<c:if test="${dto.userId!='admin' && dto.answeryes==1}">
+								<td style="font-weight: bold;">${dto.answeryes==0 ? "답변대기":"답변완료"}</td>	
+								</c:if>
+								<c:if test="${dto.userId!='admin' && dto.answeryes==0}">
+								<td style="color: black;">${dto.answeryes==0 ? "답변대기":"답변완료"}</td>	
 								</c:if>
 								<c:if test="${dto.userId == 'admin' }">
-								<td>└admin</td>
+								<td style="font-weight: bold;">└admin</td>
 								</c:if>
 								</tr>
 							</c:forEach>
@@ -121,7 +151,7 @@
 					<tbody>
 				</table>
 
-				<div class="page-navigation">
+				<div class="page-navigation" style="color: #0099e6">
 				${dataCount==0 ? "등록된 게시글이 없습니다." : paging }
 				</div>
 
