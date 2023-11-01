@@ -3,8 +3,8 @@ package com.alert;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -22,7 +22,8 @@ import com.util.MyUtil;
 public class AlertServlet extends MyUploadServlet {
 	private static final long serialVersionUID = 1L;
 
-	private String pathname;
+
+
 
 	@Override
 	protected void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -33,7 +34,8 @@ public class AlertServlet extends MyUploadServlet {
 
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
-
+		
+		
 		if (uri.indexOf("list.do") == -1 && info == null) {
 			resp.sendRedirect(cp + "/member/login.do");
 			return;
@@ -41,7 +43,7 @@ public class AlertServlet extends MyUploadServlet {
 
 		// 저장할 경로
 		String root = session.getServletContext().getRealPath("/");
-		pathname = root + "uploads" + File.separator + "alert";
+		String pathname = root + "uploads" + File.separator + "alert";
 
 		if (uri.indexOf("list.do") != -1) {
 			list(req, resp);
@@ -68,10 +70,8 @@ public class AlertServlet extends MyUploadServlet {
 
 	protected void list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		
-		 /*
-		  AlertDAO dao = new AlertDAO();
-		  
 		 
+		AlertDAO dao = new AlertDAO();
 		MyUtil util = new MyUtil();
 		
 		String cp = req.getContextPath();
@@ -92,46 +92,66 @@ public class AlertServlet extends MyUploadServlet {
 			if(req.getMethod().equalsIgnoreCase("GET")) {
 				kwd = URLDecoder.decode(kwd,"utf-8");
 			}
-			////----------------------------------------
-			String pageSize = req.getParameter("size");
-			int size = pageSize == null?10:Integer.parseInt(pageSize);
 			
-			int dataCount, total_page;
-			
-			if(kwd.length()!=0) {
-				dataCount = dao.dataCount(schType, kwd);
+			int dataCount;
+			if(kwd.length()==0) {
+				dataCount = dao.dataCount();
 			}else {
-				dataCount = dao.dataCount( );
+				dataCount =dao.dataCount(schType,kwd);
 			}
-			total_page = util.pageCount(dataCount, size);
 			
-			if(current_page > total_page) {
+			//사이즈는 안넣었고 -> 걍 넣음
+			int size = 10;
+			int total_page = util.pageCount(dataCount, size);
+			if (current_page > total_page) {
 				current_page = total_page;
+		}
+			
+			//게시뮬만 일단 가져옴
+			int offset = (current_page -1 );
+			if(offset < 0)offset = 0;
+			
+			List<AlertDTO> list = null;
+			if(kwd.length()==0) {
+				list = dao.listAlert(offset, offset);
+			}else {
+				list = dao.listAlert(offset, offset, schType, kwd);
 			}
 			
-			int offset = (current_page - 1) * size;
-			if(offset < 0) offset = 0;
-			
-			List<AlertDTO> list;
-			if (kwd.length() != 0) {
-				list = dao.listAlert(offset, size,schType,kwd);
-			} else {
-				list = dao.listAlert(offset,size);
+			String query = "";
+			if(kwd.length()!=0) {
+				query = "schType" + schType + "&kwd=" + URLEncoder.encode(kwd,"utf-8");
 			}
-			//-----------------공지
 			
-			
-			
-			
-		} catch (Exception e) {
+			//페이징처리
+			String listUrl = cp + "/alert/list.do";
+			String articleUrl = cp + "/alert/article.do?page=" + current_page;
+			if (query.length() != 0) {
+				listUrl += "?" + query;
+				articleUrl += "&" + query;
+			}
+
+			String paging = util.paging(current_page, total_page, listUrl);
+	
+			req.setAttribute("list", list);
+			req.setAttribute("page", current_page);
+			req.setAttribute("total_page", total_page);
+			req.setAttribute("dataCount", dataCount);
+			req.setAttribute("size", size);
+			req.setAttribute("atrticleUrl",articleUrl);
+			req.setAttribute("paging",paging);
+			req.setAttribute("schType",schType);
+			req.setAttribute("kwd",kwd);
+
+		} catch(Exception e) {
 			e.printStackTrace();
-			
-			
-		}*/
-		forward(req,resp,"/WEB-INF/views/alert/list.jsp");
+		}
+		forward(req, resp, "/WEB-INF/views/alert/list.jsp");
+		}
+	
 		
 
-	}
+	
 	
 
 	protected void writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -140,15 +160,12 @@ public class AlertServlet extends MyUploadServlet {
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		String cp = req.getContextPath();
-		
-		String size = req.getParameter("size");
-		
+
 		if(!info.getUserId().equals("admin")) {
-			resp.sendRedirect(cp + "/alert/list.do?size=" + size);
+			resp.sendRedirect(cp + "/alert/list.do");
 			return;
 		}
 		req.setAttribute("mode", "write");
-		req.setAttribute("size", size);
 		forward(req,resp,"/WEB-INF/views/alert/write.jsp");
 		
 	}
@@ -165,36 +182,26 @@ public class AlertServlet extends MyUploadServlet {
 			return;
 		}
 		
-		if(!info.getUserId().equals("admin")) {
+		if(!info.getUserId().equals("admin")) {    //admin만 글 저장 가능
 			resp.sendRedirect(cp + "/alert/list.do");
 			return;
 		}
 		AlertDAO dao = new AlertDAO();
-		
-		String size = req.getParameter("size");
+
 		try {
 			AlertDTO dto = new AlertDTO();
 			
 			dto.setUserId(info.getUserId());
-			if(req.getParameter("alert")!=null) {
-				dto.setAlert(Integer.parseInt(req.getParameter("alert")));
-			}
+
 			dto.setTitle(req.getParameter("title"));
 			dto.setContent(req.getParameter("content"));
-			
-			Map<String, String[]> map = doFileUpload(req.getParts(), pathname);
-			if(map != null) {
-				String[] saveFiles = map.get("saveFilenames");
-				String[] originalFiles = map.get("originalFilenames");
-				dto.setSaveFiles(saveFiles);
-				dto.OriginalFiles(originalFiles);
-					
-			}
+
+
 			dao.insertArlert(dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		resp.sendRedirect(cp + "/alert/list.do?size=" + size);
+		resp.sendRedirect(cp + "/alert/list.do");
 	}
 
 	protected void article(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException  {
@@ -217,12 +224,14 @@ public class AlertServlet extends MyUploadServlet {
 
 	}
 
+	protected void deleteList(HttpServletRequest req, HttpServletResponse resp) {
+
+	}
+	
 	protected void download(HttpServletRequest req, HttpServletResponse resp) {
 
 	}
 
-	protected void deleteList(HttpServletRequest req, HttpServletResponse resp) {
-
-	}
+	
 
 }

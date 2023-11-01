@@ -88,11 +88,17 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 </style>
 
 <script type="text/javascript">
-
+function sendOk(){
+	const f = document.boardForm;
+	
+	f.action="${pageContext.request.contextPath}/alert/${mode}_ok.do";
+	f.submit();
+}
 </script>
 </head>
 <body>
 
+<!-- 여기는 등록 -->
 <div class="board">
 	<div class="title">
 	    <h3><span>|</span> 게시판</h3>
@@ -103,14 +109,14 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 			<tr> 
 				<td>제&nbsp;&nbsp;&nbsp;&nbsp;목</td>
 				<td> 
-					<input type="text" name="subject" maxlength="100" class="form-control" value="">
+					<input type="text" name="title" maxlength="100" class="form-control" value="">
 				</td>
 			</tr>
 			
 			<tr> 
 				<td>작성자</td>
 				<td> 
-					<input type="text" name="name" maxlength="10" class="form-control" value="">
+					${sessionScope.member.userName }
 				</td>
 			</tr>
 			
@@ -121,21 +127,15 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 				</td>
 			</tr>
 			
-			<tr>
-				<td>패스워드</td>
-				<td> 
-					<input type="password" name="pwd" maxlength="10" class="form-control">
-					(게시물 수정 및 삭제시 필요 !!!)
-				</td>
-			</tr>
+
 		</table>
 			
 		<table class="table">
 			<tr> 
 				<td align="center">
-					<button type="button" class="btn">등록하기</button>
+					<button type="button" class="btn" onclick="sendOk()">글올리기</button>
 					<button type="reset" class="btn">다시입력</button>
-					<button type="button" class="btn">등록취소</button>
+					<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/list.do">등록취소</button>
 				</td>
 			</tr>
 		</table>

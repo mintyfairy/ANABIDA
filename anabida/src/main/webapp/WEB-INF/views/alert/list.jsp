@@ -129,7 +129,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 
 <div class="board">
 	<div class="title">
-	    <h3><span>|</span> 게시판</h3>
+	    <h3>⚡공지사항⚡</h3>
 	</div>
 
 	<table class="table">
@@ -152,11 +152,11 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		
 		<tbody>
 			<tr>
-				<td>1</td>
-				<td><a href="#">안녕 하세요.</a></td>
-				<td>스프링</td>
-				<td>2021-10-01</td>
-				<td>1</td>
+				<td>1</td>  <!-- 여기를 $어쩌구 해서 가져오기!!!!  서블릿이랑 디에이오하고!! -->
+				<td><a href="#">공지란입니다.</a></td>
+				<td>관리자</td>
+				<td>2023-10-31</td>
+				<td>20</td>
 			</tr>
 		<tbody>
 		
@@ -169,7 +169,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 	<table class="table">
 		<tr>
 			<td width="100">
-				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/';">새로고침</button>
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/list.do';">새로고침</button>
 			</td>
 			<td align="center">
 				<form name="searchForm" action="" method="post">
@@ -185,7 +185,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 				</form>
 			</td>
 			<td align="right" width="100">
-				<button type="button" class="btn">글올리기</button>
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/write.do'; ">글올리기</button>
 			</td>
 		</tr>
 	</table>	

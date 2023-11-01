@@ -85,11 +85,9 @@ public class AlertDTO {
 		
 	}
 	public void setAlert(int parseInt) {
-		// TODO Auto-generated method stub
 		
 	}
 	public void OriginalFiles(String[] originalFiles2) {
-		// TODO Auto-generated method stub
 		
 	}
 	
