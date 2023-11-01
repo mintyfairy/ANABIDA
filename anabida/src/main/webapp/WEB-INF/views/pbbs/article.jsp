@@ -42,7 +42,7 @@
   max-width: 1000px;
   position: relative;
   margin: auto;
-  z-index:-1;
+  z-index:2;
 }
 
 /* Hide the images by default */
@@ -193,6 +193,9 @@
 									    <div class="text" style="background: black;color:white;opacity: 0.5 "> <span >${listNum=listNum+1} / ${listSize}</span></div>
 									</div>
 								</c:forEach>
+								<c:if test="${dto.pstate==1}">
+									<div style="position: absolute; top: 0; ;opacity: 0.5; "><img src="${pageContext.request.contextPath}/resource/images/saled.png" style="width: 100%;height:450px;"/></div>
+								</c:if>
 								<!-- Next and previousbuttons -->
 	 							<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
 	  							<a class="next" onclick="plusSlides(1)">&#10095;</a>

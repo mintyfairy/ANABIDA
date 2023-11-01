@@ -58,6 +58,8 @@ public class PbbsServlet extends MyUploadServlet {
 			delete(req, resp);
 		} else if (uri.indexOf("like.do") != -1) {
 			like(req, resp);
+		} else if (uri.indexOf("choose.do") != -1) {
+			choose(req, resp);
 		} 
 
 	}
@@ -520,6 +522,43 @@ public class PbbsServlet extends MyUploadServlet {
 			}else {
 				dao.imSoso( num,id);
 			}
+			
+			
+			resp.sendRedirect(cp + "/pbbs/article.do?"+category+order  +"page="+ page+"&num="+num);
+			return;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		resp.sendRedirect(cp + "/pbbs/list.do?"+category+order  +"page="+ page);
+	}
+	protected void choose(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		PbbsDAO dao = new PbbsDAO();
+		HttpSession session = req.getSession();
+		String cp = req.getContextPath();
+		String page = req.getParameter("page");
+		String cat =req.getParameter("cat");
+		String category="";
+		if(cat!=null) {
+			category="&"+"cat="+cat+"&";
+		}
+		String ord =req.getParameter("order");
+		String order="";
+		if(ord!=null) {
+			order="&"+"order="+ord+"&";
+		}
+		if(ord==null) {
+			ord="";
+		}
+		try {
+			long num=Long.parseLong(req.getParameter("num"));
+			PbbsDTO dto = dao.findById(num);
+			if (dto == null) {
+				resp.sendRedirect(cp + "/pbbs/list.do?"+category+order  +"page=" + page);
+				return;
+			}
+			String id=req.getParameter("buyer");
+			dao.iChooseYou(num, id);
 			
 			
 			resp.sendRedirect(cp + "/pbbs/article.do?"+category+order  +"page="+ page+"&num="+num);

@@ -46,6 +46,7 @@
 	border: 1px solid #ced4da;
 	cursor: pointer;
 	padding: 5px 5px 0;
+ 	position: relative;
 }
 
 .card img {
@@ -109,8 +110,11 @@
 							src="${pageContext.request.contextPath}/uploads/pbbs/${dto.imageFilename}">
 							<p class="card-title"> ${dto.subject }</p>
 							<p class="card-title"> ${dto.cost } 원</p>
+							<c:if test="${dto.pstate==1}">
+									<div style="position: absolute; top: 5px; ;opacity: 0.5; "><img src="${pageContext.request.contextPath}/resource/images/saled.png" style="width: 95%;	"/></div>
+							</c:if>
 						</li>
-
+								
 					</c:forEach>
 				</ul>
 					<span class="list-header-right">
