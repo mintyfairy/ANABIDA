@@ -146,7 +146,7 @@ img {vertical-align: middle;}
 							이름 : ${dto.userName }
 						</td>
 						<td align="right">
-							<button type="button" class="btn btnSendBoardLike" title="좋아요"><i class="fa-regular fa-heart" style="color: ${isUserLike? 'red':'black'}"></i>&nbsp;&nbsp;<span id="boardLikeCount">${dto.likeCount}</span></button>
+							<button type="button" class="btn btnSendBoardLike" title="좋아요"><i class="fa-regular fa-heart" style="color: ${isUserLike? 'red' : 'black'}"></i>&nbsp;&nbsp;<span id="boardLikeCount">${dto.likeCount}</span></button>
 							
 							<c:if test="${dto.ccategory == 1}">모임마당</c:if>
 							<c:if test="${dto.ccategory == 2}">질문마당</c:if>
@@ -428,7 +428,7 @@ $(function(){
 			if(state === "true") {
 				let color = "black";
 				if( isNoLike ) {
-					color = "blue";
+					color = "red";
 				}
 				$i.css("color", color);
 				let count = data.likeCount;
