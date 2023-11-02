@@ -1,5 +1,6 @@
 package com.pbbs;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +21,7 @@ public class PbbsDAO {
 		long seq;
 		
 		try {
+			conn.setAutoCommit(false);
 			/*sql="insert into pbbs(pnum,userid,subject,content,IMAGEFILENAME,cost,catnum) values(pbbs_seq.nextval,?,?,?,?,?,?)";
 			
 			pstmt=conn.prepareStatement(sql);
@@ -81,13 +83,19 @@ public class PbbsDAO {
 			
 			
 			
+			conn.commit();
 		} catch (SQLException e) {
+			DBUtil.rollback(conn);
 			// TODO: handle exception
 			e.printStackTrace();
 			throw e;
 		}finally {
 			DBUtil.close(rs);
 			DBUtil.close(pstmt);
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e2) {
+			}
 		}
 	}
 
@@ -499,6 +507,7 @@ public class PbbsDAO {
 		PreparedStatement pstmt=null;
 		String sql;
 		try {
+			conn.setAutoCommit(false);
 			sql="update  pbbs set subject=?,content=?,IMAGEFILENAMe=? where pnum=? ";
 			pstmt= conn.prepareStatement(sql);
 			
@@ -526,31 +535,34 @@ public class PbbsDAO {
 					pstmt.executeUpdate();
 				}
 			}
+			conn.commit();
 		} catch (SQLException e) {
 			// TODO: handle exception
+			DBUtil.rollback(conn);
 			e.printStackTrace();
 			throw e;
 		}finally {
 			DBUtil.close(pstmt);
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e2) {
+			}
 		}
 	}
 	public void deletePhoto(long	num  ) throws SQLException {
-		PreparedStatement pstmt=null;
-		String sql;
+		CallableStatement cstmt=null;
 		try {
-			sql="delete from  pbbs  where pnum=?";
-			pstmt= conn.prepareStatement(sql);
+			cstmt = conn.prepareCall("{call anabada.pbbs_del(?)}");
+			cstmt.setLong(1,num);
 			
-			pstmt.setLong(1,num);
-			
-			pstmt.executeUpdate();
+			cstmt.executeUpdate();
 			
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
 			throw e;
 		}finally {
-			DBUtil.close(pstmt);
+			DBUtil.close(cstmt);
 		}
 	}
 	public String getCat(long num) throws SQLException {
@@ -659,8 +671,8 @@ public class PbbsDAO {
 
 	}
 	
-	public long doILikeThis(long num,String id) throws SQLException {
-		long b=0;
+	public String doILikeThis(long num,String id) throws SQLException {
+		String b="0";
 		PreparedStatement pstmt =null;
 		String sql;
 		ResultSet rs = null;
@@ -675,7 +687,7 @@ public class PbbsDAO {
 			//b=pstmt.executeUpdate();//해당안되면 영향받은값이 0이 나올것이라 기대됨
 			//0이라는 숫자를반환하는게 무조건 1로나와서 실패함
 			if(rs.next()) {
-				b=rs.getLong("what");
+				b=rs.getString("what");
 			}
 			
 			
@@ -698,6 +710,7 @@ public class PbbsDAO {
 		PreparedStatement pstmt =null;
 		String sql;
 		try {
+			conn.setAutoCommit(false);
 			sql="insert into wish_lists values(?,?)";
 			pstmt=conn.prepareStatement(sql);
 			
@@ -712,13 +725,19 @@ public class PbbsDAO {
 			pstmt.setLong(1, num);
 			
 			pstmt.executeUpdate();
+			conn.commit();
 		} catch (SQLException e) {
+			DBUtil.rollback(conn);
 			// TODO: handle exception
 			e.printStackTrace();
 			throw e;
 			
 		}finally {
 			DBUtil.close(pstmt);
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e2) {
+			}
 		}
 	}
 
@@ -727,6 +746,7 @@ public class PbbsDAO {
 		PreparedStatement pstmt =null;
 		String sql;
 		try {
+			conn.setAutoCommit(false);
 			sql="delete from wish_lists where pnum=?";
 			pstmt=conn.prepareStatement(sql);
 			
@@ -740,20 +760,35 @@ public class PbbsDAO {
 			pstmt.setLong(1, num);
 			
 			pstmt.executeUpdate();
+			conn.commit();
 		} catch (SQLException e) {
+			DBUtil.rollback(conn);
 			// TODO: handle exception
 			e.printStackTrace();
 			throw e;
 			
 		}finally {
 			DBUtil.close(pstmt);
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e2) {
+			}
 		}
 	}
-	public void iChooseYou(long num,String buyerId) throws SQLException {
+	public void iChooseYou(long num,String buyerId,long replynum) throws SQLException {
 		PreparedStatement pstmt =null;
 		String sql;
 		try {
+			conn.setAutoCommit(false);
 			sql="update pbbs  set pstate=1 where pnum=?";
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, num);
+			
+			pstmt.executeUpdate();
+			DBUtil.close(pstmt);
+			
+			sql="update preply  set choosed=1 where replynum=? and answer=0";//대댓값안들어가게
 			pstmt=conn.prepareStatement(sql);
 			
 			pstmt.setLong(1, num);
@@ -771,13 +806,380 @@ public class PbbsDAO {
 			pstmt.executeUpdate();
 			
 		
+			conn.commit();
 		} catch (SQLException e) {
+			DBUtil.rollback(conn);
 			// TODO: handle exception
 			e.printStackTrace();
 			throw e;
 			
 		}finally {
 			DBUtil.close(pstmt);
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e2) {
+			}
 		}
 	}
+	
+	// 게시물의 댓글 및 답글 추가
+		public void insertReply(PReplyDTO dto) throws SQLException {
+			PreparedStatement pstmt = null;
+			String sql;
+			
+			try {
+				sql = "INSERT INTO pReply(replyNum, pnum, userId, replycontent, answer, reply_reg_date) "
+						+ " VALUES (PREPLY_SEQ.NEXTVAL, ?, ?, ?, ?, SYSDATE)";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, dto.getNum());
+				pstmt.setString(2, dto.getUserId());
+				pstmt.setString(3, dto.getContent());
+				pstmt.setLong(4, dto.getAnswer());
+				
+				pstmt.executeUpdate();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			} finally {
+				DBUtil.close(pstmt);
+			}
+			
+		}
+	
+	
+		// 게시물의 댓글 개수
+		public int dataCountReply(long num) {
+			int result = 0;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql;
+			
+			try {
+				sql = "SELECT NVL(COUNT(*), 0) "
+						+ " FROM pReply "
+						+ " WHERE pnum = ? AND answer = 0";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+				
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					result = rs.getInt(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				DBUtil.close(rs);
+				DBUtil.close(pstmt);
+			}
+			
+			return result;
+		}
+	
+	
+		// 게시물 댓글 리스트
+		public List<PReplyDTO> listReply(long num, int offset, int size) {
+			List<PReplyDTO> list = new ArrayList<>();
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			StringBuilder sb = new StringBuilder();
+			
+			try {
+				sb.append(" SELECT r.replyNum, r.userId, userName, pnum, replycontent, reply_reg_date, ");
+				sb.append("     NVL(answerCount, 0) answerCount ");
+				sb.append(" FROM pReply r ");
+				sb.append(" JOIN member m ON r.userId = m.userId ");
+				sb.append(" LEFT OUTER  JOIN (");
+				sb.append("	    SELECT answer, COUNT(*) answerCount ");
+				sb.append("     FROM pReply ");
+				sb.append("     WHERE answer != 0 ");
+				sb.append("     GROUP BY answer ");
+				sb.append(" ) a ON r.replyNum = a.answer ");
+				sb.append(" WHERE pnum = ? AND r.answer=0 ");
+				sb.append(" ORDER BY r.replyNum DESC ");
+				sb.append(" OFFSET ? ROWS FETCH FIRST ? ROWS ONLY ");
+				
+				pstmt = conn.prepareStatement(sb.toString());
+				
+				pstmt.setLong(1, num);
+				pstmt.setInt(2, offset);
+				pstmt.setInt(3, size);
+
+				rs = pstmt.executeQuery();
+				
+				while(rs.next()) {
+					PReplyDTO dto = new PReplyDTO();
+					
+					dto.setReplyNum(rs.getLong("replyNum"));
+					dto.setNum(rs.getLong("pnum"));
+					dto.setUserId(rs.getString("userId"));
+					dto.setUserName(rs.getString("userName"));
+					dto.setContent(rs.getString("replycontent"));
+					dto.setReg_date(rs.getString("reply_reg_date"));
+					dto.setAnswerCount(rs.getInt("answerCount"));
+					
+					list.add(dto);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				DBUtil.close(rs);
+				DBUtil.close(pstmt);
+			}
+			
+			return list;
+		}
+
+		public PReplyDTO findByReplyId(long replyNum) {
+			PReplyDTO dto = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql;
+			
+			try {
+				sql = "SELECT replyNum, pnum, r.userId, userName, replycontent, r.reply_reg_date "
+						+ " FROM pReply r  "
+						+ " JOIN member m ON r.userId = m.userId  "
+						+ " WHERE replyNum = ? ";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, replyNum);
+
+				rs=pstmt.executeQuery();
+				
+				if(rs.next()) {
+					dto=new PReplyDTO();
+					
+					dto.setReplyNum(rs.getLong("replyNum"));
+					dto.setNum(rs.getLong("pnum"));
+					dto.setUserId(rs.getString("userId"));
+					dto.setUserName(rs.getString("userName"));
+					dto.setContent(rs.getString("replycontent"));
+					dto.setReg_date(rs.getString("reply_reg_date"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				DBUtil.close(rs);
+				DBUtil.close(pstmt);
+			}
+			
+			return dto;
+		}
+	
+	
+		// 게시물의 댓글 삭제
+		public void deleteReply(long replyNum, String userId) throws SQLException {
+			PreparedStatement pstmt = null;
+			String sql;
+			
+			if(! userId.equals("admin")) {
+				PReplyDTO dto = findByReplyId(replyNum);
+				if(dto == null || (! userId.equals(dto.getUserId()))) {
+					return;
+				}
+			}
+			
+			try {
+				sql = "DELETE FROM pReply "
+						+ " WHERE replyNum IN  "
+						+ " (SELECT replyNum FROM pReply START WITH replyNum = ?"
+						+ "     CONNECT BY PRIOR replyNum = answer)";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, replyNum);
+				
+				pstmt.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			} finally {
+				DBUtil.close(pstmt);
+			}		
+			
+		}
+	
+	// 댓글의 답글 리스트
+	public List<PReplyDTO> listReplyAnswer(long answer) {
+		List<PReplyDTO> list = new ArrayList<>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		StringBuilder sb=new StringBuilder();
+		
+		try {
+			sb.append(" SELECT replyNum, pnum, r.userId, userName, replycontent, reply_reg_date, answer ");
+			sb.append(" FROM pReply r ");
+			sb.append(" JOIN member m ON r.userId = m.userId ");
+			sb.append(" WHERE answer = ? ");
+			sb.append(" ORDER BY replyNum  ");
+			pstmt = conn.prepareStatement(sb.toString());
+			
+			pstmt.setLong(1, answer);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				PReplyDTO dto=new PReplyDTO();
+				
+				dto.setReplyNum(rs.getLong("replyNum"));
+				dto.setNum(rs.getLong("pnum"));
+				dto.setUserId(rs.getString("userId"));
+				dto.setUserName(rs.getString("userName"));
+				dto.setContent(rs.getString("replycontent"));
+				dto.setReg_date(rs.getString("reply_reg_date"));
+				dto.setAnswer(rs.getLong("answer"));
+				
+				list.add(dto);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return list;
+	}
+		public int dataCountReplyAnswer(long answer) {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = "SELECT NVL(COUNT(*), 0) "
+					+ " FROM pReply WHERE answer = ?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, answer);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				result=rs.getInt(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		return result;
+	}
+
+		public String writerId(long num) throws SQLException {
+			
+			PreparedStatement pstmt=null;
+			ResultSet	rs =null;
+			String sql;
+			String id="";
+			
+			try {
+				sql="select pbbs.userid id from pbbs join member 	on pbbs.userid=member.userid  where pnum=?";
+				pstmt=conn.prepareStatement(sql);
+				pstmt.setLong(1, num);
+				
+				rs=pstmt.executeQuery();
+				
+				if(rs.next()) {
+					id=rs.getString("id");
+					
+				}
+				
+			} catch (SQLException e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				throw e;
+			}finally {
+				DBUtil.close(rs);
+				DBUtil.close(pstmt);
+			}
+			
+			
+			return id;
+			
+		}
+		public String saleChk(long num) throws SQLException {
+			
+			PreparedStatement pstmt=null;
+			ResultSet	rs =null;
+			String sql;
+			String id="";
+			
+			try {
+				sql="select pstate from pbbs join member 	on pbbs.userid=member.userid  where pnum=?";
+				pstmt=conn.prepareStatement(sql);
+				pstmt.setLong(1, num);
+				
+				rs=pstmt.executeQuery();
+				
+				if(rs.next()) {
+					id=rs.getString("pstate");
+					
+				}
+				
+			} catch (SQLException e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				throw e;
+			}finally {
+				DBUtil.close(rs);
+				DBUtil.close(pstmt);
+			}
+			
+			
+			return id;
+			
+		}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		public String chkReply(long num,String id) throws SQLException {
+			String b=null;
+			PreparedStatement pstmt =null;
+			String sql;
+			ResultSet rs = null;
+			try {
+				sql="select pstate what from wish_lists w join pbbs p on w.pnum=p.pnum where w.userid=? and p.pnum=?";
+				pstmt=conn.prepareStatement(sql);
+				
+				pstmt.setString(1, id);
+				pstmt.setLong(2, num);
+				
+				rs=pstmt.executeQuery();//해당안되면 영향받은값이 0이 나올것이라 기대됨
+				//b=pstmt.executeUpdate();//해당안되면 영향받은값이 0이 나올것이라 기대됨
+				//0이라는 숫자를반환하는게 무조건 1로나와서 실패함
+				if(rs.next()) {
+					b=rs.getString("what");
+				}
+				
+				
+			} catch (SQLException e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				throw e;
+				
+			}finally {
+				DBUtil.close(pstmt);
+				DBUtil.close(rs);
+			}
+			
+			return b;
+			
+		}
+	
 }

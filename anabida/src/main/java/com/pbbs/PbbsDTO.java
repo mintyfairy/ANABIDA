@@ -1,4 +1,5 @@
 package com.pbbs;
+
 public class PbbsDTO {
 	private long num,cost,plike,catNum,hitCount,pstate;
 	private String userId;
@@ -7,11 +8,26 @@ public class PbbsDTO {
 	private String content;
 	private String regdate;
 	private String catString;
+	private String chkReply;
 	
+	public String getChkReply() {
+		return chkReply;
+	}
+	public void setChkReply(String chkReply) {
+		this.chkReply = chkReply;
+	}
 	private long fileNum;
 	private String[] imageFiles;
 	private String imageFilename;
 
+
+	public int getReplyCount() {
+		return replyCount;
+	}
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+	private int replyCount;
 	
 	public long getFileNum() {
 		return fileNum;

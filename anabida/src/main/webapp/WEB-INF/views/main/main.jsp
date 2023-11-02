@@ -114,7 +114,7 @@ cursor: pointer;
 
 			</c:forEach>
 		</ul>
-		<img class="more" src="${pageContext.request.contextPath}/resource/images/plus.png" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?order=like&page=1';">;
+		<img class="more" src="${pageContext.request.contextPath}/resource/images/plus.png" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?order=like&page=1';">
 		<div class="page-navigation">${dataCount==0?"등록된 게시물이 없습니다.":paging}
 		</div>
 	</div>
@@ -135,7 +135,7 @@ cursor: pointer;
 
 			</c:forEach>
 		</ul>
-		<img class="more" src="${pageContext.request.contextPath}/resource/images/plus.png" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?order=like&page=1';">;
+		<img class="more" src="${pageContext.request.contextPath}/resource/images/plus.png" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?order=like&page=1';">
 		<div class="page-navigation">${dataCount==0?"등록된 게시물이 없습니다.":paging}
 		</div>
 	</div>
@@ -156,7 +156,7 @@ cursor: pointer;
 
 			</c:forEach>
 		</ul>
-		<img class="more"  src="${pageContext.request.contextPath}/resource/images/plus.png" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?order=like&page=1';">;
+		<img class="more"  src="${pageContext.request.contextPath}/resource/images/plus.png" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?order=like&page=1';">
 		<div class="page-navigation">${dataCount==0?"등록된 게시물이 없습니다.":paging}
 		</div>
 	</div>
