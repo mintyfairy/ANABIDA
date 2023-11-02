@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.util.DBConn;
 import com.util.DBUtil;
 
@@ -15,19 +14,18 @@ public class AlertDAO {
 
 	public void insertArlert(AlertDTO dto) throws SQLException {
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 		String sql;
-		long seq;
 
 		try {
 
-			sql = "INSERT INTO alert(alertnum,title,content,reg_date,hitcount)"
-					+ "VALUES(alert_seq.nextVal,?,?,SYSDATE,0)";
+			sql = "INSERT INTO alert(alertNum,title,content,reg_date,hitcount, userId)"
+					+ " VALUES(alert_seq.NEXTVAL,?,?,SYSDATE,0,?)";
 
 			pstmt = conn.prepareStatement(sql);
 
 			pstmt.setString(1, dto.getTitle());
 			pstmt.setString(2, dto.getContent());
+			pstmt.setString(3, dto.getUserId());
 
 			pstmt.executeUpdate();
 
@@ -41,11 +39,72 @@ public class AlertDAO {
 
 	public int dataCount(String schType, String kwd) {
 
-		return 0;
+		int result = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+
+		try {
+			sql = "SELECT NVL(COUNT(*), 0) "
+					+ " FROM alert b "
+					+ " JOIN member m ON b.userId = m.userId ";
+			if (schType.equals("all")) {
+				sql += "  WHERE INSTR(subject, ?) >= 1 OR INSTR(content, ?) >= 1 ";
+			} else if (schType.equals("reg_date")) {
+				kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
+				sql += "  WHERE TO_CHAR(reg_date, 'YYYYMMDD') = ? ";
+			} else {
+				sql += "  WHERE INSTR(" + schType + ", ?) >= 1 ";
+			}
+
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, kwd);
+			if (schType.equals("all")) {
+				pstmt.setString(2, kwd);
+			}
+
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+
+		return result;
 	}
 
 	public int dataCount() {
-		return 0;
+		int result = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+
+		try {
+			sql = "SELECT NVL(COUNT(*), 0) FROM alert";
+			pstmt = conn.prepareStatement(sql);
+
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+
+		return result;
+		
 	}
 
 	public List<AlertDTO> listAlert(int offset, int size) {
@@ -55,10 +114,10 @@ public class AlertDAO {
 			StringBuilder sb = new StringBuilder();
 			
 			try {
-				sb.append(" SELECT alertNum, title,a.userId,content,TO_CHAR(reg_date,'YYYY-MM-DD')reg_date,hitcount");
+				sb.append(" SELECT alertNum, title,a.userId, userName, content,TO_CHAR(a.reg_date,'YYYY-MM-DD') reg_date,hitcount ");
 				sb.append(" FROM alert a ");
 				sb.append(" JOIN member m ON a.userId = m.userId ");
-				sb.append(" ORDER BY groupNum DESC, orderNo ASC ");
+				sb.append(" ORDER BY alertNum DESC ");
 				sb.append(" OFFSET ? ROWS FETCH FIRST ? ROWS ONLY ");
 				
 				pstmt = conn.prepareStatement(sb.toString());
@@ -71,15 +130,19 @@ public class AlertDAO {
 				while (rs.next()) {
 					AlertDTO dto = new AlertDTO();
 					
-					dto.setAlertnum(rs.getLong("alertNum"));
+					dto.setAlertNum(rs.getLong("alertNum"));
 					dto.setTitle(rs.getString("title"));
 					dto.setUserId(rs.getString("UserId"));
 					dto.setContent(rs.getString("content"));
 					dto.setReg_date(rs.getString("Reg_date"));
+					dto.setUserName(rs.getString("userName"));
 					
 					list.add(dto);
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
+
+			}finally {
 				DBUtil.close(rs);
 				DBUtil.close(pstmt);
 			}
@@ -109,7 +172,7 @@ public List<AlertDTO> listAlert(int offset, int size, String schType, String kwd
 				} else {
 					sb.append(" WHERE INSTR(" + schType + ", ?) >= 1 ");
 				}
-				sb.append(" ORDER BY alertNum DESC ");
+				sb.append(" ORDER BY alertNum DESC ");  //이게 맞나??/???
 				sb.append(" OFFSET ? ROWS FETCH FIRST ? ROWS ONLY ");
 
 				pstmt = conn.prepareStatement(sb.toString());
@@ -129,7 +192,7 @@ public List<AlertDTO> listAlert(int offset, int size, String schType, String kwd
 				while (rs.next()) {
 					AlertDTO dto = new AlertDTO();
 					
-					dto.setAlertnum(rs.getLong("alertNum"));
+					dto.setAlertNum(rs.getLong("alertNum"));
 					dto.setTitle(rs.getString("title"));
 					dto.setUserId(rs.getString("UserId"));
 					dto.setContent(rs.getString("content"));
@@ -147,6 +210,85 @@ public List<AlertDTO> listAlert(int offset, int size, String schType, String kwd
 
 			return list;
 		}
+
+//조회수
+public void updateHitCount(long alertNum) throws SQLException {
+	PreparedStatement pstmt = null;
+	String sql;
+
+	try {
+		sql = "UPDATE alert SET hitCount=hitCount+1 WHERE alertNum=?";
+		pstmt = conn.prepareStatement(sql);
+		
+		pstmt.setLong(1, alertNum);
+		
+		pstmt.executeUpdate();
+	} catch (SQLException e) {
+		e.printStackTrace();
+		throw e;
+	} finally {
+		DBUtil.close(pstmt);
+	}
+
+}
+
+//해당 게시물 보기
+	public AlertDTO findById(long alertNum) {
+		AlertDTO dto = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+
+		try {
+			sql = "SELECT  alertNum, title,a.userId, content, a.reg_date, hitCount, userName FROM alert a JOIN member m ON a.userId = m.userId WHERE alertNum = ?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, alertNum);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				dto = new AlertDTO();
+				
+				dto.setAlertNum(rs.getLong("alertNum"));
+				dto.setTitle(rs.getString("title"));
+				dto.setUserId(rs.getString("userId"));
+				dto.setContent(rs.getString("content"));
+				dto.setReg_date(rs.getString("reg_date"));
+				dto.setHitcount(rs.getLong("hitCount"));
+				dto.setUserName(rs.getString("username"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+
+		return dto;
+	}
+
+	public void deleteAlert(long alertNum) throws SQLException{
+		PreparedStatement pstmt = null;
+		String sql;
+
+		try {
+			sql = " DELETE FROM alert WHERE alertNum= ? ";
+					
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setLong(1, alertNum);
+			
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+		
+		
+	}
 
 			
 }

@@ -134,7 +134,10 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 
 	<table class="table">
 		<tr>
-			<td width="50%">25개(1/2 페이지)</td>
+			<td width="50%">
+				${dataCount}개({page}/${total_page}페이지)
+			</td>
+			
 			<td align="right">&nbsp;</td>
 		</tr>
 	</table>
@@ -151,19 +154,23 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		</thead>
 		
 		<tbody>
+			<c:forEach var="dto" items="${list}" varStatus="status">
 			<tr>
-				<td>1</td>  <!-- 여기를 $어쩌구 해서 가져오기!!!!  서블릿이랑 디에이오하고!! -->
-				<td><a href="#">공지란입니다.</a></td>
-				<td>관리자</td>
-				<td>2023-10-31</td>
-				<td>20</td>
+				<td>${dataCount-(page-1) * size -status.index}</td> 
+				
+				<td><a href="${pageContext.request.contextPath}/alert/article.do?alertNum=${dto.alertNum}&page=${page}"> ${dto.title}</a></td>	
+				
+				<td>${dto.userName}</td>
+				<td>${dto.reg_date}</td>
+				<td>${dto.hitcount}</td>
 			</tr>
+			</c:forEach>
 		<tbody>
 		
 	</table>
 	
 	<div class="page-navigation">
-		1 2 3
+		${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}
 	</div>
 	
 	<table class="table">
@@ -174,14 +181,14 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 			<td align="center">
 				<form name="searchForm" action="" method="post">
 					<select name="schType" class="form-select">
-						<option value="all">제목+내용</option>
-						<option value="name">작성자</option>
-						<option value="reg_date">등록일</option>
-						<option value="subject">제목</option>
-						<option value="content">내용</option>
+						<option value="all"  ${schType=="all"?"selected":"" }>제목+내용</option>
+						<option value="name" ${schType=="userName"?"selected":"" }>작성자</option>
+						<option value="reg_date" ${schType=="reg_date"?"selected":"" }>등록일</option>
+						<option value="subject" ${schType=="subject"?"selected":"" }>제목</option>
+						<option value="content" ${schType=="content"?"selected":"" }>내용</option>
 					</select>
 					<input type="text" name="kwd" value="" class="form-control">
-					<button type="button" class="btn">검색</button>
+					<button type="button" class="btn" onclick="searchList();">검색</button>
 				</form>
 			</td>
 			<td align="right" width="100">

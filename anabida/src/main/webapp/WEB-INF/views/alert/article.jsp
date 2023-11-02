@@ -132,10 +132,10 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		<tr>
 			<td width="50%">
 				<button type="button" class="btn">수정</button>
-				<button type="button" class="btn">삭제</button>
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/delete.do?alertNum=${dto.alertNum}&page=${page}';">삭제</button>
 			</td>
 			<td align="right">
-				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/';">리스트</button>
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/list.do';">리스트</button>
 			</td>
 		</tr>
 	</table>

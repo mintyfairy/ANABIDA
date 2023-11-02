@@ -1,24 +1,22 @@
 package com.alert;
 
 public class AlertDTO {
-	private long alertnum;
+	private long alertNum;
 	private String title;
 	private String content;
 	private String reg_date;
-	private String hitcount;
+	private long hitcount;
+	private String userId;
+	private String userName;
+	private long groupNum;
+	private int orderNo;
 	
-	private long fileNum;
-	private String saveFilename;
-	private String originalFilename;
-		
-	private String[] saveFiles;
-	private String[] originalFiles;
-	private long gap;
-	public long getAlertnum() {
-		return alertnum;
+	
+	public long getAlertNum() {
+		return alertNum;
 	}
-	public void setAlertnum(long alertnum) {
-		this.alertnum = alertnum;
+	public void setAlertNum(long alertNum) {
+		this.alertNum = alertNum;
 	}
 	public String getTitle() {
 		return title;
@@ -38,60 +36,45 @@ public class AlertDTO {
 	public void setReg_date(String reg_date) {
 		this.reg_date = reg_date;
 	}
-	public String getHitcount() {
+	public long getHitcount() {
 		return hitcount;
 	}
-	public void setHitcount(String hitcount) {
+	public void setHitcount(long hitcount) {
 		this.hitcount = hitcount;
 	}
-	public long getFileNum() {
-		return fileNum;
-	}
-	public void setFileNum(long fileNum) {
-		this.fileNum = fileNum;
-	}
-	public String getSaveFilename() {
-		return saveFilename;
-	}
-	public void setSaveFilename(String saveFilename) {
-		this.saveFilename = saveFilename;
-	}
-	public String getOriginalFilename() {
-		return originalFilename;
-	}
-	public void setOriginalFilename(String originalFilename) {
-		this.originalFilename = originalFilename;
-	}
-	public String[] getSaveFiles() {
-		return saveFiles;
-	}
-	public void setSaveFiles(String[] saveFiles) {
-		this.saveFiles = saveFiles;
-	}
-	public String[] getOriginalFiles() {
-		return originalFiles;
-	}
-	public void setOriginalFiles(String[] originalFiles) {
-		this.originalFiles = originalFiles;
-	}
-	public long getGap() {
-		return gap;
-	}
-	public void setGap(long gap) {
-		this.gap = gap;
+	public String getUserId() {
+		return userId;
 	}
 	public void setUserId(String userId) {
-		// TODO Auto-generated method stub
-		
+		this.userId = userId;
 	}
-	public void setAlert(int parseInt) {
-		
+	public String getUserName() {
+		return userName;
 	}
-	public void OriginalFiles(String[] originalFiles2) {
-		
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public long getGroupNum() {
+		return groupNum;
+	}
+	public void setGroupNum(long groupNum) {
+		this.groupNum = groupNum;
+	}
+	public int getOrderNo() {
+		return orderNo;
+	}
+	public void setOrderNo(int orderNo) {
+		this.orderNo = orderNo;
 	}
 	
 	
 	
 	
+	
+	
+	
+	
+	
+	
+		
 }
