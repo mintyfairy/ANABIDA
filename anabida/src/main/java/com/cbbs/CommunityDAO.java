@@ -720,7 +720,61 @@ public class CommunityDAO {
 			return result;
 		}
 		
+		// 삭제 deleteCbbs
+		public void deleteCbbs(long num, String userId) throws SQLException {
+			PreparedStatement pstmt = null;
+			String sql;
+			try {
+				if(userId.equals("admin")) {
+					sql = "DELETE FROM cbbs WHERE cnum = ?";
+					pstmt = conn.prepareStatement(sql);
+					
+					pstmt.setLong(1, num);
+					
+					pstmt.executeUpdate();
+				}else {
+					sql = "DELETE FROM cbbs WHERE cnum = ? AND userId = ?";
+					
+					pstmt = conn.prepareStatement(sql);
+					
+					pstmt.setLong(1, num);
+					pstmt.setString(2, userId);
+					
+					pstmt.executeUpdate();
+				}
+			}  catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}  finally {
+				DBUtil.close(pstmt);
+			}
 		
+		}
 		
+		// 사진파일 삭제 deletePhotoFile
+		public void deletePhotoFile(String mode, long num) throws SQLException {
+			PreparedStatement pstmt = null;
+			String sql;
+
+			try {
+				if (mode.equals("all")) {
+					sql = "DELETE FROM cpics WHERE cnum = ?";
+				} else {
+					sql = "DELETE FROM cpics WHERE picnum = ?";
+				}
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+
+				pstmt.executeUpdate();
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			} finally {
+				DBUtil.close(pstmt);
+			}
+		}
+
 		
 }

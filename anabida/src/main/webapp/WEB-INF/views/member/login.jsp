@@ -92,7 +92,6 @@
             width: 348px;
             height: 650px;
             position: absolute;
-            top: 10px;
             opacity:0;
             transition:all 0.3s ;
         }
@@ -103,7 +102,7 @@
         }
         .login_img{
          	width: 350px;
-            height: 590px;
+            height: 600px;
             border-radius: 10px;
             object-fit: cover;
         }
@@ -161,11 +160,12 @@ function sendLogin() {
 	
 		
 		<div class="login_wrap">
+			
 			<div class="login" style="float: left">
 				<br />
 				<br />
 				<br />
-				<img src="${pageContext.request.contextPath}/resources/images/an.png" width="150px;"height="60px;" style="margin: 0px;">
+				<img src="${pageContext.request.contextPath}/resource/images/an.png" width="150px;"height="60px;" style="margin: 0px;">
 				
 				<form name="loginForm" method="post">
 					<input type="text" placeholder="ID" name=userId class="inputid" id="login-userId" ><br /> 
@@ -178,11 +178,12 @@ function sendLogin() {
 				<br/>
 				
 				<div style="font-size: 14px;">
-				<img width="15px;" height="15px;" src="${pageContext.request.contextPath}/resources/images/kakao.png">
+				<img width="15px;" height="15px;" src="${pageContext.request.contextPath}/resource/images/kakao.png">
 				카카오톡으로 로그인</div>
 				<br>
 				<div style="font-size: 13px;"><a>비밀번호를 잊으셨나요?</a></div>
-			</div>
+			</div>	
+			<div>asdas</div>
 			
 			
 			
@@ -190,20 +191,21 @@ function sendLogin() {
 			<div class="image1">
 				<div class="slide">
 					<div class="item">
-						<img src="${pageContext.request.contextPath}/resources/images/3.jpg" class="login_img">
+						<img src="${pageContext.request.contextPath}/resource/images/3.jpg" class="login_img">
 					</div>
 					<div class="item">
-						<img src="${pageContext.request.contextPath}/resources/images/4.jpg" class="login_img">
+						<img src="${pageContext.request.contextPath}/resource/images/4.jpg" class="login_img">
 					</div>
 					<div class="item">
-						<img src="${pageContext.request.contextPath}/resources/images/5.jpg" class="login_img">
+						<img src="${pageContext.request.contextPath}/resource/images/5.jpg" class="login_img">
 					</div>
 					<div class="item">
-						<img src="${pageContext.request.contextPath}/resources/images/6.jpg" class="login_img">
+						<img src="${pageContext.request.contextPath}/resource/images/6.jpg" class="login_img">
 					</div>
 				</div>
 			</div>
 		</div>
+		
 	
 		<div class="members-message">
 			<p class="text-center">${message}</p>

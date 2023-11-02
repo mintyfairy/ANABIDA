@@ -118,6 +118,19 @@ img {vertical-align: middle;}
 </style>
 </head>
 
+<c:if test="${sessionScope.member.userId==dto.userId || sessionScope.member.userId=='admin'}">
+<script type="text/javascript">
+//게시글 삭제
+function deleteBoard() {
+	console.log("asdas");
+	    if(confirm("게시글을 삭제 하시 겠습니까 ? ")) {
+		    let query = "num=${dto.num}&${query}";
+		    let url = "${pageContext.request.contextPath}/cbbs/cdelete.do?" + query;
+	    	location.href = url;
+	    }
+	}
+</script>
+</c:if>
 <body>
 
 <header>
@@ -126,15 +139,13 @@ img {vertical-align: middle;}
 	
 <main>
 	<div class="container body-container">
-	    <div class="body-title">
-			<h2><i class="fa-regular fa-square"></i> 게시판 </h2>
-	    </div>
+	    
 	    
 	    <div class="body-main mx-auto">
 			<table class="table table-border table-article">
 				<thead>
-					<tr>
-						<td colspan="2" align="center">
+					<tr >
+						<td colspan="2" align="center" style="border-top: none;">
 							${dto.ctitle }
 						</td>
 					</tr>
@@ -209,7 +220,6 @@ img {vertical-align: middle;}
 								<input type="hidden" name="page" value = "${page}">
 								<button type="button" class="btn btnSendparticipate" onclick="participate();" >참여하기</button>
 							</form> 
-							
 						</td>
 					</tr>
 														
@@ -250,17 +260,17 @@ img {vertical-align: middle;}
 								<c:when test="${dto.userId eq sessionScope.member.userId}">
 									<button type="button" class="btn"
 										onclick="location.href='${pageContext.request.contextPath}/bbs/update.do?num=${dto.num}&page=${page}';">수정</button>
-									<button type="button" class="btn">삭제</button>
+									<button type="button" class="btn" onclick="deleteBoard();">삭제</button>
 								</c:when>
 
-								<c:when test="${sessionScope.member.userId eq 'admin'}">
-									<button type="button" class="btn">삭제</button>
+				    			<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.userId=='admin'}">
+									<button type="button" class="btn" onclick="deleteBoard();">삭제</button>
 								</c:when>
 
 							</c:choose>
 						</td>
 						<td align="right">
-						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/bbs/list.do?${query}'" >리스트</button>
+						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/cbbs/clist.do?${query}'" >리스트</button>
 					</td>
 				</tr>
 				</tbody>	
@@ -279,6 +289,10 @@ img {vertical-align: middle;}
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=60e66caa443255c7eacf898657309fe6&libraries=services"></script>
 
 <script>
+
+
+		
+
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = {
         center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표

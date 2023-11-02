@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 
 import com.member.SessionInfo;
+import com.util.FileManager;
 import com.util.MyUploadServlet;
 import com.util.MyUtil;
 
@@ -69,7 +70,9 @@ public class CommunityServlet extends MyUploadServlet{
 			participate(req, resp);
 		}else if(uri.indexOf("insertBoardLike.do")!=-1) {
 			insertBoardLike(req, resp);
-		}
+		}else if (uri.indexOf("delete.do") != -1) {
+			delete(req, resp);
+		} 
 	}
 	
 	protected void list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -310,11 +313,46 @@ public class CommunityServlet extends MyUploadServlet{
 	
 	protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 커뮤니티 게시글 삭제
+		CommunityDAO dao = new CommunityDAO();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		String cp = req.getContextPath();
+		String page = req.getParameter("page");
+		String query = "page=" + page;
+		
+		try {
+			long num = Long.parseLong(req.getParameter("num"));
+			
+			CommunityDTO dto = dao.findById(num);
+			if (dto == null) {
+				resp.sendRedirect(cp + "/cbbs/clist.do?" + query);
+				return;
+			}
+			
+			// 게시물을 올린 사용자가 아니면
+			if (!dto.getUserId().equals(info.getUserId())) {
+				viewPage(req, resp, "redirect:/cbbs/clist.do?page=" + page);
+				return;
+			}
+			List<CommunityDTO> listFile = dao.listPhotoFile(num);
+			for (CommunityDTO vo : listFile) {
+				FileManager.doFiledelete(pathname, vo.getPicFileName());
+			}
+			dao.deletePhotoFile("all", num);
+			
+			dao.deleteCbbs(num, info.getUserId());
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		resp.sendRedirect(cp + "/cbbs/clist.do?" + query);
 	}
 	
 	protected void listReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 커뮤니티 댓글리스트
 	}
+	
 	
 	protected void participate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 참여하기 버튼
