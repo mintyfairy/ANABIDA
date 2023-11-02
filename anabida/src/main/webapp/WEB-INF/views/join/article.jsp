@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<jsp:include page="/WEB-INF/views/layout/staticHeader.jsp"/>
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 <style type="text/css">
 * { padding: 0; margin: 0; }
@@ -86,17 +87,24 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 <c:if test="${sessionScopte.member.userId==dto.userId || sessionScope.member.userId=='admin'}">
 	function deleteBoard() {
 		if(confirm("게시글을 삭제 하시겠습니까? ")){
-		let query = "buyNum=${buyNum}&${query}";
+		let query = "buyNum=${dto.buyNum}&${query}";
 		let url = "${pageContext.request.contextPath}/join/delete.do?"+query;
 		location.href = url;
 		}
 	}
 </c:if>
+
+
+
+
 </script>
 
 
 </head>
 <body>
+<header>
+	<jsp:include page="/WEB-INF/views/layout/header.jsp"></jsp:include>
+</header>
 
 <div class="board">
 	<div class="title">
@@ -128,6 +136,12 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 				</td>
 				<td align="right">
 					참여 인원수 : (0/${dto.min_peo}) 
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					제품 상세페이지 : <a href="${dto.link}" target="_blank">${dto.link}</a>
 				</td>
 			</tr>
 			
@@ -171,7 +185,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 			<td width="50%">
 				<c:choose>
 					<c:when test="${sessionScope.member.userId==dto.userId}">
-						<button type="button" class="btn" onclick="location.href='${pateContext.request.contextPath}/join/update.do?buyNum=${dto.buyNum}&page=${page}';">수정</button>
+						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/update.do?buyNum=${dto.buyNum}&page=${page}';">수정</button>
 					</c:when>
 					<c:otherwise>
 						<button type="button" class="btn" disabled="disabled">수정</button>
@@ -186,14 +200,20 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 						<button type="button" class="btn" disabled="disabled">삭제</button>
 					</c:otherwise>
 				</c:choose>
-				
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/list.do?page=${page}';">이전</button>
 			</td>
 			<td align="right">
-				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/list.do?page=${page}';">리스트</button>
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/join.do?buyNum=${dto.buyNum}&page=${page}';">신청하기</button>
 			</td>
 		</tr>
 	</table>
 </div>
+
+<footer>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp"></jsp:include>
+</footer>
+
+<jsp:include page="/WEB-INF/views/layout/staticFooter.jsp"/>
 
 </body>
 </html>

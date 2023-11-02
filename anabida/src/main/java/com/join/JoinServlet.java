@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import com.member.MemberDAO;
 import com.member.SessionInfo;
+import com.util.DBUtil;
 import com.util.MyUploadServlet;
 import com.util.MyUtil;
 
@@ -67,6 +69,10 @@ public class JoinServlet extends MyUploadServlet{
 		} else if(uri.indexOf("delete.do")!= -1) {
 			// 글 삭제
 			delete(req, resp);
+		} else if(uri.indexOf("join.do")!=-1) {
+			joinForm(req, resp);
+		} else if(uri.indexOf("join_ok.do")!=-1) {
+			JoinSubmit(req, resp);
 		}
 	}
 	
@@ -298,6 +304,36 @@ public class JoinServlet extends MyUploadServlet{
 	}
 	
 	protected void updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		JoinDAO dao = new JoinDAO();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		if(req.getMethod().equalsIgnoreCase("GET")) {
+			resp.sendRedirect(cp+"/join/list.do");
+			return;
+		}
+		
+		String page = req.getParameter("page");
+		try {
+			JoinDTO dto = new JoinDTO();
+			
+			dto.setTitle(req.getParameter("title"));
+			dto.setLink(req.getParameter("link"));
+			dto.setContent(req.getParameter("content"));
+			dto.setReg_date(req.getParameter("reg_date"));
+			dto.setExp_date(req.getParameter("exp_date"));
+			dto.setMin_peo(Integer.parseInt(req.getParameter("min_peo")));
+			
+			dto.setUserId(info.getUserId());
+			
+			dao.updateJoin(dto);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		resp.sendRedirect(cp + "/join/list.do?page=" + page);
 	}
 	protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		JoinDAO dao = new JoinDAO();
@@ -335,5 +371,64 @@ public class JoinServlet extends MyUploadServlet{
 				
 	}
 	
+	protected void joinForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		try {
+			JoinDAO dao = new JoinDAO();
+			
+			long buyNum = Long.parseLong(req.getParameter("buyNum"));
+			JoinDTO dto = dao.findById(buyNum);
+			
+			req.setAttribute("dto", dto);
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		req.setAttribute("mode", "enter");
+		forward(req, resp, "/WEB-INF/views/join/joinwrite.jsp");
+	}
+	
+	
+	protected void JoinSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		JoinDAO dao = new JoinDAO();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		String cp = req.getContextPath(); 
+		
+		if(req.getMethod().equalsIgnoreCase("GET")) {
+			resp.sendRedirect(cp + "/join/list.do");
+			return;
+		}
+		
+		// req.setAttribute("mode", "enter");
+		
+		try {
+			JoinDTO dto = new JoinDTO();
+			dto.setMemNum(Long.parseLong(req.getParameter("memNum")));
+			dto.setTitle(req.getParameter("title"));
+			dto.setUserName(req.getParameter("userName"));
+			dto.setQuantity(Integer.parseInt(req.getParameter("quantity")));
+			dto.setSelectEmail(req.getParameter("selectEmail"));
+			dto.setEmail1(req.getParameter("email1"));
+			dto.setEmail2(req.getParameter("email2"));
+			dto.setTel1(req.getParameter("tel1"));
+			dto.setTel2(req.getParameter("tel2"));
+			dto.setTel3(req.getParameter("tel3"));
+			dto.setZip(req.getParameter("zip"));
+			dto.setAddr1(req.getParameter("addr1"));
+			dto.setAddr2(req.getParameter("addr2"));
+			dto.setBuyNum(Long.parseLong(req.getParameter("buyNum")));
+			
+			dao.insertJoinMember(dto);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+		forward(req, resp, "/WEB-INF/views/join/joinwrite.jsp");
+	}
 	
 }

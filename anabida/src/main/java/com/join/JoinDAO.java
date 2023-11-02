@@ -10,6 +10,8 @@ import java.util.List;
 import com.util.DBConn;
 import com.util.DBUtil;
 
+import oracle.jdbc.proxy.annotation.Pre;
+
 public class JoinDAO {
 	private Connection conn = DBConn.getConnection();
 	
@@ -265,7 +267,7 @@ public class JoinDAO {
 		String sql;
 		
 		try {
-			sql = " SELECT buyNum, g.userId, userName, link, title, content, g.reg_date, exp_date, hitCount, joinCount, "
+			sql = " SELECT buyNum, g.userId, userName, link, title, content, g.reg_date, TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, hitCount, joinCount, "
 					+ " NVL(imageFilename, 'no.png') imageFilename, min_peo "
 					+ " FROM group_buying g"
 					+ " JOIN member m ON g.userId = m.userId"
@@ -431,7 +433,7 @@ public class JoinDAO {
 		String sql;
 		
 		try {
-			sql = " UPDATE group_buying SET title=?, exp_date=?, min_peo=?, content=?,"
+			sql = " UPDATE group_buying SET title=?, exp_date=?, min_peo=?, content=?, link=?"
 					+ " WHERE buyNum=? AND userId=? ";
 			pstmt = conn.prepareStatement(sql);
 			
@@ -439,8 +441,9 @@ public class JoinDAO {
 			pstmt.setString(2, dto.getExp_date());
 			pstmt.setInt(3, dto.getMin_peo());
 			pstmt.setString(4, dto.getContent());
-			pstmt.setLong(5, dto.getBuyNum());
-			pstmt.setString(6, dto.getUserId());
+			pstmt.setString(5, dto.getLink());
+			pstmt.setLong(6, dto.getBuyNum());
+			pstmt.setString(7, dto.getUserId());
 			
 			pstmt.executeUpdate();
 			
@@ -491,7 +494,38 @@ public class JoinDAO {
 	}
 	*/
 
-	
+	public void insertJoinMember(JoinDTO dto) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			
+			dto.setUserId(dto.getUserId()+"@"+dto.getEmail2());
+			dto.setTel(dto.getTel1()+"-"+dto.getTel2()+"-"+dto.getTel3());
+			dto.setAddr(dto.getAddr1()+" " + dto.getAddr2());
+			
+			sql=" INSERT INTO join_member(memNum, userId, buyNum, quantity, email, tel, zip, addr, title) "
+					+ " VALUES(join_seq.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?) ";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, dto.getUserId());
+			pstmt.setLong(2, dto.getBuyNum());
+			pstmt.setInt(3, dto.getQuantity());
+			pstmt.setString(4, dto.getEmail());
+			pstmt.setString(5, dto.getTel());
+			pstmt.setString(6, dto.getZip());
+			pstmt.setString(7, dto.getAddr());
+			pstmt.setString(7, dto.getTitle());
+			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(pstmt);
+		}
+		
+	}
 	
 	
 	
