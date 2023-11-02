@@ -15,6 +15,7 @@ public class CommunityDTO {
 	private int likeCount;
 	
 
+
 	// 모임 번호
 	private long mnum;
 	// 조회수
@@ -32,7 +33,7 @@ public class CommunityDTO {
 	private String picFileName;
 	private String[] picFileNames;
 
-	
+
 
 	public int getLikeCount() {
 		return likeCount;

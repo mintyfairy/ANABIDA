@@ -347,24 +347,6 @@ function showSlides(n) {
 }
 
 function participate() {
-	/*
-    //var ans = confirm("별점을 주시겠습니가?");
-    //if(!ans) {
-    //    return false;
-    //}
-  	var query = {idx : ${sessionScope.member.userId} ,mnum : ${meet.mnum}} 
-   // var mnum = {}
-    $.ajax({
-        url : "${pageContext.request.contextPath}/cbbs/participate.do",
-        type: "get",
-        data: query,
-        success:function(data) {
-            alert("참여하셨습니다..");
-            location.reload();
-        }
-    });
-  	*/
-  	
   	const f = document.insertmember;
   	f.action = "${pageContext.request.contextPath}/cbbs/participate.do";
 	f.submit();
@@ -441,5 +423,8 @@ $(function(){
 		ajaxFun(url, "post", query, "json", fn);
 	});
 });
+
+
+
 </script>
 </html>

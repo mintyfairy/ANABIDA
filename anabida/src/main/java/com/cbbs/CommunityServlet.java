@@ -281,8 +281,7 @@ public class CommunityServlet extends MyUploadServlet{
 			
 			int cdataCount = dao.cdataCount(dto.getNum());
 			HttpSession session = req.getSession();
-			SessionInfo info = (SessionInfo)session.getAttribute("member");
-
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
 			boolean isUserLike = dao.isUserBoardLike(num, info.getUserId());
 			
 			req.setAttribute("meet", meet);	
