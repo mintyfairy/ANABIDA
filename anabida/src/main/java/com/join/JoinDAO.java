@@ -10,8 +10,6 @@ import java.util.List;
 import com.util.DBConn;
 import com.util.DBUtil;
 
-import oracle.jdbc.proxy.annotation.Pre;
-
 public class JoinDAO {
 	private Connection conn = DBConn.getConnection();
 	
@@ -432,6 +430,7 @@ public class JoinDAO {
 		PreparedStatement pstmt = null;
 		String sql;
 		
+		
 		try {
 			sql = " UPDATE group_buying SET title=?, exp_date=?, min_peo=?, content=?, link=?"
 					+ " WHERE buyNum=? AND userId=? ";
@@ -445,7 +444,12 @@ public class JoinDAO {
 			pstmt.setLong(6, dto.getBuyNum());
 			pstmt.setString(7, dto.getUserId());
 			
+			System.out.println(dto.getBuyNum());
+			System.out.println(dto.getUserId());
+			
 			pstmt.executeUpdate();
+			
+			
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -500,7 +504,7 @@ public class JoinDAO {
 		
 		try {
 			
-			dto.setUserId(dto.getUserId()+"@"+dto.getEmail2());
+			dto.setEmail(dto.getEmail1()+"@"+dto.getEmail2());
 			dto.setTel(dto.getTel1()+"-"+dto.getTel2()+"-"+dto.getTel3());
 			dto.setAddr(dto.getAddr1()+" " + dto.getAddr2());
 			
@@ -515,7 +519,7 @@ public class JoinDAO {
 			pstmt.setString(5, dto.getTel());
 			pstmt.setString(6, dto.getZip());
 			pstmt.setString(7, dto.getAddr());
-			pstmt.setString(7, dto.getTitle());
+			pstmt.setString(8, dto.getTitle());
 			
 			pstmt.executeUpdate();
 			

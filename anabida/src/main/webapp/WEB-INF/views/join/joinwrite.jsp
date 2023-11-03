@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+ <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
@@ -81,12 +81,14 @@ function sendOk() {
     
 
 
-    f.action = "${pageContext.request.contextPath}/join/article.do?";
+    f.action = "${pageContext.request.contextPath}/join/join_ok.do?";
     f.submit();
+    
+    alert("신청이 완료되었습니다.");
 }
 
 function changeEmail() {
-    const f = document.memberForm;
+    const f = document.questionForm;
 	    
     let str = f.selectEmail.value;
     if(str !== "direct") {
@@ -124,14 +126,14 @@ function changeEmail() {
 					<tr> 
 						<td>제목</td>
 						<td> 
-							<input type="text" readonly="readonly" value="${dto.title}" class="form-select">
+						<input type="text" readonly="readonly" name="title" value="${dto.title}" class="form-select">
 						</td>
 					</tr>
 					
 					<tr> 
 						<td>작성자</td>
 						<td> 
-							<input type="text" readonly="readonly" value="${dto.userName}" class="form-select">
+							<input type="text" readonly="readonly" name="userName" value="${dto.userName}" class="form-select">
 						</td>
 					</tr>
 					
@@ -145,15 +147,15 @@ function changeEmail() {
 					<tr>
 					<td>이 메 일</td>
 					<td>
-						  <select name="selectEmail" class="form-select" onchange="changeEmail();">
-								<option value="">선 택</option>
+						  <select name="selectEmail" class="form-select" onchange="changeEmail();" >
+								<option value="${dto.email1}">선 택</option>
 								<option value="naver.com"   ${dto.email2=="naver.com" ? "selected" : ""}>네이버 메일</option>
 								<option value="hanmail.net" ${dto.email2=="hanmail.net" ? "selected" : ""}>한 메일</option>
 								<option value="gmail.com"   ${dto.email2=="gmail.com" ? "selected" : ""}>지 메일</option>
 								<option value="hotmail.com" ${dto.email2=="hotmail.com" ? "selected" : ""}>핫 메일</option>
 								<option value="direct">직접입력</option>
 						  </select>
-						  <input type="text" name="email1" maxlength="30" class="form-control" value="${dto.email1}" style="width: 33%;"> @ 
+						  <input type="text" name="email1" maxlength="30" class="form-control" value="${dto.email1}" style="width: 33%;" value="${dto.email1}"> @ 
 						  <input type="text" name="email2" maxlength="30" class="form-control" value="${dto.email2}" style="width: 33%;" readonly>
 					</td>
 				</tr>
@@ -162,7 +164,7 @@ function changeEmail() {
 					<td>전화번호</td>
 					<td>
 						  <select name="tel1" class="form-select">
-								<option value="">선 택</option>
+								<option value="">선택</option>
 								<option value="010" ${dto.tel1=="010" ? "selected" : ""}>010</option>
 								<option value="02"  ${dto.tel1=="02"  ? "selected" : ""}>02</option>
 								<option value="031" ${dto.tel1=="031" ? "selected" : ""}>031</option>
@@ -183,7 +185,7 @@ function changeEmail() {
 								<option value="064" ${dto.tel1=="064" ? "selected" : ""}>064</option>
 								<option value="070" ${dto.tel1=="070" ? "selected" : ""}>070</option>
 						  </select>
-						  <input type="text" name="tel2" maxlength="4" class="form-control" value="${dto.tel2}" style="width: 33%;"> -
+						  <input type="text" name="tel2" maxlength="4" class="form-control" value="${dto.tel2}" style="width: 33%;" > -
 						  <input type="text" name="tel3" maxlength="4" class="form-control" value="${dto.tel3}" style="width: 33%;">
 					</td>
 				</tr>
@@ -214,7 +216,7 @@ function changeEmail() {
 						<td align="center">
 							<button type="button" class="btn" onclick="sendOk();">${mode=='update'?'수정완료':'등록하기'}</button>
 							<button type="reset" class="btn">다시입력</button>
-							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/article.do?buyNum=?${dto.buyNum}&page=${page}';">${mode=='update'?'수정취소':'등록취소'}</button>
+							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/article.do?buyNum=?${dto.buyNum}&page=${page}';">${mode=='update'?'수정취소':'신청취소'}</button>
 							<c:if test="${mode=='update'}">
 								<input type="hidden" name="num" value="">
 								<input type="hidden" name="page" value="">

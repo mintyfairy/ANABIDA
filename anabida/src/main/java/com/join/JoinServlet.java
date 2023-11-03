@@ -16,8 +16,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import com.member.MemberDAO;
+import com.member.MemberDTO;
 import com.member.SessionInfo;
-import com.util.DBUtil;
 import com.util.MyUploadServlet;
 import com.util.MyUtil;
 
@@ -87,7 +87,8 @@ public class JoinServlet extends MyUploadServlet{
 		try {
 			String page = req.getParameter("page");
 			int current_page = 1;
-			if(page!=null) {
+			
+			if(page!=null ) {
 				current_page = Integer.parseInt(page);
 			}
 			
@@ -276,6 +277,8 @@ public class JoinServlet extends MyUploadServlet{
 		String cp = req.getContextPath();
 		String page = req.getParameter("page");
 		
+		
+		
 		try {
 			long buyNum = Long.parseLong(req.getParameter("buyNum"));
 			JoinDTO dto = dao.findById(buyNum);
@@ -293,6 +296,7 @@ public class JoinServlet extends MyUploadServlet{
 			req.setAttribute("dto", dto);
 			req.setAttribute("page", page);
 			req.setAttribute("mode", "update");
+			
 			
 			forward(req, resp, "/WEB-INF/views/join/write.jsp");
 			return;
@@ -320,16 +324,18 @@ public class JoinServlet extends MyUploadServlet{
 			JoinDTO dto = new JoinDTO();
 			
 			dto.setTitle(req.getParameter("title"));
+			System.out.println(req.getParameter("title"));
 			dto.setLink(req.getParameter("link"));
 			dto.setContent(req.getParameter("content"));
 			dto.setReg_date(req.getParameter("reg_date"));
 			dto.setExp_date(req.getParameter("exp_date"));
 			dto.setMin_peo(Integer.parseInt(req.getParameter("min_peo")));
+			dto.setBuyNum(Long.parseLong(req.getParameter("buyNum")));
 			
 			dto.setUserId(info.getUserId());
 			
-			dao.updateJoin(dto);
 			
+			dao.updateJoin(dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -374,11 +380,21 @@ public class JoinServlet extends MyUploadServlet{
 	protected void joinForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			JoinDAO dao = new JoinDAO();
+			MemberDAO mdao = new MemberDAO(); // 
 			
 			long buyNum = Long.parseLong(req.getParameter("buyNum"));
 			JoinDTO dto = dao.findById(buyNum);
 			
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			MemberDTO mdto = mdao.findById(info.getUserId()); 
+			
+			String page = req.getParameter("page");
+		
+			req.setAttribute("mdto", mdto);
 			req.setAttribute("dto", dto);
+			req.setAttribute("page", page);
 			
 			
 		} catch (Exception e) {
@@ -395,18 +411,21 @@ public class JoinServlet extends MyUploadServlet{
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
-		String cp = req.getContextPath(); 
+		String cp = req.getContextPath();
 		
+		/*
 		if(req.getMethod().equalsIgnoreCase("GET")) {
 			resp.sendRedirect(cp + "/join/list.do");
 			return;
 		}
+		*/
 		
 		// req.setAttribute("mode", "enter");
 		
 		try {
 			JoinDTO dto = new JoinDTO();
-			dto.setMemNum(Long.parseLong(req.getParameter("memNum")));
+			
+			dto.setUserId(info.getUserId());
 			dto.setTitle(req.getParameter("title"));
 			dto.setUserName(req.getParameter("userName"));
 			dto.setQuantity(Integer.parseInt(req.getParameter("quantity")));
@@ -416,10 +435,16 @@ public class JoinServlet extends MyUploadServlet{
 			dto.setTel1(req.getParameter("tel1"));
 			dto.setTel2(req.getParameter("tel2"));
 			dto.setTel3(req.getParameter("tel3"));
+			
+			
+			
+			
 			dto.setZip(req.getParameter("zip"));
 			dto.setAddr1(req.getParameter("addr1"));
 			dto.setAddr2(req.getParameter("addr2"));
-			dto.setBuyNum(Long.parseLong(req.getParameter("buyNum")));
+			// dto.setBuyNum(Long.parseLong(req.getParameter("buyNum")));
+			
+			dto.setBuyNum((long)24);
 			
 			dao.insertJoinMember(dto);
 			
@@ -428,7 +453,7 @@ public class JoinServlet extends MyUploadServlet{
 		}
 
 		
-		forward(req, resp, "/WEB-INF/views/join/joinwrite.jsp");
+		resp.sendRedirect(cp+"/join/list.do");
 	}
 	
 }
