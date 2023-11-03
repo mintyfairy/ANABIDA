@@ -119,6 +119,7 @@ function searchList() {
 								<tr>
 									<td>${dataCount-(page-1)*size-status.index}</td>
 									<td class="left">
+
 									
 									<c:if test="${sessionScope.member.userId==dto.userId || dto.userId == 'admin' || sessionScope.member.userId=='admin' || sessionScope.member.userId==dto.answerUserId2}">
 										<c:forEach var="n" begin="1" end="${dto.depth }">&nbsp;&nbsp;</c:forEach>

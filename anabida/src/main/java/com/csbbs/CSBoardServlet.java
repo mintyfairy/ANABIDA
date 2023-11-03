@@ -269,7 +269,6 @@ public class CSBoardServlet extends MyUploadServlet {
 		}
 
 		// 예외 발생시 list.do로
-		System.out.println("aaa");
 		resp.sendRedirect(cp + "/csbbs/list.do?" + query);
 
 	}
