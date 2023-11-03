@@ -204,18 +204,8 @@ public class AlertServlet extends MyUploadServlet {
 
 		try {
 			long alertNum = Long.parseLong(req.getParameter("alertNum"));
-			//String schType = req.getParameter("schType");
-			//String kwd = req.getParameter("kwd");
-			//if (schType == null) {
-			//	schType = "all";
-			//	kwd = "";
-			//}
-			//kwd = URLDecoder.decode(kwd, "utf-8");
-
-			//if (kwd.length() != 0) {
-			//	query += "&schType=" + schType + "&kwd=" + URLEncoder.encode(kwd, "UTF-8");
-			//}
-
+			
+	
 			// 조회수 증가 잇어야함
 			dao.updateHitCount(alertNum);
 
@@ -228,15 +218,16 @@ public class AlertServlet extends MyUploadServlet {
 			dto.setContent(util.htmlSymbols(dto.getContent()));
 
 			// 이전글 다음글  alertDAO에 안만들어서 넘김
-			
+			AlertDTO prevDto = dao.findByPrev(dto.getAlertNum());
+			AlertDTO nextDto = dao.findByNext(dto.getAlertNum());
 			
 
 			// JSP로 전달할 속성
 			req.setAttribute("dto", dto);
 			req.setAttribute("page", page);
 			req.setAttribute("query", query);
-			//req.setAttribute("prevDto", prevDto);
-			//req.setAttribute("nextDto", nextDto);
+			req.setAttribute("prevDto", prevDto);
+			req.setAttribute("nextDto", nextDto);
 
 			// 포워딩
 			forward(req, resp, "/WEB-INF/views/alert/article.jsp");
@@ -251,15 +242,71 @@ public class AlertServlet extends MyUploadServlet {
 		
 
 	protected void updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		AlertDAO dao = new AlertDAO();
 
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		String cp = req.getContextPath();
 		
-		
-		
-		
+		String page = req.getParameter("page");
+
+		try {
+			long alertNum = Long.parseLong(req.getParameter("alertNum"));
+			AlertDTO dto = dao.findById(alertNum);
+
+			if (dto == null) {
+				resp.sendRedirect(cp + "/alert/list.do?page=" + page);
+				return;
+			}
+
+			
+			if (! dto.getUserId().equals(info.getUserId())) {
+				resp.sendRedirect(cp + "/alert/list.do?page=" + page);
+				return;
+			}
+
+			req.setAttribute("dto", dto); 
+			req.setAttribute("page", page);
+			req.setAttribute("mode", "update");
+
+			forward(req, resp, "/WEB-INF/views/alert/write.jsp");
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		resp.sendRedirect(cp + "/alert/list.do?page=" + page);
 	}
 
-	protected void updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+	protected void updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		AlertDAO dao = new AlertDAO();
+
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		if (req.getMethod().equalsIgnoreCase("GET")) {
+			resp.sendRedirect(cp + "/alert/list.do");
+			return;
+		}
+		
+		String page = req.getParameter("page");
+		
+		try {
+			AlertDTO dto = new AlertDTO();
+			
+			dto.setAlertNum(Long.parseLong(req.getParameter("alertNum")));
+			dto.setTitle(req.getParameter("title"));
+			dto.setContent(req.getParameter("content"));
+			dto.setUserId(info.getUserId());
+			dao.updateAlert(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		resp.sendRedirect(cp + "/alert/list.do?page=" + page);
 	}
 
 

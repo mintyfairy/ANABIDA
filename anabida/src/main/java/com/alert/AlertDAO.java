@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.util.DBConn;
 import com.util.DBUtil;
 
@@ -231,6 +232,112 @@ public void updateHitCount(long alertNum) throws SQLException {
 	}
 
 }
+
+//업데이트
+public void updateAlert(AlertDTO dto) throws SQLException {
+	PreparedStatement pstmt = null;
+	String sql;
+
+	try {
+		sql = "UPDATE alert SET title=?, content=? WHERE alertNum=? AND userId=?";
+		pstmt = conn.prepareStatement(sql);
+		
+		pstmt.setString(1, dto.getTitle());
+		pstmt.setString(2, dto.getContent());
+		pstmt.setLong(3, dto.getAlertNum());
+		pstmt.setString(4, dto.getUserId());
+		
+		pstmt.executeUpdate();
+
+	} catch (SQLException e) {
+		e.printStackTrace();
+		throw e;
+	} finally {
+		DBUtil.close(pstmt);
+	}
+
+}
+
+//이전글합시다
+public AlertDTO findByPrev(long alertNum) {
+	AlertDTO dto = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	StringBuilder sb = new StringBuilder();
+
+	try {
+
+			sb.append(" SELECT alertNum, title ");
+			sb.append(" FROM alert ");
+			sb.append(" WHERE (alertNum = ? )");
+			sb.append(" ORDER BY alertNum ASC ");
+			sb.append(" FETCH FIRST 1 ROWS ONLY ");
+
+			pstmt = conn.prepareStatement(sb.toString());
+			
+			pstmt.setLong(1, alertNum);
+	
+
+		rs = pstmt.executeQuery();
+
+		if (rs.next()) {
+			dto = new AlertDTO();
+			
+			dto.setAlertNum(rs.getLong("alertNum"));
+			dto.setTitle(rs.getString("title"));
+		}
+		
+	} catch (SQLException e) {
+		e.printStackTrace();
+	} finally {
+		DBUtil.close(rs);
+		DBUtil.close(pstmt);
+	}
+
+	return dto;
+}
+
+
+//다음글
+public AlertDTO findByNext(long alertNum) {
+	AlertDTO dto = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	StringBuilder sb = new StringBuilder();
+
+	try {	
+						
+			sb.append(" SELECT alertNum, title ");
+			sb.append(" FROM alert ");
+			sb.append(" WHERE alertNum = ?  ");
+			sb.append(" ORDER BY alertNum DESC ");
+			sb.append(" FETCH FIRST 1 ROWS ONLY ");
+
+			pstmt = conn.prepareStatement(sb.toString());
+			
+			pstmt.setLong(1, alertNum);
+
+
+		rs = pstmt.executeQuery();
+
+		if (rs.next()) {
+			dto = new AlertDTO();
+			
+			dto.setAlertNum(rs.getLong("alertNum"));
+			dto.setTitle(rs.getString("title"));
+		}
+		
+	} catch (SQLException e) {
+		e.printStackTrace();
+	} finally {
+		DBUtil.close(rs);
+		DBUtil.close(pstmt);
+	}
+
+	return dto;
+}
+
+
 
 //해당 게시물 보기
 	public AlertDTO findById(long alertNum) {

@@ -7,6 +7,9 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+<jsp:include page="/WEB-INF/views/layout/staticHeader.jsp"/>
+
 <style type="text/css">
 * { padding: 0; margin: 0; }
 *, *::after, *::before { box-sizing: border-box; }
@@ -89,7 +92,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 
 <script type="text/javascript">
 function sendOk(){
-	const f = document.boardForm;
+	const f = document.alertForm;
 	
 	f.action="${pageContext.request.contextPath}/alert/${mode}_ok.do";
 	f.submit();
@@ -98,32 +101,37 @@ function sendOk(){
 </head>
 <body>
 
+<header>
+	<jsp:include page="/WEB-INF/views/layout/header.jsp"></jsp:include>
+</header>
+
 <!-- 여기는 등록 -->
 <div class="board">
 	<div class="title">
 	    <h3><span>|</span> 게시판</h3>
 	</div>
 
-	<form name="boardForm" method="post">
+	<form name="alertForm" method="post">
 		<table class="table table-border table-form">
 			<tr> 
 				<td>제&nbsp;&nbsp;&nbsp;&nbsp;목</td>
 				<td> 
-					<input type="text" name="title" maxlength="100" class="form-control" value="">
+					<input type="text" name="title" maxlength="100" class="form-control" value="${dto.title}">
 				</td>
 			</tr>
 			
 			<tr> 
 				<td>작성자</td>
 				<td> 
-					${sessionScope.member.userName }
+					${sessionScope.member.userName}
 				</td>
 			</tr>
 			
 			<tr> 
 				<td>내&nbsp;&nbsp;&nbsp;&nbsp;용</td>
 				<td valign="top"> 
-					<textarea name="content" class="form-control"></textarea>
+					<textarea name="content" class="form-control">${dto.content}</textarea>
+					
 				</td>
 			</tr>
 			
@@ -136,6 +144,11 @@ function sendOk(){
 					<button type="button" class="btn" onclick="sendOk()">글올리기</button>
 					<button type="reset" class="btn">다시입력</button>
 					<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/list.do">등록취소</button>
+					<c:if test="${mode=='update'}">
+						<input type="hidden" name="page" value="${page}">
+						<input type="hidden" name="alertNum" value="${dto.alertNum}">
+					</c:if>
+				
 				</td>
 			</tr>
 		</table>

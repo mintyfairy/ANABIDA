@@ -6,6 +6,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<jsp:include page="/WEB-INF/views/layout/staticHeader.jsp"/>
+
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 <style type="text/css">
 * { padding: 0; margin: 0; }
@@ -85,6 +87,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .table-list .num { width: 60px; color: #787878; }
 .table-list .subject { color: #787878; }
 .table-list .name { width: 100px; color: #787878; }
+.table-list .title { width: 500px; color: #787878; }
 .table-list .date { width: 100px; color: #787878; }
 .table-list .hit { width: 70px; color: #787878; }
 
@@ -127,6 +130,10 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 </head>
 <body>
 
+<header>
+    <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
+</header>
+
 <div class="board">
 	<div class="title">
 	    <h3>⚡공지사항⚡</h3>
@@ -135,7 +142,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 	<table class="table">
 		<tr>
 			<td width="50%">
-				${dataCount}개({page}/${total_page}페이지)
+				${dataCount}개(${page}/${total_page}페이지)
 			</td>
 			
 			<td align="right">&nbsp;</td>
@@ -146,7 +153,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		<thead>
 			<tr>
 				<th class="num">번호</th>
-				<th class="subject">제목</th>
+				<th class="title">제목</th>
 				<th class="name">작성자</th>
 				<th class="date">작성일</th>
 				<th class="hit">조회수</th>

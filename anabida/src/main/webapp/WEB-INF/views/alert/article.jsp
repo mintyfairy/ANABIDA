@@ -6,7 +6,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<jsp:include page="/WEB-INF/views/layout/staticHeader.jsp"/>
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
 <style type="text/css">
 * { padding: 0; margin: 0; }
 *, *::after, *::before { box-sizing: border-box; }
@@ -84,7 +86,9 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 
 </head>
 <body>
-
+<header>
+	<jsp:include page="/WEB-INF/views/layout/header.jsp"></jsp:include>
+</header>
 <div class="board">
 	<div class="title">
 	    <h3><span>|</span> 게시판</h3>
@@ -94,7 +98,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		<thead>
 			<tr>
 				<td colspan="2" align="center">
-					제목 입니다.
+					${dto.title}
 				</td>
 			</tr>
 		</thead>
@@ -102,27 +106,33 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		<tbody>
 			<tr>
 				<td width="50%">
-					이름 : 김자바
+					관리자
 				</td>
 				<td align="right">
-					2021-10-10 | 조회 10
+					${dto.reg_date} | 조회 ${dto.hitcount}
 				</td>
 			</tr>
 			
 			<tr>
 				<td colspan="2" valign="top" height="200">
-					내용 입니다.
+					${dto.content}
 				</td>
 			</tr>
 			
 			<tr>
 				<td colspan="2">
-					이전글 : 이전글입니다.
+					이전글 : 
+					<c:if test="${not empty prevDto}">
+								<a href="${pageContext.request.contextPath}/alert/article.do?${query}&alertNum=${prevDto.alertNum}">${prevDto.title}</a>
+					</c:if>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
-					다음글 : 다음글입니다.
+					다음글 : 
+					<c:if test="${not empty nextDto}">
+								<a href="${pageContext.request.contextPath}/alert/article.do?${query}&alertNum=${nextDto.alertNum}">${nextDto.title}</a>
+					</c:if>
 				</td>
 			</tr>
 		<tbody>
@@ -131,7 +141,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 	<table class="table">
 		<tr>
 			<td width="50%">
-				<button type="button" class="btn">수정</button>
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/update.do?alertNum=${dto.alertNum}&page=${page}';">수정</button>
 				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/delete.do?alertNum=${dto.alertNum}&page=${page}';">삭제</button>
 			</td>
 			<td align="right">
