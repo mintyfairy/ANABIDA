@@ -395,10 +395,10 @@ public class JoinServlet extends MyUploadServlet{
 			req.setAttribute("mdto", mdto);
 			req.setAttribute("dto", dto);
 			req.setAttribute("page", page);
-			
+
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		req.setAttribute("mode", "enter");
 		forward(req, resp, "/WEB-INF/views/join/joinwrite.jsp");
@@ -412,6 +412,9 @@ public class JoinServlet extends MyUploadServlet{
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		String cp = req.getContextPath();
+		
+		// 참여자 수 증가
+		dao.enterCount();
 		
 		/*
 		if(req.getMethod().equalsIgnoreCase("GET")) {
@@ -437,14 +440,11 @@ public class JoinServlet extends MyUploadServlet{
 			dto.setTel3(req.getParameter("tel3"));
 			
 			
-			
-			
 			dto.setZip(req.getParameter("zip"));
 			dto.setAddr1(req.getParameter("addr1"));
 			dto.setAddr2(req.getParameter("addr2"));
-			// dto.setBuyNum(Long.parseLong(req.getParameter("buyNum")));
 			
-			dto.setBuyNum((long)24);
+			dto.setBuyNum(Long.parseLong(req.getParameter("buyNum")));
 			
 			dao.insertJoinMember(dto);
 			

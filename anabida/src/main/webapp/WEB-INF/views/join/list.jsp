@@ -210,7 +210,7 @@ function searchList() {
 					</td>
 					<td>${dto.userName}</td>
 					<td>(${dto.reg_date}<br>~${dto.exp_date})</td>
-					<td>(${dto.joinCount}/${dto.min_peo})</td>
+					<td>(${dto.enterCount}/${dto.min_peo})</td>
 					<td>${dto.hitCount}</td>
 				</tr>
 			   </c:forEach>

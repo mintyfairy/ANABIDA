@@ -30,21 +30,7 @@ public class JoinDTO {
 	private String addr;
 	private String addr1;
 	private String addr2;
-	
-	
-	public String getSelectEmail() {
-		return selectEmail;
-	}
-	public void setSelectEmail(String selectEmail) {
-		this.selectEmail = selectEmail;
-	}
-	
-	public String getAddr() {
-		return addr;
-	}
-	public void setAddr(String addr) {
-		this.addr = addr;
-	}
+	private int  enterCount;
 	public long getBuyNum() {
 		return buyNum;
 	}
@@ -129,6 +115,12 @@ public class JoinDTO {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+	public String getSelectEmail() {
+		return selectEmail;
+	}
+	public void setSelectEmail(String selectEmail) {
+		this.selectEmail = selectEmail;
+	}
 	public String getEmail() {
 		return email;
 	}
@@ -177,6 +169,12 @@ public class JoinDTO {
 	public void setZip(String zip) {
 		this.zip = zip;
 	}
+	public String getAddr() {
+		return addr;
+	}
+	public void setAddr(String addr) {
+		this.addr = addr;
+	}
 	public String getAddr1() {
 		return addr1;
 	}
@@ -189,6 +187,17 @@ public class JoinDTO {
 	public void setAddr2(String addr2) {
 		this.addr2 = addr2;
 	}
+	public int getEnterCount() {
+		return enterCount;
+	}
+	public void setEnterCount(int enterCount) {
+		this.enterCount = enterCount;
+	}
+	
+	
+	
+	
+
 
 
 	

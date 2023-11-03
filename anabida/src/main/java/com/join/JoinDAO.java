@@ -146,12 +146,19 @@ public class JoinDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, min_peo, NVL(imageFilename, 'no.png') imageFilename, ");
+			sb.append(" SELECT g.buyNum, g.userId, title, hitCount, joinCount, link, min_peo, NVL(imageFilename, 'no.png') imageFilename, ");
 			sb.append(" TO_CHAR(g.reg_date, 'YYYY-MM-DD') reg_date, ");
-			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, ");
+			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, NVL(enterCount, 0) enterCount,");
 			sb.append(" m.userName ");
 			sb.append(" FROM group_buying g ");
 			sb.append(" JOIN member m ON g.userId = m.userId ");
+			sb.append(" JOIN member m ON g.userId = m.userId ");
+			sb.append(" LEFT OUTER JOIN ( ");
+			sb.append("     SELECT buyNum, COUNT(*) enterCount ");
+			sb.append("     FROM join_member ");
+			sb.append("     GROUP BY buyNum");
+			sb.append(" ) c ON g.buyNum = c.buyNum");				
+			
 			sb.append(" ORDER BY buyNum DESC ");
 			sb.append(" OFFSET ? ROWS FETCH FIRST ? ROWS ONLY ");
 			
@@ -166,6 +173,7 @@ public class JoinDAO {
 				JoinDTO dto = new JoinDTO();
 				
 				dto.setBuyNum(rs.getLong("buyNum"));
+				//System.out.println(rs.getLong("buyNum"));
 				dto.setUserId(rs.getString("userId"));
 				dto.setUserName(rs.getString("userName"));
 				dto.setImageFilename(rs.getString("imageFilename"));
@@ -176,7 +184,7 @@ public class JoinDAO {
 				dto.setMin_peo(rs.getInt("min_peo"));
 				dto.setReg_date(rs.getString("reg_date"));
 				dto.setExp_date(rs.getString("exp_date"));
-				
+				dto.setEnterCount(rs.getInt("enterCount"));				
 				list.add(dto);
 			}
 			
@@ -197,12 +205,17 @@ public class JoinDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			sb.append(" SELECT buyNum, g.userId, title, hitCount, joinCount, link, min_peo,  NVL(imageFilename, 'no.png') imageFilename,");
+			sb.append(" SELECT g.buyNum, g.userId, title, hitCount, joinCount, link, min_peo,  NVL(imageFilename, 'no.png') imageFilename,");
 			sb.append(" TO_CHAR(g.reg_date, 'YYYY-MM-DD') reg_date, ");
-			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, ");
+			sb.append(" TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, NVL(enterCount, 0) enterCount, ");
 			sb.append(" m.userName ");
 			sb.append(" FROM group_buying g ");
 			sb.append(" JOIN member m ON g.userId = m.userId ");
+			sb.append(" LEFT OUTER JOIN ( ");
+			sb.append("     SELECT buyNum, COUNT(*) enterCount ");
+			sb.append("     FROM join_member ");
+			sb.append("     GROUP BY buyNum");
+			sb.append(" ) c ON g.buyNum = c.buyNum");			
 			if (schType.equals("all")) {
 				sb.append(" WHERE INSTR(title, ?) >= 1 OR INSTR(content, ?) >= 1 ");
 			} else if (schType.equals("reg_date")) {
@@ -243,6 +256,8 @@ public class JoinDAO {
 				dto.setMin_peo(rs.getInt("min_peo"));
 				dto.setReg_date(rs.getString("reg_date"));
 				dto.setExp_date(rs.getString("exp_date"));
+				
+				dto.setEnterCount(rs.getInt("enterCount"));
 				
 				list.add(dto);
 			}
@@ -490,13 +505,35 @@ public class JoinDAO {
 			DBUtil.close(pstmt);
 		}
 	}
-	/*
+	
 	
 	// 참여자 수 증가하기
-	public void joinCount(long buynum) throws SQLException {
+	public int enterCount(){
+		int result = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
 		
+		try {
+			sql = " SELECT NVL(COUNT(*), 0) FROM join_member ";
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return result;
 	}
-	*/
+	
+	
 
 	public void insertJoinMember(JoinDTO dto) throws SQLException {
 		PreparedStatement pstmt = null;
@@ -508,8 +545,8 @@ public class JoinDAO {
 			dto.setTel(dto.getTel1()+"-"+dto.getTel2()+"-"+dto.getTel3());
 			dto.setAddr(dto.getAddr1()+" " + dto.getAddr2());
 			
-			sql=" INSERT INTO join_member(memNum, userId, buyNum, quantity, email, tel, zip, addr, title) "
-					+ " VALUES(join_seq.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?) ";
+			sql=" INSERT INTO join_member(memNum, userId, buyNum, quantity, email, tel, zip, addr, title, enterCount) "
+					+ " VALUES(join_seq.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, 0) ";
 			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, dto.getUserId());
@@ -520,6 +557,7 @@ public class JoinDAO {
 			pstmt.setString(6, dto.getZip());
 			pstmt.setString(7, dto.getAddr());
 			pstmt.setString(8, dto.getTitle());
+		
 			
 			pstmt.executeUpdate();
 			
