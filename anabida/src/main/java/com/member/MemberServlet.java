@@ -40,7 +40,15 @@ public class MemberServlet extends MyServlet {
 			updateSubmit(req, resp);
 		} else if (uri.indexOf("userIdCheck.do") != -1) {
 			userIdCheck(req, resp);
+		} else if (uri.indexOf("myPage.do") != -1) {
+			myPage(req, resp);
 		} 
+	}
+	
+	protected void myPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 로그인 폼
+		String path = "/WEB-INF/views/member/myPage.jsp";
+		forward(req, resp, path);
 	}
 
 	protected void loginForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
