@@ -636,6 +636,31 @@ $(function(){
 		ajaxFun(url, "post", query, "json", fn);
 	});
 });
+
+//댓글별 답글 삭제
+$(function(){
+	$(".reply").on("click", ".deleteReplyAnswer", function(){
+	
+		if(! confirm("제안을 삭제하시겠습니까 ? ")) {
+		    return false;
+		}
+		
+		let replyNum = $(this).attr("data-replyNum");
+		let answer = $(this).attr("data-answer");
+	
+		
+		let url = "${pageContext.request.contextPath}/pbbs/deleteReply.do";
+		let query = "replyNum=" + replyNum;
+		
+		const fn = function(data){
+	
+			listReplyAnswer(answer);
+			countReplyAnswer(answer);
+		};
+		
+		ajaxFun(url, "post", query, "json", fn);
+	});
+});
 </script>
 
 </body>
