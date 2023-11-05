@@ -10,7 +10,7 @@ public class AlertDTO {
 	private String userName;
 	private long groupNum;
 	private int orderNo;
-	
+	private long gap;
 	
 	public long getAlertNum() {
 		return alertNum;
@@ -65,6 +65,18 @@ public class AlertDTO {
 	}
 	public void setOrderNo(int orderNo) {
 		this.orderNo = orderNo;
+	}
+	/**
+	 * @return the gap
+	 */
+	public long getGap() {
+		return gap;
+	}
+	/**
+	 * @param gap the gap to set
+	 */
+	public void setGap(long gap) {
+		this.gap = gap;
 	}
 	
 	

@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>아나비다 공지사항</title>
 <jsp:include page="/WEB-INF/views/layout/staticHeader.jsp"/>
 
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
@@ -164,8 +164,11 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 			<c:forEach var="dto" items="${list}" varStatus="status">
 			<tr>
 				<td>${dataCount-(page-1) * size -status.index}</td> 
+				<td class="left">
+						<a href="${articleUrl}&num=${dto.alertNum}">${dto.title}</a>
+						<c:if test="${dto.gap<1}"><img src="${pageContext.request.contextPath}/resource/images/new.gif"></c:if>
+				</td>
 				
-				<td><a href="${pageContext.request.contextPath}/alert/article.do?alertNum=${dto.alertNum}&page=${page}"> ${dto.title}</a></td>	
 				
 				<td>${dto.userName}</td>
 				<td>${dto.reg_date}</td>
@@ -204,6 +207,12 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		</tr>
 	</table>	
 </div>
+
+<footer>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp"></jsp:include>
+</footer>
+
+<jsp:include page="/WEB-INF/views/layout/staticFooter.jsp"/>
 
 </body>
 </html>

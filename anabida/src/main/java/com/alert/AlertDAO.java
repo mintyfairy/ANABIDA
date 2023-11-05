@@ -266,16 +266,16 @@ public AlertDTO findByPrev(long alertNum) {
 	StringBuilder sb = new StringBuilder();
 
 	try {
-
 			sb.append(" SELECT alertNum, title ");
 			sb.append(" FROM alert ");
-			sb.append(" WHERE (alertNum = ? )");
+			sb.append(" WHERE alertNum = ? ");
 			sb.append(" ORDER BY alertNum ASC ");
 			sb.append(" FETCH FIRST 1 ROWS ONLY ");
 
 			pstmt = conn.prepareStatement(sb.toString());
 			
 			pstmt.setLong(1, alertNum);
+	
 	
 
 		rs = pstmt.executeQuery();

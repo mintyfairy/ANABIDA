@@ -134,8 +134,7 @@ public class AlertServlet extends MyUploadServlet {
 			req.setAttribute("size", size);
 			req.setAttribute("atrticleUrl", articleUrl);
 			req.setAttribute("paging", paging);
-			req.setAttribute("schType", schType);
-			req.setAttribute("kwd", kwd);
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();

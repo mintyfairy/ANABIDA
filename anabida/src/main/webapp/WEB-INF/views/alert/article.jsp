@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>아나비다 공지사항입니다</title>
 <jsp:include page="/WEB-INF/views/layout/staticHeader.jsp"/>
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
@@ -91,7 +91,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 </header>
 <div class="board">
 	<div class="title">
-	    <h3><span>|</span> 게시판</h3>
+	    <h3><span>|</span> 공지사항</h3>
 	</div>
 	
 	<table class="table table-border table-article">
