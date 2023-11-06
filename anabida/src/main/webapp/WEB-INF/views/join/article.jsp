@@ -81,10 +81,18 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 
 .table-article { margin-top: 20px; }
 .table-article tr > td { padding-left: 5px; padding-right: 5px; }
+
+.table tr td {
+overflow:hidden;
+white-space: initial;
+text-overflow: ellipsis;
+webkit-box-orient: vertical;
+word-break: break-all;
+}
 </style>
 
 <script type="text/javascript">
-<c:if test="${sessionScopte.member.userId==dto.userId || sessionScope.member.userId=='admin'}">
+<c:if test="${sessionScope.member.userId==dto.userId || sessionScope.member.userId=='admin'}">
 	function deleteBoard() {
 		if(confirm("게시글을 삭제 하시겠습니까? ")){
 		let query = "buyNum=${dto.buyNum}&${query}";
@@ -140,14 +148,14 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 			</tr>
 			
 			<tr>
-				<td>
-					제품 상세페이지 : <a href="${dto.link}" target="_blank">${dto.link}</a>
+				<td >
+					제품 상세페이지 : <a href="${dto.link}" target="_blank"> ${dto.link}></a>
 				</td>
 			</tr>
 			
 			<tr style="border-bottom: none;">
-				<td colspan="2" valign="top" height="200">
-					<img src="<c:url value='/uploads/join/${dto.imageFilename}'/>">
+				<td colspan="2" valign="top">
+					<img src="<c:url value='/uploads/join/${dto.imageFilename}'/>" width="400px" height="400px">
 				</td>
 			</tr>
 			

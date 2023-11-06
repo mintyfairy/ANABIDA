@@ -245,6 +245,7 @@ public class JoinServlet extends MyUploadServlet{
 			JoinDTO dto = dao.findById(buyNum);
 			if(dto==null) {
 				resp.sendRedirect(cp+"/join/list.do?"+query);
+				return;
 			}
 			dto.setContent(util.htmlSymbols(dto.getContent()));
 			
@@ -324,7 +325,6 @@ public class JoinServlet extends MyUploadServlet{
 			JoinDTO dto = new JoinDTO();
 			
 			dto.setTitle(req.getParameter("title"));
-			System.out.println(req.getParameter("title"));
 			dto.setLink(req.getParameter("link"));
 			dto.setContent(req.getParameter("content"));
 			dto.setReg_date(req.getParameter("reg_date"));

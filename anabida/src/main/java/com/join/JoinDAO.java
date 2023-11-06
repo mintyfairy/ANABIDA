@@ -280,8 +280,8 @@ public class JoinDAO {
 		String sql;
 		
 		try {
-			sql = " SELECT buyNum, g.userId, userName, link, title, content, g.reg_date, TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, hitCount, joinCount, "
-					+ " NVL(imageFilename, 'no.png') imageFilename, min_peo "
+			sql = " SELECT buyNum, g.userId, userName, link, title, content, g.reg_date, TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, hitCount, joinCount, min_peo,"
+					+ " imageFilename "
 					+ " FROM group_buying g"
 					+ " JOIN member m ON g.userId = m.userId"
 					+ " WHERE buyNum= ? ";
@@ -459,8 +459,7 @@ public class JoinDAO {
 			pstmt.setLong(6, dto.getBuyNum());
 			pstmt.setString(7, dto.getUserId());
 			
-			System.out.println(dto.getBuyNum());
-			System.out.println(dto.getUserId());
+		
 			
 			pstmt.executeUpdate();
 			
