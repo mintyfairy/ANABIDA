@@ -18,6 +18,24 @@ public class MemberDTO {
 	private String addr1;
 	private String addr2;
 	private String score;
+	private int age;
+	
+	// 사진 이미지
+	private String proFile;
+	
+	
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public String getProFile() {
+		return proFile;
+	}
+	public void setProFile(String proFile) {
+		this.proFile = proFile;
+	}
 	public String getScore() {
 		return score;
 	}

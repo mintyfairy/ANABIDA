@@ -103,11 +103,12 @@ public class MemberDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			sb.append("SELECT m1.userId, userName, userPwd,");
+			sb.append("SELECT m1.userId, userName, userPwd,proFile");
 			sb.append("      enabled, reg_date, score,");
+			sb.append("      TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), birth) / 12) age, ");
 			sb.append("      TO_CHAR(birth, 'YYYY-MM-DD') birth, ");
 			sb.append("      email, tel,");
-			sb.append("      zip, addr1, addr2");
+			sb.append("      zip, addr1, addr2,proFile");
 			sb.append("  FROM member m1");
 			sb.append("  LEFT OUTER JOIN member2 m2 ON m1.userId=m2.userId ");
 			sb.append("  WHERE m1.userId = ?");
@@ -120,11 +121,11 @@ public class MemberDAO {
 			
 			if(rs.next()) {
 				dto = new MemberDTO();
-				
+				dto.setAge(rs.getInt("age"));
+				dto.setProFile(rs.getString("proFile"));
 				dto.setUserId(rs.getString("userId"));
 				dto.setUserPwd(rs.getString("userPwd"));
 				dto.setUserName(rs.getString("userName"));
-				dto.setEnabled(rs.getInt("enabled"));
 				dto.setReg_date(rs.getString("reg_date"));
 				dto.setScore(rs.getString("score"));
 				dto.setBirth(rs.getString("birth"));
@@ -226,4 +227,80 @@ public class MemberDAO {
 		}
 
 	}
+	
+	// 
+	public void uploadProFile(MemberDTO dto) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			sql = "UPDATE member SET profile=?  WHERE userId=?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, dto.getProFile());
+			pstmt.setString(2, dto.getUserId());
+			
+			pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+
+	}
+	
+	//DeleteProFile
+	public void DeleteProFile(MemberDTO dto) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			sql = "UPDATE member SET profile=?  WHERE userId=?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, dto.getProFile());
+			pstmt.setString(2, dto.getUserId());
+			
+			pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+
+	}
+	
+	// findByPhoto
+	public MemberDTO findByPhoto(String userId) {
+		MemberDTO dto = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = "select profile from member where userid = ?";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, userId);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				dto = new MemberDTO();
+				dto.setProFile(rs.getString("proFile"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		return dto;
+	}	
 }

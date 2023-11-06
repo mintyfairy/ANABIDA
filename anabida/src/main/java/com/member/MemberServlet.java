@@ -1,25 +1,44 @@
 package com.member;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
+import org.json.JSONObject;
+
+import com.util.FileManager;
 import com.util.MyServlet;
+import com.util.MyUploadServlet;
 
 @WebServlet("/member/*")
-public class MemberServlet extends MyServlet {
+public class MemberServlet extends MyUploadServlet {
 	private static final long serialVersionUID = 1L;
-
+	private String pathname;
 	@Override
 	protected void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
 
+		// 세션에 저장된 로그인 정보
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+				
+		
 		String uri = req.getRequestURI();
+		
+		
+		
+		// 이미지를 저장할 경로(pathname)
+		String root = session.getServletContext().getRealPath("/");
+		pathname = root + "uploads" + File.separator + "member";
+				
 
 		// uri에 따른 작업 구분
 		if (uri.indexOf("login.do") != -1) {
@@ -42,14 +61,18 @@ public class MemberServlet extends MyServlet {
 			userIdCheck(req, resp);
 		} else if (uri.indexOf("myPage.do") != -1) {
 			myPage(req, resp);
-		} 
+		} else if (uri.indexOf("profileUpload.do") != -1) {
+			profileUpload(req, resp);
+		} else if(uri.indexOf("profileDelete.do")!=-1) {
+			profileDelete(req, resp);
+		} else if(uri.indexOf("myPagephoto.do")!=-1) {
+			myPagephoto(req, resp);
+		}
+		// myPagephoto
+		
 	}
 	
-	protected void myPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 로그인 폼
-		String path = "/WEB-INF/views/member/myPage.jsp";
-		forward(req, resp, path);
-	}
+	
 
 	protected void loginForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 로그인 폼
@@ -114,6 +137,45 @@ public class MemberServlet extends MyServlet {
 		resp.sendRedirect(cp + "/");
 	}
 
+	protected void myPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 마이페이지
+		
+		// 세션에 저장된 로그인 정보
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		
+		String cp = req.getContextPath();
+
+		// 로그인이 안된경우
+		if (info == null) { // 로그인되지 않은 경우
+			resp.sendRedirect(cp + "/member/login.do");
+			return;
+		}
+		
+		MemberDAO dao = new MemberDAO();
+		
+		try {
+			MemberDTO dto = dao.findById(info.getUserId());
+			
+			if (dto == null) { 
+				resp.sendRedirect(cp + "/main.do?" );
+				return;
+			}
+			
+			req.setAttribute("dto", dto);
+			forward(req, resp, "/WEB-INF/views/member/myPage.jsp");
+			return;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+
+		String path = "/WEB-INF/views/member/myPage.jsp";
+		forward(req, resp, path);
+	}
+	
 	protected void memberForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 회원가입 폼
 		req.setAttribute("title", "회원 가입");
@@ -302,5 +364,115 @@ public class MemberServlet extends MyServlet {
 
 	}
 	
+	//profileUpload
+	
+	protected void profileUpload(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 파일 업로드
+		
+		System.out.println("제발,,,,,,");
+		
+		
+		MemberDAO dao = new MemberDAO();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		if(info.getUserId().length() <0) {
+			return;
+		}
+		
+		try {
+			MemberDTO dto = new  MemberDTO();
+			String filename;
+			Part p = req.getPart("proFile");
+			FileManager.doFiledelete(pathname, dto.getProFile());
+			Map<String, String> map = doFileUpload(p, pathname);
+			if (map != null) {
+				filename = map.get("saveFilename");
+				dto.setProFile(filename);
+			}else {
+				return;
+			}
+			
+			dto.setUserId(info.getUserId());
+			dao.uploadProFile(dto);
+			
+			
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+		JSONObject job = new JSONObject();
+		respJson(resp, job.toString());
+		
+
+	}
+	
+	//profileDelete
+	protected void profileDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 파일 삭제
+		
+		System.out.println("hi");
+		
+		
+		MemberDAO dao = new MemberDAO();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		if(info.getUserId().length() <0) {
+			return;
+		}
+		
+		try {
+			MemberDTO dto = new  MemberDTO();
+			System.out.println(req.getParameter("proFile"));
+			dto.setProFile(req.getParameter("proFile"));
+			
+			dto.setUserId(info.getUserId());
+			dao.DeleteProFile(dto);
+			
+			
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+		JSONObject job = new JSONObject();
+		respJson(resp, job.toString());
+		
+
+	}
+	
+	// myPagephoto - ajax로 이미지만 불러오기
+	protected void myPagephoto(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 마이페이지
+		
+		// 세션에 저장된 로그인 정보
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		
+		String cp = req.getContextPath();
+
+		MemberDAO dao = new MemberDAO();
+		
+		try {
+			MemberDTO dto = dao.findByPhoto(info.getUserId());
+			
+			if (dto == null) { 
+				resp.sendRedirect(cp + "/main.do?" );
+				return;
+			}
+			
+			String proFile = dto.getProFile();
+			
+			JSONObject job = new JSONObject();
+			job.put("proFile", proFile);
+			respJson(resp, job.toString());
+			
+			return;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

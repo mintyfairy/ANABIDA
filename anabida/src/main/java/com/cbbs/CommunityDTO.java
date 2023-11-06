@@ -10,7 +10,9 @@ public class CommunityDTO {
 	private String ccontent;
 	private String creg_date;
 	private String ccategory;
+	private String proFile;
 	
+
 	// 좋아요
 	private int likeCount;
 	
@@ -33,7 +35,16 @@ public class CommunityDTO {
 	private String picFileName;
 	private String[] picFileNames;
 
+	
 
+
+	public String getProFile() {
+		return proFile;
+	}
+
+	public void setProFile(String proFile) {
+		this.proFile = proFile;
+	}
 
 	public int getLikeCount() {
 		return likeCount;

@@ -159,20 +159,23 @@ a {
 	        return;
 	    }
 	    
-	    
-	    str = f.mcount.value;
-	    if( !/^\d{1,3}$/.test(str)|| str<0 || str>=999 ) {
-	    	alert("최대인원수를 다시 입력해주세요. ");
-	        f.tel3.focus();
-	        return;
-	    }
-	  	
+	    <c:if test="${not empty toge}">
+		
+		str = f.mcount.value;
+		if( !/^\d{1,3}$/.test(str)|| str<0 || str>=999 ) {
+			alert("최대인원수를 다시 입력해주세요. ");
+    		f.tel3.focus();
+    		return;
+		}
+
+		</c:if>
+	   
 		f.action = "${pageContext.request.contextPath}/cbbs/${mode}_ok.do";
 		f.submit();
 		
 	}
 </script>
-
+ 
 <script type="text/javascript">
 $(function(){
 	var sel_files = [];

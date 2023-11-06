@@ -289,7 +289,7 @@ public class CommunityServlet extends MyUploadServlet{
 					}else{
 						cookie.setValue(cookie.getValue()+"_"+req.getParameter("num"));
 						resp.addCookie(cookie);
-						cookie.setMaxAge(60 * 60 * 2); 					
+						cookie.setMaxAge(60 * 60 * 24); 					
 						// 조회수 증가
 						dao.updateHitCount(num); 
 					}
@@ -300,7 +300,7 @@ public class CommunityServlet extends MyUploadServlet{
 			
 			if(visitor == 0 ) {
 				Cookie cookie1  = new Cookie("visit",req.getParameter("num"));
-				cookie1.setMaxAge(60 * 60 * 2);
+				cookie1.setMaxAge(60 * 60 * 24);
 				resp.addCookie(cookie1);
 				dao.updateHitCount(num); 
 			}

@@ -253,7 +253,7 @@ public class CommunityDAO {
 
 			try {
 				sb.append(" SELECT p.cnum, p.userId, userName, ctitle, picfilename,TO_CHAR(creg_date, 'YYYY-MM-DD') creg_date,");
-				sb.append(" ccategory, chitCount FROM cbbs p ");
+				sb.append(" ccategory, chitCount,proFile FROM cbbs p ");
 				sb.append(" JOIN member m ON p.userId = m.userId ");
 				sb.append(" LEFT OUTER JOIN ( ");
 				sb.append(" SELECT picnum, cnum, picfilename FROM ( ");
