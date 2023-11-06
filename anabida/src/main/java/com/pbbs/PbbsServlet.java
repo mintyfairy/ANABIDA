@@ -1,8 +1,11 @@
 package com.pbbs;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -277,8 +280,8 @@ public class PbbsServlet extends MyUploadServlet {
 			
 			//사진
 			List<PbbsDTO> listFile = dao.listPhotoFile(num);
-			long listSize=listFile.size()+1;
-			long listNum=1;
+			long listSize=listFile.size();
+			long listNum=0;
 			//숫자인 카케고리구분을 스트링으로
 			dto.setCatString(dao.getCat(dto.getCatNum()));
 			// 포워딩할 JSP에 전달할 속성
@@ -345,8 +348,6 @@ public class PbbsServlet extends MyUploadServlet {
 			}
 			//JSP에 보내기
 			List<PbbsDTO> listFile = dao.listPhotoFile(num);
-			PbbsDTO thumnail=dao.findById(num);
-			listFile.add(0, thumnail);
 			req.setAttribute("dto", dto);
 			req.setAttribute("listFile",listFile);
 			req.setAttribute("page", page);
@@ -391,6 +392,7 @@ public class PbbsServlet extends MyUploadServlet {
 			dto.setContent(req.getParameter("content"));
 			
 			Map<String, String[]> map = doFileUpload(req.getParts(), pathname);
+			System.out.println(req.getParts().toArray());
 			if (map != null) {
 				String[] saveFiles = map.get("saveFilenames");
 				dto.setImageFiles(saveFiles);

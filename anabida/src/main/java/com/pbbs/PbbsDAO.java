@@ -72,8 +72,9 @@ public class PbbsDAO {
 						+ " (pPic_seq.NEXTVAL, ?, ?)";
 				pstmt = conn.prepareStatement(sql);
 				
-				for (int i = 1; i < dto.getImageFiles().length; i++) {
-					//1부터시작하는 이유는 이미 섬네일용으로 앞에서 0을 사용함
+				for (int i = 0; i < dto.getImageFiles().length; i++) {
+					//1부터시작하는 이유는 이미 섬네일용으로 앞에서 0을 사용함--취소
+					//섬네일용을 한번더 저장하는 방식으로
 					pstmt.setLong(1, dto.getNum());
 					pstmt.setString(2, dto.getImageFiles()[i]);
 					
@@ -508,12 +509,12 @@ public class PbbsDAO {
 		String sql;
 		try {
 			conn.setAutoCommit(false);
-			sql="update  pbbs set subject=?,content=?,IMAGEFILENAMe=? where pnum=? ";
+			sql="update  pbbs set subject=?,content=?,IMAGEFILENAME=? where pnum=? ";
 			pstmt= conn.prepareStatement(sql);
 			
 			pstmt.setString(1,	 dto.getSubject());
 			pstmt.setString(2,	 dto.getContent());
-			pstmt.setString(3,	 dto.getImageFiles()[0]);
+			pstmt.setString(3,	 dto.getImageFiles()[0]);			
 			pstmt.setLong(4,	 dto.getNum());
 			//pstmt.setString(5,	 dto.getUserId());
 			
@@ -527,7 +528,7 @@ public class PbbsDAO {
 						+ " (pPic_seq.NEXTVAL, ?, ?)";
 				pstmt = conn.prepareStatement(sql);
 				
-				for (int i = 1; i < dto.getImageFiles().length; i++) {
+				for (int i = 0; i < dto.getImageFiles().length; i++) {
 					//1부터시작하는 이유는 이미 섬네일용으로 앞에서 0을 사용함
 					pstmt.setLong(1, dto.getNum());
 					pstmt.setString(2, dto.getImageFiles()[i]);
