@@ -9,6 +9,7 @@
 <jsp:include page="/WEB-INF/views/layout/staticHeader.jsp"/>
 
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/layout.css" type="text/css">
 <style type="text/css">
 * { padding: 0; margin: 0; }
 *, *::after, *::before { box-sizing: border-box; }
@@ -91,6 +92,16 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .table-list .date { width: 100px; color: #787878; }
 .table-list .hit { width: 70px; color: #787878; }
 
+.btn {
+  width: 80px;
+  height: 30px;
+  text-align: center;
+  background: #feefef;
+  border: solid 2px #ced4da ;
+  border-radius: 5px;
+}
+
+
 /* paginate */
 .page-navigation { clear: both; padding: 20px 0; text-align: center; }
 
@@ -125,6 +136,10 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 </style>
 
 <script type="text/javascript">
+function searchList() {
+	const f = document.searchForm;
+	f.submit();
+}
 
 </script>
 </head>
@@ -135,19 +150,17 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 </header>
 
 <div class="board">
-	<div class="title">
-	    <h3>⚡공지사항⚡</h3>
-	</div>
+	<div class="container body-container">
+		<div class="title">
+	   		 <h3>⚡공지사항⚡</h3>
+		</div>
 
-	<table class="table">
-		<tr>
-			<td width="50%">
-				${dataCount}개(${page}/${total_page}페이지)
-			</td>
-			
-			<td align="right">&nbsp;</td>
-		</tr>
-	</table>
+		<table class="table">
+			<tr>
+				<td width="50%">${dataCount}개(${page}/${total_page}페이지)</td>
+				<td align="right">&nbsp;</td>
+			</tr>
+		</table>
 	
 	<table class="table table-border table-list">
 		<thead>
@@ -183,31 +196,31 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 		${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}
 	</div>
 	
-	<table class="table">
-		<tr>
-			<td width="100">
-				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/list.do';">새로고침</button>
-			</td>
-			<td align="center">
-				<form name="searchForm" action="" method="post">
-					<select name="schType" class="form-select">
-						<option value="all"  ${schType=="all"?"selected":"" }>제목+내용</option>
-						<option value="name" ${schType=="userName"?"selected":"" }>작성자</option>
-						<option value="reg_date" ${schType=="reg_date"?"selected":"" }>등록일</option>
-						<option value="subject" ${schType=="subject"?"selected":"" }>제목</option>
-						<option value="content" ${schType=="content"?"selected":"" }>내용</option>
-					</select>
-					<input type="text" name="kwd" value="" class="form-control">
-					<button type="button" class="btn" onclick="searchList();">검색</button>
-				</form>
-			</td>
-			<td align="right" width="100">
-				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/write.do'; ">글올리기</button>
-			</td>
-		</tr>
-	</table>	
+		<table class="table">
+			<tr>
+				<td width="100">
+					<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/list.do';">새로고침</button>
+				</td>
+				<td align="center">
+					<form name="searchForm" action="" method="post">
+						<select name="schType" class="form-select">
+							<option value="all"  ${schType=="all"?"selected":"" }>제목+내용</option>
+							<option value="name" ${schType=="userName"?"selected":"" }>작성자</option>
+							<option value="reg_date" ${schType=="reg_date"?"selected":"" }>등록일</option>
+							<option value="subject" ${schType=="subject"?"selected":"" }>제목</option>
+							<option value="content" ${schType=="content"?"selected":"" }>내용</option>
+						</select>
+						<input type="text" name="kwd" value="" class="form-control">
+						<button type="button" class="btn" onclick="searchList();">검색</button>
+					</form>
+				</td>
+				<td align="right" width="100">
+					<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/write.do'; ">글올리기</button>
+				</td>
+			</tr>
+		</table>	
+	</div>
 </div>
-
 <footer>
     <jsp:include page="/WEB-INF/views/layout/footer.jsp"></jsp:include>
 </footer>

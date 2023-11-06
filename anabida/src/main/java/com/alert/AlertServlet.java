@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -105,6 +107,7 @@ public class AlertServlet extends MyUploadServlet {
 			int offset = (current_page - 1)*size;
 			if (offset < 0) offset = 0;
 
+			//
 			List<AlertDTO> list = null;
 			if (kwd.length() == 0) {
 				list = dao.listAlert(offset, size);
@@ -112,6 +115,24 @@ public class AlertServlet extends MyUploadServlet {
 				list = dao.listAlert(offset, size, schType, kwd);  
 			}
 
+			
+			//공지사항 반짝이 gap시도		
+			/*
+			long gap;
+			Date curDate = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+			for (AlertDTO dto : list) {
+				Date date = sdf.parse(dto.getReg_date());
+				 gap = (curDate.getTime() - date.getTime()) / (1000*60*60*24); // 일자
+				//gap = (curDate.getTime() - date.getTime()) / (1000 * 60 * 60); // 시간
+				dto.setGap(gap);
+
+				dto.setReg_date(dto.getReg_date().substring(0, 10));
+			}
+			*/
+			//-----------------------------------------------------------------
+			
 			String query = "";
 			if (kwd.length() != 0) {
 				query = "schType" + schType + "&kwd=" + URLEncoder.encode(kwd, "utf-8");

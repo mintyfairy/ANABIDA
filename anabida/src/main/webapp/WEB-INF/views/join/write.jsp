@@ -205,6 +205,7 @@ function sendOk() {
 						<input type="hidden" name="buyNum" value="${dto.buyNum}">
 						<input type="hidden" name="page" value="${page}">
 					</c:if>
+					
 				</td>
 			</tr>
 		</table>
