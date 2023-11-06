@@ -16,7 +16,6 @@ import javax.servlet.http.Part;
 import org.json.JSONObject;
 
 import com.util.FileManager;
-import com.util.MyServlet;
 import com.util.MyUploadServlet;
 
 @WebServlet("/member/*")
@@ -163,11 +162,30 @@ public class MemberServlet extends MyUploadServlet {
 				resp.sendRedirect(cp + "/main.do?" );
 				return;
 			}
+			
+			// 관심
 			List<MPDTO> wlist = null;
 			wlist = dao.mypagewish(info.getUserId());
 			
+			// 모임
 			List<MemberDTO> meet1 = dao.meetMember(info.getUserId());
 			
+			
+			// 판매내역
+			List<MPDTO> slist = null;
+			slist = dao.mypagesell(info.getUserId());
+			
+			// 구매내역
+			List<MPDTO> blist = dao.mypagebuy(info.getUserId());
+			
+			// 문의내역
+			List<MPDTO> qlist = null;
+			qlist = dao.mypageqna(info.getUserId());
+			
+			
+			req.setAttribute("qlist", qlist);
+			req.setAttribute("blist", blist);
+			req.setAttribute("slist", slist);
 			req.setAttribute("meet1", meet1);
 			req.setAttribute("wlist", wlist);
 			req.setAttribute("dto", dto);

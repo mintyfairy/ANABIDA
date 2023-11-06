@@ -356,16 +356,22 @@ public class MemberDAO {
 		String sql;	
 		
 		try {
-			sql="  select ctitle, mreg_date from cbbs c "
-					+ " join meet m1 on c.cnum = m1.cnum where userId = ?";
+			sql= " select ctitle,mreg_date"
+					+ " from cbbs a "
+					+ " join meet b on a.cnum=b.cnum "
+					+ " join meetmember c on b.mnum=c.mnum"
+					+ " where c.userid=? ";
 			
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setString(1, userId);
 			
 			rs = pstmt.executeQuery();
+			System.out.println("asdasdasdasdsa");
 			
 			while(rs.next()) {
+				
 				MemberDTO dto = new MemberDTO();
+				System.out.println("asdasd"+dto.getCtitle());
 				dto.setCtitle(rs.getString("ctitle"));
 				dto.setMreg_date(rs.getString("mreg_date"));
 				meet1.add(dto);
@@ -379,5 +385,123 @@ public class MemberDAO {
 		
 		
 		return meet1;
+	}
+	
+	// mypagesell
+	
+	public List<MPDTO> mypagesell(String userId){
+		List<MPDTO> slist = new ArrayList<MPDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;	
+		
+		
+		try {
+			sql=" select m.userName, a.userId, a.subject, "
+					+ " a.content, a.cost, a.regdate,"
+					+ " a.pstate, case when a.pstate = 0 then '거래중' else '판매완료' end as "
+					+ " state from pbbs a "
+					+ " join member m on a.userId=m.userId where "
+					+ " a.userId=?";
+			
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				MPDTO vo = new MPDTO();
+				vo.setScontent(rs.getString("content"));
+				vo.setScost(rs.getLong("cost"));
+				vo.setSreg_date(rs.getString("regdate"));
+				vo.setSsubject(rs.getString("subject"));
+				vo.setSuserId(rs.getString("userId"));
+				vo.setSuserName(rs.getString("userName"));
+				vo.setSellstate(rs.getString("state"));
+				slist.add(vo);
+			}
+			
+		} catch (Exception e) {
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		
+		return slist;
+	}
+	
+	public List<MPDTO> mypagebuy(String userId){
+        List<MPDTO> blist = new ArrayList<MPDTO>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql;
+
+
+        try {
+            sql="  select a.subject, a.content, a.cost, b.hdate "
+                    + "from pbbs a join phistory b on a.pnum=b.hisnum "
+                    + "where b.buyer=?";
+
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1, userId);
+
+            rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                MPDTO bo = new MPDTO();
+                bo.setBcontent(rs.getString("content"));
+                bo.setBcost(rs.getLong("cost"));
+                bo.setBhdate(rs.getString("hdate"));
+                bo.setBsubject(rs.getString("subject"));
+                blist.add(bo);
+            }
+
+        } catch (Exception e) {
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+
+
+        return blist;
+    }
+	
+	public List<MPDTO> mypageqna(String userId){
+		List<MPDTO> qlist = new ArrayList<MPDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;	
+		
+		
+		try {
+			sql="select qnum, title, content, reg_date, "
+					+ " answeryes, case when answeryes = 0 then '답변대기' "
+					+ " else '답변완료' end as answer"
+					+ " from qbbs where userId =?";
+			
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				MPDTO zo = new MPDTO();
+				zo.setQqnum(rs.getInt("qnum"));
+				zo.setQreg_date(rs.getString("reg_date"));
+				zo.setQtitle(rs.getString("title"));
+				zo.setQanswer(rs.getString("answer"));
+				zo.setQcontent(rs.getString("content"));
+				qlist.add(zo);
+			}
+			
+		} catch (Exception e) {
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		
+		return qlist;
 	}
 }
