@@ -82,6 +82,8 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .table-article { margin-top: 20px; }
 .table-article tr > td { padding-left: 5px; padding-right: 5px; }
 
+.imgg { margin:30px 150px;}
+
 .table tr td {
 overflow:hidden;
 white-space: initial;
@@ -149,13 +151,13 @@ word-break: break-all;
 			
 			<tr>
 				<td >
-					제품 상세페이지 : <a href="${dto.link}" target="_blank"> ${dto.link}></a>
+					제품 상세페이지 : <a href="${dto.link}" target="_blank"> ${dto.link}</a>
 				</td>
 			</tr>
 			
 			<tr style="border-bottom: none;">
 				<td colspan="2" valign="top">
-					<img src="<c:url value='/uploads/join/${dto.imageFilename}'/>" width="400px" height="400px">
+					<img src="<c:url value='/uploads/join/${dto.imageFilename}'/>" width="400px" height="400px" class="imgg">
 				</td>
 			</tr>
 			
