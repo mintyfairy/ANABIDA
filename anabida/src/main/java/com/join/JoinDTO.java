@@ -13,7 +13,7 @@ public class JoinDTO {
 	private int min_peo;
 	private String imageFilename;
 	private String userName;
-	
+	private int def;
 	
 	
 	private long memNum;
@@ -192,6 +192,12 @@ public class JoinDTO {
 	}
 	public void setEnterCount(int enterCount) {
 		this.enterCount = enterCount;
+	}
+	public int getDef() {
+		return def;
+	}
+	public void setDef(int def) {
+		this.def = def;
 	}
 	
 	

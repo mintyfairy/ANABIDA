@@ -133,7 +133,7 @@ function changeEmail() {
 					<tr> 
 						<td>작성자</td>
 						<td> 
-							<input type="text" readonly="readonly" name="userName" value="${dto.userName}" class="form-select">
+							<input type="text" readonly="readonly" name="userName" value="${sessionScope.member.userName}" class="form-select">
 						</td>
 					</tr>
 					

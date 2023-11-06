@@ -154,6 +154,13 @@ function searchList() {
 	f.submit();
 }
 
+function full() {
+	if(${dto.enterCount}==${dto.min_peo} || ) {
+		alert("신청이 완료되었습니다.");
+		return;
+	}
+}
+
 
 </script>
 </head>
@@ -196,7 +203,7 @@ function searchList() {
 			
 			<tbody>
 			  <c:forEach var="dto" items="${list}" varStatus="status">
-				<tr>
+				<tr onclick="full();">
 					<td>${dataCount - (page-1) * size - status.index}</td>
 					<td class="">
 						<a href="${pageContext.request.contextPath}/join/article.do?buyNum=${dto.buyNum}&page=${page}">

@@ -105,8 +105,6 @@ word-break: break-all;
 </c:if>
 
 
-
-
 </script>
 
 
@@ -145,7 +143,7 @@ word-break: break-all;
 					모집종료기한 : ${dto.exp_date}
 				</td>
 				<td align="right">
-					참여 인원수 : (0/${dto.min_peo}) 
+					참여 인원수 : (${dto.enterCount}/${dto.min_peo}) 
 				</td>
 			</tr>
 			
@@ -213,7 +211,14 @@ word-break: break-all;
 				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/list.do?page=${page}';">이전</button>
 			</td>
 			<td align="right">
-				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/join.do?buyNum=${dto.buyNum}&page=${page}';">신청하기</button>
+				<c:choose>
+					<c:when test="${dto.enterCount >= dto.min_peo || dto.def < -1}">
+						<button type="button" class="btn" disabled="disabled">신청하기</button>					
+					</c:when>
+					<c:otherwise>
+						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/join/join.do?buyNum=${dto.buyNum}&page=${page}';">신청하기</button>					
+					</c:otherwise>
+				</c:choose>
 			</td>
 		</tr>
 	</table>

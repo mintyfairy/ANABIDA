@@ -152,7 +152,6 @@ public class JoinDAO {
 			sb.append(" m.userName ");
 			sb.append(" FROM group_buying g ");
 			sb.append(" JOIN member m ON g.userId = m.userId ");
-			sb.append(" JOIN member m ON g.userId = m.userId ");
 			sb.append(" LEFT OUTER JOIN ( ");
 			sb.append("     SELECT buyNum, COUNT(*) enterCount ");
 			sb.append("     FROM join_member ");
@@ -280,11 +279,16 @@ public class JoinDAO {
 		String sql;
 		
 		try {
-			sql = " SELECT buyNum, g.userId, userName, link, title, content, g.reg_date, TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, hitCount, joinCount, min_peo,"
-					+ " imageFilename "
+			sql = " SELECT g.buyNum, g.userId, title, hitCount, link, min_peo, NVL(imageFilename, 'no.png') imageFilename, "
+					+ " TO_CHAR(exp_date, 'YYYY-MM-DD') exp_date, NVL(enterCount, 0) enterCount, m.userName, content, TRUNC(exp_date - SYSDATE) def "
 					+ " FROM group_buying g"
 					+ " JOIN member m ON g.userId = m.userId"
-					+ " WHERE buyNum= ? ";
+					+ " LEFT OUTER JOIN ( "
+					+ "     SELECT buyNum, COUNT(*) enterCount "
+					+ "     FROM join_member "
+					+ "     GROUP BY buyNum "
+					+ "  ) c ON g.buyNum = c.buyNum "
+					+ " WHERE g.buyNum = ? ";
 			
 			pstmt = conn.prepareStatement(sql);
 			
@@ -300,13 +304,16 @@ public class JoinDAO {
 				dto.setUserName(rs.getString("userName"));
 				dto.setContent(rs.getString("content"));
 				dto.setTitle(rs.getString("title"));
-				dto.setJoinCount(rs.getInt("joinCount"));
+				dto.setEnterCount(rs.getInt("enterCount"));
 				dto.setHitCount(rs.getInt("hitCount"));
 				dto.setLink(rs.getString("link"));
 				dto.setMin_peo(rs.getInt("min_peo"));
-				dto.setReg_date(rs.getString("reg_date"));
+	
 				dto.setExp_date(rs.getString("exp_date"));
 				dto.setImageFilename(rs.getString("imageFilename"));
+				
+				dto.setDef(rs.getInt("def"));
+				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
