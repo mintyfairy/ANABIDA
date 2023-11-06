@@ -190,8 +190,6 @@ function searchList() {
 				<td>${dto.userName}</td>
 				<td>${dto.reg_date}</td>
 				<td>${dto.hitcount}</td>
-				
-				
 			</tr>
 			</c:forEach>
 		<tbody>
@@ -201,6 +199,19 @@ function searchList() {
 	<div class="page-navigation" style="color: #0099e6" >
 		${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}
 	</div>
+	
+	<table class="table">
+		<tr>
+			<td width="100">
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/list.do';" title="새로고침"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+			</td>
+			
+			<td align="right" width="100">
+				<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/alert/write.do';">글올리기</button>
+			</td>
+
+		</tr>
+	</table>
 	
 </div>
 </main>
