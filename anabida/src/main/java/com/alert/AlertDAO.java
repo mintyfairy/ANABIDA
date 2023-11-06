@@ -115,7 +115,7 @@ public class AlertDAO {
 			StringBuilder sb = new StringBuilder();
 			
 			try {
-				sb.append(" SELECT alertNum, title,a.userId, userName, content,TO_CHAR(a.reg_date,'YYYY-MM-DD') reg_date,hitcount ");
+				sb.append(" SELECT alertNum, title,a.userId, userName, content, a.reg_date,hitcount ");
 				sb.append(" FROM alert a ");
 				sb.append(" JOIN member m ON a.userId = m.userId ");
 				sb.append(" ORDER BY alertNum DESC ");
@@ -137,6 +137,7 @@ public class AlertDAO {
 					dto.setContent(rs.getString("content"));
 					dto.setReg_date(rs.getString("Reg_date"));
 					dto.setUserName(rs.getString("userName"));
+					dto.setHitcount(rs.getLong("hitCount"));
 					
 					list.add(dto);
 				}
@@ -161,7 +162,7 @@ public List<AlertDTO> listAlert(int offset, int size, String schType, String kwd
 			StringBuilder sb = new StringBuilder();
 			
 			try {
-				sb.append(" SELECT alertNum, title,a.userId,content,TO_CHAR(reg_date,'YYYY-MM-DD')reg_date,hitcount");
+				sb.append(" SELECT alertNum, title,a.userId,content,reg_date,hitcount");
 				sb.append(" FROM alert a ");
 				sb.append(" JOIN member m ON a.userId = m.userId ");
 				
@@ -268,7 +269,7 @@ public AlertDTO findByPrev(long alertNum) {
 	try {
 			sb.append(" SELECT alertNum, title ");
 			sb.append(" FROM alert ");
-			sb.append(" WHERE alertNum = ? ");
+			sb.append(" WHERE alertNum > ? ");
 			sb.append(" ORDER BY alertNum ASC ");
 			sb.append(" FETCH FIRST 1 ROWS ONLY ");
 
@@ -309,7 +310,7 @@ public AlertDTO findByNext(long alertNum) {
 						
 			sb.append(" SELECT alertNum, title ");
 			sb.append(" FROM alert ");
-			sb.append(" WHERE alertNum = ?  ");
+			sb.append(" WHERE alertNum < ?  ");
 			sb.append(" ORDER BY alertNum DESC ");
 			sb.append(" FETCH FIRST 1 ROWS ONLY ");
 

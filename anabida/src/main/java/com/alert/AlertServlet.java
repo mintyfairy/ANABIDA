@@ -107,7 +107,8 @@ public class AlertServlet extends MyUploadServlet {
 			int offset = (current_page - 1)*size;
 			if (offset < 0) offset = 0;
 
-			//
+			
+			//ㅁㅁㅁㅁ
 			List<AlertDTO> list = null;
 			if (kwd.length() == 0) {
 				list = dao.listAlert(offset, size);
@@ -117,7 +118,7 @@ public class AlertServlet extends MyUploadServlet {
 
 			
 			//공지사항 반짝이 gap시도		
-			/*
+
 			long gap;
 			Date curDate = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -130,7 +131,7 @@ public class AlertServlet extends MyUploadServlet {
 
 				dto.setReg_date(dto.getReg_date().substring(0, 10));
 			}
-			*/
+
 			//-----------------------------------------------------------------
 			
 			String query = "";
@@ -148,7 +149,7 @@ public class AlertServlet extends MyUploadServlet {
 
 			String paging = util.paging(current_page, total_page, listUrl);
 
-			req.setAttribute("list", list);
+			req.setAttribute("list", list);//db에서 꺼낸거
 			req.setAttribute("page", current_page);
 			req.setAttribute("total_page", total_page);
 			req.setAttribute("dataCount", dataCount);
