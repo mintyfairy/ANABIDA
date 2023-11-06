@@ -84,7 +84,7 @@ td .content-box{width:30%; height:100%; display: flex;}
 
 
 /* board */
-.board { margin: 30px auto; width: 700px; }
+.board { margin: 30px auto; width: 900px; }
 
 .title { width:100%; font-size: 16px; font-weight: bold; padding: 13px 0; }
 

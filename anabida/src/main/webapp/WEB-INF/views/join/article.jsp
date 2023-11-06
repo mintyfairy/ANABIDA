@@ -75,7 +75,7 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .td-border td { border: 1px solid #ced4da; }
 
 /* board */
-.board { margin: 30px auto; width: 700px; }
+.board { margin: 30px auto; width: 900px; }
 
 .title { width:100%; font-size: 16px; font-weight: bold; padding: 13px 0; }
 
