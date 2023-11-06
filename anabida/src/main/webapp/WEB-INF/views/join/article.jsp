@@ -85,11 +85,14 @@ input[type=checkbox], input[type=radio] { vertical-align: middle; }
 .imgg { margin:30px 150px;}
 
 .table tr td {
+
 overflow:hidden;
 white-space: initial;
 text-overflow: ellipsis;
 webkit-box-orient: vertical;
 word-break: break-all;
+
+
 }
 </style>
 

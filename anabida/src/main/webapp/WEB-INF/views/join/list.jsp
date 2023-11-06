@@ -154,13 +154,6 @@ function searchList() {
 	f.submit();
 }
 
-function full() {
-	if(${dto.enterCount}==${dto.min_peo} || ) {
-		alert("신청이 완료되었습니다.");
-		return;
-	}
-}
-
 
 </script>
 </head>
@@ -203,13 +196,14 @@ function full() {
 			
 			<tbody>
 			  <c:forEach var="dto" items="${list}" varStatus="status">
-				<tr onclick="full();">
+				<tr>
 					<td>${dataCount - (page-1) * size - status.index}</td>
 					<td class="">
 						<a href="${pageContext.request.contextPath}/join/article.do?buyNum=${dto.buyNum}&page=${page}">
 						<img src="${pageContext.request.contextPath}/uploads/join/${dto.imageFilename}" width="100" height="103" class="img">
 						</a>
 					</td>
+					
 					<td> 
 						<a href="${pageContext.request.contextPath}/join/article.do?buyNum=${dto.buyNum}&page=${page}">
 						${dto.title}
