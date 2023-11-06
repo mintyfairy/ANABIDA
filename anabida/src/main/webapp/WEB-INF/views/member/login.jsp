@@ -36,7 +36,7 @@
             border: 1px solid #ccc;
             background-color: white;
             width: 350px;
-            height: 400px;
+            height: 500px;
             text-align: center;
             display: inline-block;
             border-radius: 10px;
@@ -153,19 +153,14 @@ function sendLogin() {
 
 </head>
 <body>
-
-
-	
 <main>
-	
-		
 		<div class="login_wrap">
 			
-			<div class="login" style="float: left">
+			<div class="login" >
 				<br />
 				<br />
 				<br />
-				<img src="${pageContext.request.contextPath}/resource/images/an.png" width="150px;"height="60px;" style="margin: 0px;">
+				<a href="${pageContext.request.contextPath}/main.do"><img src="${pageContext.request.contextPath}/resource/images/an.png" width="260px;"height="80px;" style="margin: 0px;"></a>
 				
 				<form name="loginForm" method="post">
 					<input type="text" placeholder="ID" name=userId class="inputid" id="login-userId" ><br /> 
@@ -181,9 +176,14 @@ function sendLogin() {
 				<img width="15px;" height="15px;" src="${pageContext.request.contextPath}/resource/images/kakao.png">
 				카카오톡으로 로그인</div>
 				<br>
-				<div style="font-size: 13px;"><a>비밀번호를 잊으셨나요?</a></div>
+				<div style="font-size: 13px;"><a href="">비밀번호를 잊으셨나요?</a></div>
+				<div class="login" style="margin-top: 100px; height: 90px; ">
+				<div><br/><br/>
+				계정이 없으신가요 ? <a href="${pageContext.request.contextPath}/member/member.do"><span style="color: skyblue">가입하기</span></a>
+				</div>
+				</div>
 			</div>	
-			<div>asdas</div>
+			
 			
 			
 			
