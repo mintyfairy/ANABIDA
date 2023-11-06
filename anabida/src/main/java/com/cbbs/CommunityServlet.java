@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -72,7 +73,27 @@ public class CommunityServlet extends MyUploadServlet{
 			insertBoardLike(req, resp);
 		}else if (uri.indexOf("delete.do") != -1) {
 			delete(req, resp);
-		} 
+		} else if (uri.indexOf("insertReply.do") != -1) {
+			insertReply(req, resp);
+		} else if (uri.indexOf("clistReply.do") != -1) {
+			clistReply(req, resp);
+		} else if (uri.indexOf("deleteReply.do") != -1) {
+			deleteReply(req, resp);
+		} else if (uri.indexOf("insertReplyLike.do") != -1) {
+			insertReplyLike(req, resp);
+		} else if (uri.indexOf("countReplyLike.do") != -1) {
+			countReplyLike(req, resp);
+		} else if (uri.indexOf("insertReplyAnswer.do") != -1) {
+			insertReplyAnswer(req, resp);
+		} else if (uri.indexOf("listReplyAnswer.do") != -1) {
+			listReplyAnswer(req, resp);
+		} else if (uri.indexOf("deleteReplyAnswer.do") != -1) {
+			deleteReplyAnswer(req, resp);
+		} else if (uri.indexOf("countReplyAnswer.do") != -1) {
+			countReplyAnswer(req, resp);
+		}else if(uri.indexOf("participate_un.do")!=-1) {
+			unparticipate(req, resp);
+		}
 	}
 	
 	protected void list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -110,7 +131,7 @@ public class CommunityServlet extends MyUploadServlet{
 			}
 			
 			// 전체 페이지 수
-			int size = 10;
+			int size = 12;
 			int total_page = util.pageCount(dataCount, size);
 			if (current_page > total_page) {
 				current_page = total_page;
@@ -141,7 +162,7 @@ public class CommunityServlet extends MyUploadServlet{
 				articleUrl += "&" + query;
 			}
 			String paging = util.paging(current_page, total_page, listUrl);
-
+			
 			// 포워딩할 JSP에 전달할 속성
 			req.setAttribute("list", list);
 			req.setAttribute("page", current_page);
@@ -233,6 +254,9 @@ public class CommunityServlet extends MyUploadServlet{
 		CommunityDAO dao = new CommunityDAO();
 		MyUtil util = new MyUtil();
 		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
 		String cp = req.getContextPath();
 		
 		String page = req.getParameter("page");
@@ -252,8 +276,37 @@ public class CommunityServlet extends MyUploadServlet{
 				query += "&schType=" + schType + "&kwd=" + URLEncoder.encode(kwd, "UTF-8");
 			}
 			
-			// 조회수 증가
-			dao.updateHitCount(num);
+			// 쿠키로 조회수 증가 막기
+			Cookie[] cookies = req.getCookies();
+			int visitor = 0;
+			
+			for(Cookie cookie : cookies) {
+				if(cookie.getName().equals("visit")) {
+					visitor = 1; 
+					
+					if(cookie.getValue().contains(req.getParameter("num"))){
+					}else{
+						cookie.setValue(cookie.getValue()+"_"+req.getParameter("num"));
+						resp.addCookie(cookie);
+						cookie.setMaxAge(60 * 60 * 2); 					
+						// 조회수 증가
+						dao.updateHitCount(num); 
+					}
+					
+					
+				}
+			}
+			
+			if(visitor == 0 ) {
+				Cookie cookie1  = new Cookie("visit",req.getParameter("num"));
+				cookie1.setMaxAge(60 * 60 * 2);
+				resp.addCookie(cookie1);
+				dao.updateHitCount(num); 
+			}
+			
+			
+			
+			
 			
 			// 게시물 가져오기
 			CommunityDTO dto = dao.findById(num);
@@ -283,8 +336,6 @@ public class CommunityServlet extends MyUploadServlet{
 			List<CommunityDTO> listFile = dao.listPhotoFile(num);
 			
 			int cdataCount = dao.cdataCount(dto.getNum());
-			HttpSession session = req.getSession();
-			SessionInfo info = (SessionInfo) session.getAttribute("member");
 			boolean isUserLike = dao.isUserBoardLike(num, info.getUserId());
 			
 			req.setAttribute("meet", meet);	
@@ -357,7 +408,7 @@ public class CommunityServlet extends MyUploadServlet{
 	protected void participate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 참여하기 버튼
 		CommunityDAO dao = new CommunityDAO();
-				
+		System.out.println("참여");
 
 		String cp = req.getContextPath();
 			if (req.getMethod().equalsIgnoreCase("GET")) {
@@ -384,6 +435,46 @@ public class CommunityServlet extends MyUploadServlet{
 				return;
 			}else {
 				dao.insertmeetmember(dto);
+				resp.sendRedirect(cp + "/cbbs/carticle.do?num="+num+"&page="+page);
+				return;
+			}
+			
+			
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected void unparticipate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 참여취소
+		CommunityDAO dao = new CommunityDAO();
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+			
+		
+		try {
+			CommunityDTO dto = new CommunityDTO();
+			dto.setUserId(info.getUserId());
+			dto.setMnum(Integer.parseInt(req.getParameter("mnum")));
+			
+			
+			dto.setNum(Integer.parseInt(req.getParameter("num")));
+			long num = dto.getNum();
+			
+			String page = req.getParameter("page");		
+			
+			int result = dao.selectmember(dto.getMnum(),dto.getUserId());
+			
+			
+			if(result == 1 ) {
+				dao.deletemeetmember(dto);
+				resp.sendRedirect(cp + "/cbbs/carticle.do?num="+num+"&page="+page);
+				return;
+			}else {
 				resp.sendRedirect(cp + "/cbbs/carticle.do?num="+num+"&page="+page);
 				return;
 			}
@@ -431,8 +522,252 @@ public class CommunityServlet extends MyUploadServlet{
 			respJson(resp, job.toString());
 			
 		}
+		
+		// 리플 또는 답글 저장
+		protected void insertReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			CommunityDAO dao = new CommunityDAO();
+			
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+			String state = "false";
+			try {
+				CreplyDTO dto = new CreplyDTO();
+				long num = Long.parseLong(req.getParameter("num"));
+				dto.setNum(num);
+				dto.setUserId(info.getUserId());
+				dto.setContent(req.getParameter("content"));
+				String answer = req.getParameter("answer");
+				if (answer != null) {
+					dto.setAnswer(Long.parseLong(answer));
+				}
+				dao.insertReply(dto);
+				state = "true";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			JSONObject job = new JSONObject();
+			job.put("state", state);
+
+			// JSON 으로 응답
+			respJson(resp, job.toString());
+		}
 	
-	
-	
+		//clistReply
+		protected void clistReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			CommunityDAO dao = new CommunityDAO();
+			MyUtil util = new MyUtil();
+
+			
+			try {
+				long num = Long.parseLong(req.getParameter("num"));
+				String pageNo = req.getParameter("pageNo");
+				int current_page = 1;
+				if (pageNo != null) {
+					current_page = Integer.parseInt(pageNo);
+				}
+
+				int size = 5;
+				int total_page = 0;
+				int replyCount = 0;
+
+				replyCount = dao.dataCountReply(num);
+				total_page = util.pageCount(replyCount, size);
+				if (current_page > total_page) {
+					current_page = total_page;
+				}
+
+				// 리스트에 출력할 데이터
+				int offset = (current_page - 1) * size;
+				if(offset < 0) offset = 0;
+				List<CreplyDTO> listReply = dao.listReply(num, offset, size);
+
+				// 엔터를 <br>
+				for (CreplyDTO dto : listReply) {
+					dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
+				}
+
+				// 페이징 처리 : AJAX 용 - listPage : 자바스크립트 함수명
+				String paging = util.pagingMethod(current_page, total_page, "listPage");
+
+				req.setAttribute("listReply", listReply);
+				req.setAttribute("pageNo", current_page);
+				req.setAttribute("replyCount", replyCount);
+				req.setAttribute("total_page", total_page);
+				req.setAttribute("paging", paging);
+				
+				forward(req, resp, "/WEB-INF/views/cbbs/listReply.jsp");
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			resp.sendError(400);
+		}
+		
+		// 리플 또는 답글 삭제 - AJAX:JSON
+		protected void deleteReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			CommunityDAO dao = new CommunityDAO();
+
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			String state = "false";
+
+			try {
+				long replyNum = Long.parseLong(req.getParameter("replyNum"));
+
+				dao.deleteReply(replyNum, info.getUserId());
+				
+				state = "true";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			JSONObject job = new JSONObject();
+			job.put("state", state);
+
+			// JSON 으로 응답
+			respJson(resp, job.toString());
+		}
+
+		// 댓글 좋아요 / 싫어요 저장 - AJAX:JSON
+		protected void insertReplyLike(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			CommunityDAO dao = new CommunityDAO();
+
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			String state = "false";
+			int likeCount = 0;
+			int disLikeCount = 0;
+
+			try {
+				long replyNum = Long.parseLong(req.getParameter("replyNum"));
+				int replyLike = Integer.parseInt(req.getParameter("replyLike"));
+
+				CreplyDTO dto = new CreplyDTO();
+
+				dto.setReplyNum(replyNum);
+				dto.setUserId(info.getUserId());
+				dto.setReplyLike(replyLike);
+
+				dao.insertReplyLike(dto);
+
+				Map<String, Integer> map = dao.countReplyLike(replyNum);
+
+				if (map.containsKey("likeCount")) {
+					likeCount = map.get("likeCount");
+				}
+
+				if (map.containsKey("disLikeCount")) {
+					disLikeCount = map.get("disLikeCount");
+				}
+
+				state = "true";
+			} catch (SQLException e) {
+				if(e.getErrorCode() == 1) {
+					state = "liked";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			JSONObject job = new JSONObject();
+			job.put("state", state);
+			job.put("likeCount", likeCount);
+			job.put("disLikeCount", disLikeCount);
+
+			// JSON 으로 응답
+			respJson(resp, job.toString());
+		}
+
+		// 댓글 좋아요 / 싫어요 개수 - AJAX:JSON
+		protected void countReplyLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			CommunityDAO dao = new CommunityDAO();
+
+			int likeCount = 0;
+			int disLikeCount = 0;
+
+			try {
+				long replyNum = Long.parseLong(req.getParameter("replyNum"));
+				Map<String, Integer> map = dao.countReplyLike(replyNum);
+
+				if (map.containsKey("likeCount")) {
+					likeCount = map.get("likeCount");
+				}
+
+				if (map.containsKey("disLikeCount")) {
+					disLikeCount = map.get("disLikeCount");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			JSONObject job = new JSONObject();
+			job.put("likeCount", likeCount);
+			job.put("disLikeCount", disLikeCount);
+
+			// JSON 으로 응답 
+			respJson(resp, job.toString());
+		}
+
+		// 답글 저장 - AJAX:JSON
+		protected void insertReplyAnswer(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			insertReply(req, resp);
+		}
+
+		// 리플의 답글 리스트 - AJAX:TEXT
+		protected void listReplyAnswer(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			CommunityDAO dao = new CommunityDAO();
+
+			try {
+				long answer = Long.parseLong(req.getParameter("answer"));
+
+				List<CreplyDTO> listReplyAnswer = dao.listReplyAnswer(answer);
+
+				// 엔터를 <br>(스타일 => style="white-space:pre;")
+				for (CreplyDTO dto : listReplyAnswer) {
+					dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
+				}
+
+				req.setAttribute("listReplyAnswer", listReplyAnswer);
+
+				forward(req, resp, "/WEB-INF/views/cbbs/listReplyAnswer.jsp");
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			resp.sendError(400);
+		}
+
+		// 리플 답글 삭제 - AJAX:JSON
+		protected void deleteReplyAnswer(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			deleteReply(req, resp);
+		}
+
+		// 리플의 답글 개수 - AJAX:JSON
+		protected void countReplyAnswer(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			CommunityDAO dao = new CommunityDAO();
+			int count = 0;
+
+			try {
+				long answer = Long.parseLong(req.getParameter("answer"));
+				count = dao.dataCountReplyAnswer(answer);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			JSONObject job = new JSONObject();
+			job.put("count", count);
+
+			// JSON 으로 응답 
+			respJson(resp, job.toString());
+		}
 	
 }

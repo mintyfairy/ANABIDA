@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>아나비다</title>
+<title>spring</title>
 <jsp:include page="/WEB-INF/views/layout/staticHeader.jsp"/>
 <style type="text/css">
 .body-main {
@@ -28,9 +28,9 @@
 /*popup*/
 .popup_layer {position:fixed;top:0;left:0;z-index: 10000; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); }
 /*팝업 박스*/
-.popup_box{position: relative;top:50%;left:50%; overflow: auto; height: 600px; width:375px;transform:translate(-50%, -50%);z-index:1002;box-sizing:border-box;background:#fff;box-shadow: 2px 5px 10px 0px rgba(0,0,0,0.35);-webkit-box-shadow: 2px 5px 10px 0px rgba(0,0,0,0.35);-moz-box-shadow: 2px 5px 10px 0px rgba(0,0,0,0.35);}
+.popup_box{position: relative;top:50%;left:50%; overflow: auto; height: 400px; width:375px;transform:translate(-50%, -50%);z-index:1002;box-sizing:border-box;background:#fff;box-shadow: 2px 5px 10px 0px rgba(0,0,0,0.35);-webkit-box-shadow: 2px 5px 10px 0px rgba(0,0,0,0.35);-moz-box-shadow: 2px 5px 10px 0px rgba(0,0,0,0.35);}
 /*컨텐츠 영역*/
-.popup_box .popup_cont {padding:50px;line-height:1.4rem;font-size:14px; }
+.popup_box .popup_cont {padding:50px;line-height:1.4rem;font-size:14px;}
 .popup_box .popup_cont h2 {padding:15px 0;color:#333;margin:0;}
 /*버튼영역*/
 .popup_box .popup_btn {display:table;table-layout: fixed;width:100%;height:70px;background:#ECECEC;word-break: break-word;}
@@ -42,12 +42,31 @@
 /*오버레이 뒷배경*/
 .popup_overlay{position:fixed;top:0px;right:0;left:0;bottom:0;z-index:1001;;background:rgba(0,0,0,0.5);}
 </style>
+
 <script type="text/javascript">
 function searchList() {
 	const f = document.searchForm;
 	f.submit();
 }
+
+
+
 </script>
+
+ <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="${pageContext.request.contextPath}/resource/assets1/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/resource/assets1/vendor/aos/aos.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/resource/assets1/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/resource/assets1/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/resource/assets1/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/resource/assets1/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/resource/assets1/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="${pageContext.request.contextPath}/resource/assets1/css/style.css" rel="stylesheet">
 </head>
 <body>
 
@@ -57,10 +76,12 @@ function searchList() {
 	
 <main>
 	<div class="container body-container">
-	    <div class="body-title">
-			<h2><i class="fa-regular fa-square"></i> 커뮤니티마당 </h2>
+	   <div class="body-title" style="text-align: center;">
+			<h2>커뮤니티 </h2> 
+			<span style="text-align: right; margin-left:870px; "><a href="javascript:openPop()" > 글올리기<i class="fa-solid fa-pen-to-square fa-beat-fade"></i> </a></span>
 	    </div>
 	    
+	    <!-- 
 	    <div class="body-main mx-auto">
 			<table class="table">
 				<tr>
@@ -118,14 +139,76 @@ function searchList() {
 					</td>
 					<td align="right" width="100">
 					<a href="javascript:openPop()" >글올리기 </a>
-						<!--  <button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/cbbs/cwrite.do';">글올리기</button>-->
 					</td>
 				</tr>
 			</table>
 		
 		</div>
+		-->
+		
+		  <!-- ======= Courses Section ======= -->
+			<section id="courses" class="courses">
+				<div class="container" data-aos="fade-up">
+					<div class="row" data-aos="zoom-in" data-aos-delay="100">
+							<c:forEach var="list" items="${list}" varStatus="status">
+							<div class="col-lg-4 col-md-6 d-flex align-items-stretch" style="margin-top: 10px;">
+								<div class="course-item">
+									<a href="${articleUrl}&num=${list.num}">
+									<img
+										src="${pageContext.request.contextPath}/uploads/cbbs/${list.picFileName}"
+										style="width: 410px; height: 300px;"></a>
+									<div class="course-content">
+										<div
+											class="d-flex justify-content-between align-items-center mb-3">
+												<c:choose>
+												<c:when test="${list.ccategory == 1}">
+													<h4>모임</h4>
+												</c:when>
+												<c:when test="${list.ccategory == 2}">
+													<h4>질문</h4>
+												</c:when>
+												<c:when test="${list.ccategory == 3}">
+													<h4>사건사고</h4>
+												</c:when>
+												<c:when test="${list.ccategory == 4}">
+													<h4>취미</h4>
+												</c:when>
+												<c:when test="${list.ccategory == 5}">
+													<h4>생활</h4>
+												</c:when>
+											</c:choose>
+											<p class="price">${list.creg_date }</p>
+										</div>
+
+										<h3>
+											<a href="${articleUrl}&num=${list.num}">${list.ctitle}</a>
+										</h3>
+										<!-- <p>Et architecto provident deleniti facere repellat nobis
+											iste. Id facere quia quae dolores dolorem tempore.</p> -->
+										<div
+											class="trainer d-flex justify-content-between align-items-center">
+											<div class="trainer-profile d-flex align-items-center">
+												<img src="assets1/img/trainers/trainer-1.jpg"
+													class="img-fluid" alt=""> <span>${list.userName}</span>
+											</div>
+											<div class="trainer-rank d-flex align-items-center">
+												<!-- <i class="bx bx-user"></i>&nbsp;50 &nbsp;&nbsp;  --> 
+												조회수 : &nbsp;${list.chitCount }
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End Course Item-->
+					</c:forEach>
+					</div>
+					<div class="page-navigation">
+						${ dataCount== 0 ? "등록된 게시글이 없다" : paging }
+					</div>
+				</div>
+			</section>
 	</div>
-	
+
 	<!-- 팝업창 -->
 
 		<div class="popup_layer" id="popup_layer" style="display: none;">
@@ -137,11 +220,11 @@ function searchList() {
 				</div>
 				<!--팝업 컨텐츠 영역-->
 				<div class="popup_cont">
-					<h2>카테고리를 선택해주세요!!</h2>
+					<p style="font-size: 20px;">※ 카테고리를 선택해주세요 ※</p>
 					<form name="cate" method="post"
 						action="${pageContext.request.contextPath}/cbbs/cwrite.do">
 						<p>
-							<span><input type="radio" name="ccategory" value="1">모임</span>
+							<span style="font-size: 15px;"><input type="radio" name="ccategory" value="1">모임</span>
 							<span><input type="radio" name="ccategory" value="2">질문</span>
 						</p>
 							<span><input type="radio" name="ccategory" value="3">사건사고</span>
@@ -180,4 +263,14 @@ function closePop() {
 
 }
 </script>
+
+ <!-- Vendor JS Files -->
+  <script src="${pageContext.request.contextPath}/resource/assets1/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="${pageContext.request.contextPath}/resource/assets1/vendor/aos/aos.js"></script>
+  <script src="${pageContext.request.contextPath}/resource/assets1/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="${pageContext.request.contextPath}/resource/assets1/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="${pageContext.request.contextPath}/resource/assets1/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="${pageContext.request.contextPath}/resource/assets1/js/main.js"></script>
 </html>
