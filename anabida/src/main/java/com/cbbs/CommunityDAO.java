@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.member.MPDTO;
 import com.util.DBConn;
 import com.util.DBUtil;
 
@@ -1125,6 +1126,8 @@ public class CommunityDAO {
 			}
 			
 			return map;
-		}	
+		}
+		
+		
 		
 }

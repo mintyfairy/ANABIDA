@@ -20,6 +20,23 @@ public class MemberDTO {
 	private String score;
 	private int age;
 	
+	private String ctitle;
+	
+	private String mreg_date;
+	
+	public String getCtitle() {
+		return ctitle;
+	}
+	public void setCtitle(String ctitle) {
+		this.ctitle = ctitle;
+	}
+	public String getMreg_date() {
+		return mreg_date;
+	}
+	public void setMreg_date(String mreg_date) {
+		this.mreg_date = mreg_date;
+	}
+	
 	// 사진 이미지
 	private String proFile;
 	

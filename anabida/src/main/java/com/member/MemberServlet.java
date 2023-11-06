@@ -3,6 +3,7 @@ package com.member;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -162,8 +163,16 @@ public class MemberServlet extends MyUploadServlet {
 				resp.sendRedirect(cp + "/main.do?" );
 				return;
 			}
+			List<MPDTO> wlist = null;
+			wlist = dao.mypagewish(info.getUserId());
 			
+			List<MemberDTO> meet1 = dao.meetMember(info.getUserId());
+			
+			req.setAttribute("meet1", meet1);
+			req.setAttribute("wlist", wlist);
 			req.setAttribute("dto", dto);
+			
+			
 			forward(req, resp, "/WEB-INF/views/member/myPage.jsp");
 			return;
 			

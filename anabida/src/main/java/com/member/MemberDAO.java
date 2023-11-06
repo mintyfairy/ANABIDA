@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.util.DBConn;
 import com.util.DBUtil;
@@ -302,5 +304,80 @@ public class MemberDAO {
 		}
 		
 		return dto;
-	}	
+	}
+	
+	// mypagewish
+	public List<MPDTO> mypagewish(String userId){
+				List<MPDTO> wlist = new ArrayList<MPDTO>();
+				PreparedStatement pstmt = null;
+				ResultSet rs = null;
+				String sql;	
+				
+				try {
+					sql="select m.userName, a.userId, a.subject, a.content,"
+							+ " a.cost, a.regdate"
+							+ " , a.pstate, case when"
+							+ " a.pstate = 0 then '거래중' else '판매완료' end as state from pbbs a join "
+							+ " wish_lists b on a.pnum=b.pnum"
+							+ " join member m on a.userId=m.userId "
+							+ " where b.userId=?";
+					
+					pstmt=conn.prepareStatement(sql);
+					pstmt.setString(1, userId);
+					
+					rs = pstmt.executeQuery();
+					
+					while(rs.next()) {
+						MPDTO to = new MPDTO();
+						to.setWcontent(rs.getString("content"));
+						to.setWcost(rs.getLong("cost"));
+						to.setWreg_date(rs.getString("regdate"));
+						to.setWsubject(rs.getString("subject"));
+						to.setWuserId(rs.getString("userId"));
+						to.setWuserName(rs.getString("userName"));
+						to.setWsellstate(rs.getString("state"));
+						wlist.add(to);
+					}
+					
+				} catch (Exception e) {
+				} finally {
+					DBUtil.close(rs);
+					DBUtil.close(pstmt);
+				}
+				
+				
+				return wlist;
+			}
+	
+	public List<MemberDTO> meetMember(String userId){
+		List<MemberDTO> meet1 = new ArrayList<MemberDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;	
+		
+		try {
+			sql="  select ctitle, mreg_date from cbbs c "
+					+ " join meet m1 on c.cnum = m1.cnum where userId = ?";
+			
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				MemberDTO dto = new MemberDTO();
+				dto.setCtitle(rs.getString("ctitle"));
+				dto.setMreg_date(rs.getString("mreg_date"));
+				meet1.add(dto);
+			}
+			
+		} catch (Exception e) {
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		
+		return meet1;
+	}
 }
