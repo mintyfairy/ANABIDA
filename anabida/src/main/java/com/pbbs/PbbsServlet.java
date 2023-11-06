@@ -345,6 +345,8 @@ public class PbbsServlet extends MyUploadServlet {
 			}
 			//JSP에 보내기
 			List<PbbsDTO> listFile = dao.listPhotoFile(num);
+			PbbsDTO thumnail=dao.findById(num);
+			listFile.add(0, thumnail);
 			req.setAttribute("dto", dto);
 			req.setAttribute("listFile",listFile);
 			req.setAttribute("page", page);
@@ -505,6 +507,8 @@ public class PbbsServlet extends MyUploadServlet {
 
 			
 			dao.deletePhoto(num);
+			resp.sendRedirect(cp + "/pbbs/list.do?"+category+order +"page="+ page);
+			
 
 		} catch (Exception e) {
 			// TODO: handle exception
