@@ -204,6 +204,7 @@ public class CommunityServlet extends MyUploadServlet{
 	}
 	protected void writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 커뮤니티 게시글 등록
+		System.out.println("asdasdsa");
 		CommunityDAO dao = new CommunityDAO();
 		
 		HttpSession session = req.getSession();

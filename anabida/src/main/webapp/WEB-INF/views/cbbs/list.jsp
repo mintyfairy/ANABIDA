@@ -220,19 +220,24 @@ function searchList() {
 				</div>
 				<!--팝업 컨텐츠 영역-->
 				<div class="popup_cont">
-					<p style="font-size: 20px;">※ 카테고리를 선택해주세요 ※</p>
+					<p style="font-size: 20px;">※ <strong>카테고리를 선택해주세요</strong> ※</p>
 					<form name="cate" method="post"
 						action="${pageContext.request.contextPath}/cbbs/cwrite.do">
-						<p>
-							<span style="font-size: 15px;"><input type="radio" name="ccategory" value="1">모임</span>
-							<span><input type="radio" name="ccategory" value="2">질문</span>
+						<p style="text-align: center;">
+							<span style="font-size: 25px; padding-right: 57px;"><input type="radio" name="ccategory" value="1">모임</span>
+							<span style="font-size: 25px;"><input type="radio" name="ccategory" value="2">질문</span>
 						</p>
-							<span><input type="radio" name="ccategory" value="3">사건사고</span>
-							<span><input type="radio" name="ccategory" value="4">취미</span>
-						<p>
-							<input type="radio" name="ccategory" value="5">생활
+						<p style="text-align: center;">
+							<span style="font-size: 25px; padding-right: 10px;"><input type="radio" name="ccategory" value="3">사건사고</span>
+							<span style="font-size: 25px;"><input type="radio" name="ccategory" value="4">취미</span>
+							
 						</p>
-						<button type="submit" onclick="closePop();">선택완료</button>
+						<p style="text-align: center;">
+							<span style="font-size: 25px; "><input type="radio" name="ccategory" value="5">생활</span>
+						</p>
+						<p >
+							<button type="submit" onclick="closePop();">선택완료</button>
+						</p>
 					</form>
 				</div>
 			</div>

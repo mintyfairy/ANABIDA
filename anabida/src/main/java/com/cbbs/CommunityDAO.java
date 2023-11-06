@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.pbbs.PReplyDTO;
 import com.util.DBConn;
 import com.util.DBUtil;
 
