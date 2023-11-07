@@ -521,7 +521,7 @@ function deleteBoard() {
 
 <jsp:include page="/WEB-INF/views/layout/staticFooter.jsp"/>
 </body>
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=60e66caa443255c7eacf898657309fe6&libraries=services"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=?&libraries=services"></script>
 
 <script>
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
