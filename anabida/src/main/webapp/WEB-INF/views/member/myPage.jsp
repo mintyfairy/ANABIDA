@@ -439,7 +439,7 @@ window.addEventListener('load', (e) => {
           <h3 class="resume-title">관심품목</h3>
           <c:forEach var="to" items="${wlist}" varStatus="status">
             <div class="resume-item pb-0">
-              <h4>${to.wsubject }</h4>
+              <h4><a href="${pageContext.request.contextPath}/pbbs/article.do?num=${to.pnum}">${to.wsubject }</a></h4>
               <ul>
                 <li>${to.wcost } 원</li>
                 <li>${to.wreg_date }</li>
@@ -467,7 +467,7 @@ window.addEventListener('load', (e) => {
             <h3 class="resume-title">내가 참여한 모임</h3>
  			<c:forEach var="meet1" items="${meet1}" varStatus="status">
             <div class="resume-item pb-0">
-              <h4>제목 : ${meet1.ctitle }</h4>
+              <h4><a href="${pageContext.request.contextPath}/cbbs/carticle.do?num=${meet1.num}">제목 : ${meet1.ctitle }</a></h4>
               <p><em>모임날짜 : ${meet1.mreg_date}</em></p>
              
             </div>
@@ -490,7 +490,7 @@ window.addEventListener('load', (e) => {
         <c:forEach var="vo" items="${slist}" varStatus="status">
           <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up">
             <div class="icon"><i class="fa-solid fa-check fa-flip"></i></div>
-            <h4 class="title"><a href="">${vo.ssubject}</a></h4>
+            <h4 class="title"><a href="${pageContext.request.contextPath}/pbbs/article.do?num=${vo.pnum}">${vo.ssubject}</a></h4>
             <p class="description">${vo.scost  } 원</p>
             <p class="description">${vo.sreg_date  }</p>
             <p class="description">${vo.sellstate}</p>
@@ -544,7 +544,7 @@ window.addEventListener('load', (e) => {
 					<i class="bx bxs-quote-alt-right quote-icon-right"></i>
                 </p>
                 <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
-                <h3>${zo.qtitle}</h3>
+                <h3><a href="${pageContext.request.contextPath}/csbbs/article.do?qnum=${zo.pnum}">${zo.qtitle}</a></h3>
                 <h4>${zo.qanswer}</h4>
               </div>
             </div><!-- End testimonial item -->

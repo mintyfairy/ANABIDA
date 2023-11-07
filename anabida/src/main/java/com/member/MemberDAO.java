@@ -314,7 +314,7 @@ public class MemberDAO {
 				String sql;	
 				
 				try {
-					sql="select m.userName, a.userId, a.subject, a.content,"
+					sql="select m.userName, a.userId, a.subject, a.content, b.pnum,"
 							+ " a.cost, a.regdate"
 							+ " , a.pstate, case when"
 							+ " a.pstate = 0 then '거래중' else '판매완료' end as state from pbbs a join "
@@ -330,6 +330,7 @@ public class MemberDAO {
 					while(rs.next()) {
 						MPDTO to = new MPDTO();
 						to.setWcontent(rs.getString("content"));
+						to.setPnum(rs.getLong("pnum"));
 						to.setWcost(rs.getLong("cost"));
 						to.setWreg_date(rs.getString("regdate"));
 						to.setWsubject(rs.getString("subject"));
@@ -356,7 +357,7 @@ public class MemberDAO {
 		String sql;	
 		
 		try {
-			sql= " select ctitle,mreg_date"
+			sql= " select ctitle,mreg_date, a.cnum"
 					+ " from cbbs a "
 					+ " join meet b on a.cnum=b.cnum "
 					+ " join meetmember c on b.mnum=c.mnum"
@@ -371,7 +372,7 @@ public class MemberDAO {
 			while(rs.next()) {
 				
 				MemberDTO dto = new MemberDTO();
-				System.out.println("asdasd"+dto.getCtitle());
+				dto.setNum(rs.getLong("cnum"));
 				dto.setCtitle(rs.getString("ctitle"));
 				dto.setMreg_date(rs.getString("mreg_date"));
 				meet1.add(dto);
@@ -397,7 +398,7 @@ public class MemberDAO {
 		
 		
 		try {
-			sql=" select m.userName, a.userId, a.subject, "
+			sql=" select m.userName, a.userId, a.subject,pnum, "
 					+ " a.content, a.cost, a.regdate,"
 					+ " a.pstate, case when a.pstate = 0 then '거래중' else '판매완료' end as "
 					+ " state from pbbs a "
@@ -411,6 +412,7 @@ public class MemberDAO {
 			
 			while(rs.next()) {
 				MPDTO vo = new MPDTO();
+				vo.setPnum(rs.getLong("pnum"));
 				vo.setScontent(rs.getString("content"));
 				vo.setScost(rs.getLong("cost"));
 				vo.setSreg_date(rs.getString("regdate"));
@@ -487,7 +489,7 @@ public class MemberDAO {
 			
 			while(rs.next()) {
 				MPDTO zo = new MPDTO();
-				zo.setQqnum(rs.getInt("qnum"));
+				zo.setPnum(rs.getLong("qnum"));
 				zo.setQreg_date(rs.getString("reg_date"));
 				zo.setQtitle(rs.getString("title"));
 				zo.setQanswer(rs.getString("answer"));

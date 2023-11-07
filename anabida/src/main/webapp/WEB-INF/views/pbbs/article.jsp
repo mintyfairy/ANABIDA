@@ -220,7 +220,11 @@
 						<td colspan="2" height="110">
 							<div class="slideshow-container" >
 								
-									
+									<div class="mySlides fade">
+									    <img src="<c:url value='/uploads/pbbs/${dto.imageFilename}'/>" class="img" style=" width:100%; height: 450px;overflow:hidden;object-fit:cover " 
+										onclick="imageViewer('${pageContext.request.contextPath}/uploads/pbbs/${dto.imageFilename}');">
+									    <div class="text" style="background: black;color:white;opacity: 0.5 "> <span >${listNum} / ${listSize}</span></div>
+									</div>
 								<c:forEach var="vo" items="${listFile}">
 									<div class="mySlides fade">
 									    <img src="${pageContext.request.contextPath}/uploads/pbbs/${vo.imageFilename}" style="bottom : 0 ;width:100%;height: 450px; overflow:hidden;object-fit:cover" 
@@ -298,7 +302,18 @@
 						
 					</td>
 					<td align="right">
-						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?page=${page}${category}';">리스트</button>
+					<c:choose>
+						<c:when test="${page == ''}">
+							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?page=1';">리스트</button>
+						</c:when>
+						<c:when test="${page !=null }">
+							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?page=${page}${category}';">리스트</button>
+						</c:when>
+						<c:otherwise>
+							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/pbbs/list.do?page=1';">리스트</button>
+						
+						</c:otherwise>
+					</c:choose>
 					</td>
 				</tr>
 			</table>

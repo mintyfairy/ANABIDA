@@ -65,14 +65,12 @@ public class CommunityServlet extends MyUploadServlet{
 			updateForm(req, resp);
 		}else if(uri.indexOf("cupdate_ok.do")!=-1) {
 			updateSubmit(req, resp);
-		}else if(uri.indexOf("cdelete.do")!=-1) {
-			delete(req, resp);
+		}else if(uri.indexOf("cdelete_k.do")!=-1) {
+			cdelete_k(req, resp);
 		}else if(uri.indexOf("participate.do")!=-1) {
 			participate(req, resp);
 		}else if(uri.indexOf("insertBoardLike.do")!=-1) {
 			insertBoardLike(req, resp);
-		}else if (uri.indexOf("delete.do") != -1) {
-			delete(req, resp);
 		} else if (uri.indexOf("insertReply.do") != -1) {
 			insertReply(req, resp);
 		} else if (uri.indexOf("clistReply.do") != -1) {
@@ -363,10 +361,9 @@ public class CommunityServlet extends MyUploadServlet{
 		// 커뮤니티 게시글 완료
 	}
 	
-	protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void cdelete_k(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 커뮤니티 게시글 삭제
 		CommunityDAO dao = new CommunityDAO();
-		
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
 		String cp = req.getContextPath();
@@ -377,16 +374,20 @@ public class CommunityServlet extends MyUploadServlet{
 			long num = Long.parseLong(req.getParameter("num"));
 			
 			CommunityDTO dto = dao.findById(num);
+			
 			if (dto == null) {
+				
 				resp.sendRedirect(cp + "/cbbs/clist.do?" + query);
 				return;
 			}
 			
 			// 게시물을 올린 사용자가 아니면
-			if (!dto.getUserId().equals(info.getUserId())) {
-				viewPage(req, resp, "redirect:/cbbs/clist.do?page=" + page);
-				return;
-			}
+			
+			/*
+			 * if (!dto.getUserId().equals(info.getUserId())) { viewPage(req, resp,
+			 * "redirect:/cbbs/clist.do?page=" + page); return; }
+			 */
+			
 			List<CommunityDTO> listFile = dao.listPhotoFile(num);
 			for (CommunityDTO vo : listFile) {
 				FileManager.doFiledelete(pathname, vo.getPicFileName());

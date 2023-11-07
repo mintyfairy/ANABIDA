@@ -19,7 +19,15 @@ public class MemberDTO {
 	private String addr2;
 	private String score;
 	private int age;
+	private Long num;
 	
+	public Long getNum() {
+		return num;
+	}
+	public void setNum(Long num) {
+		this.num = num;
+	}
+
 	private String ctitle;
 	
 	private String mreg_date;

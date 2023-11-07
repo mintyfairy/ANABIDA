@@ -1,6 +1,7 @@
 package com.member;
 public class MPDTO {
 	
+	private Long pnum;
 	private String profile;
 	private String wuserName;
 	private String wuserId;
@@ -10,6 +11,15 @@ public class MPDTO {
 	private String wreg_date;
 	private String wsellstate;
 	
+	
+	public Long getPnum() {
+		return pnum;
+	}
+
+	public void setPnum(Long pnum) {
+		this.pnum = pnum;
+	}
+
 	public String getWsellstate() {
 		return wsellstate;
 	}

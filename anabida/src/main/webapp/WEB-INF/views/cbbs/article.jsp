@@ -202,7 +202,7 @@ function deleteBoard() {
 	console.log("asdas");
 	    if(confirm("게시글을 삭제 하시 겠습니까 ? ")) {
 		    let query = "num=${dto.num}&${query}";
-		    let url = "${pageContext.request.contextPath}/cbbs/cdelete.do?" + query;
+		    let url = "${pageContext.request.contextPath}/cbbs/cdelete_k.do?" + query;
 	    	location.href = url;
 	    }
 	}
@@ -385,6 +385,7 @@ function deleteBoard() {
               <br>
                 <c:if test="${dto.ccategory == 1}">
               <strong>모임장소 <i class="fa-solid fa-map-location-dot"></i></strong>
+              <span>모임날짜 : ${meet.mreg_date }</span>
               <div id="map" style="width:100%;height:350px;"></div>
               </c:if>
               
@@ -395,7 +396,19 @@ function deleteBoard() {
           <div class="col-lg-4">
             <div class="portfolio-info">
               <h3>${dto.ctitle }               
-              <button type="button" style="padding-left:5px; " class="btn" onclick="location.href='${pageContext.request.contextPath}/cbbs/clist.do?${query}'" ><i class="fa-solid fa-list"></i></button>
+              <c:choose>
+              	<c:when test="${page == '' }">
+              	    <button type="button" style="padding-left:5px; " class="btn" onclick="location.href='${pageContext.request.contextPath}/cbbs/clist.do?page=1'" ><i class="fa-solid fa-list"></i></button>
+              	</c:when>
+              	<c:when test="${page !=null }">
+              	    <button type="button" style="padding-left:5px; " class="btn" onclick="location.href='${pageContext.request.contextPath}/cbbs/clist.do?${query}'" ><i class="fa-solid fa-list"></i></button>
+              	</c:when>
+				<c:otherwise>
+              		<button type="button" style="padding-left:5px; " class="btn" onclick="location.href='${pageContext.request.contextPath}/cbbs/clist.do?page=1'" ><i class="fa-solid fa-list"></i></button>
+              	</c:otherwise>
+              	
+			  </c:choose>
+              
               </h3> 
               <button style="padding-left: 0px; padding-bottom: 9px;" type="button" class="btn btnSendBoardLike" title="좋아요"><i class="fa-regular fa-heart" style="color: ${isUserLike? 'red' : 'black'}"></i>&nbsp;&nbsp;<span id="boardLikeCount">${dto.likeCount}</span></button>
               <span style="">조회수 : ${dto.chitCount}</span>

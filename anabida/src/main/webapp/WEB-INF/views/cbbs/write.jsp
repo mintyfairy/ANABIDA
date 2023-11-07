@@ -174,6 +174,17 @@ a {
 		f.submit();
 		
 	}
+	
+	$(function(){
+		$("#date1").datepicker({
+			showMonthAfterYear:true
+			,defaultDate:"0"
+			//,minDate:0, maxDate:"+5D"
+			//,minDate:-5, maxDate:"+1M +5D"
+			,minDate:"0", maxDate:"+2M"
+		});
+	});
+
 </script>
  
 <script type="text/javascript">
@@ -308,12 +319,12 @@ $(function(){
 
 							<tr>
 								<td>모임 날짜</td>
-								<td><input type="date" name="mreg_date"
-									class="form-control" value=""></td>
+								<td><input type="text" name="mreg_date"
+									class="form-control" value="" id="date1" readonly></td>
 							</tr>
 
 							<tr>
-								<td>우편번호</td>
+								<td>모임장소</td>
 								<td><input type="text" name="zip" id="zip" maxlength="7"
 									class="form-control" value="${dto.zip}" readonly
 									style="width: 50%;">

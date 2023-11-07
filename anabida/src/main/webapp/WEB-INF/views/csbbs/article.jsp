@@ -149,7 +149,19 @@ function imageViewer(img) {
 				        </c:choose>				
 					</td>
 					<td align="right">
-						<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/csbbs/list.do?${query}';">리스트</button>
+					<c:choose>
+						
+						<c:when test="${page == ''}">
+							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/csbbs/list.do?page=1';">리스트</button>
+						</c:when>
+						
+						<c:when test="${page !=null }">
+							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/csbbs/list.do?${query}';">리스트</button>
+						</c:when>
+						<c:otherwise>
+							<button type="button" class="btn" onclick="location.href='${pageContext.request.contextPath}/csbbs/list.do?page=1';">리스트</button>
+						</c:otherwise>
+					</c:choose>
 					</td>
 				</tr>
 			</table>
