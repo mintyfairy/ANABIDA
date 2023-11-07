@@ -971,6 +971,36 @@ public class PbbsDAO {
 			
 			return dto;
 		}
+		public String findReplyId(long replyNum) {
+			String b = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql;
+			
+			try {
+				sql = "SELECT r.USERID "
+						+ " FROM pReply r  "
+						+ " JOIN member m ON r.userId = m.userId  "
+						+ " WHERE replyNum = ? ";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, replyNum);
+				
+				rs=pstmt.executeQuery();
+				
+				if(rs.next()) {
+					
+					b=rs.getString("userId");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				DBUtil.close(rs);
+				DBUtil.close(pstmt);
+			}
+			
+			return b;
+		}
 	
 	
 		// 게시물의 댓글 삭제

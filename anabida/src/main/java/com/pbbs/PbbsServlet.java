@@ -1,11 +1,8 @@
 package com.pbbs;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Array;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -641,8 +638,8 @@ public class PbbsServlet extends MyUploadServlet {
 				resp.sendRedirect(cp + "/pbbs/list.do?"+category+order  +"page=" + page);
 				return;
 			}
-			String buyer=req.getParameter("buyer");
 			long replynum=Long.parseLong(req.getParameter("replynum"));
+			String buyer=dao.findReplyId(replynum);
 			dao.iChooseYou(num, buyer,replynum);
 			long pstate=1;
 			
